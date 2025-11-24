@@ -93,8 +93,8 @@ export default buildConfig({
 		})
 	],
 	email: nodemailerAdapter({
-		defaultFromAddress: 'info@payloadcms.com',
-		defaultFromName: 'Payload',
+		defaultFromAddress: 'no-reply@the-easycode.eu',
+		defaultFromName: 'EasyCode',
 		// Nodemailer transportOptions
 		transportOptions: {
 			host: process.env.SMTP_HOST,
