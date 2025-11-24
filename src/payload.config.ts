@@ -20,6 +20,20 @@ import { getServerSideURL } from './utilities/getURL'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+const mongoURL = process.env.MONGODB_URI
+if (!mongoURL) {
+	throw new Error(
+		'MONGODB_URI is not defined. Please set it in your environment.'
+	)
+}
+
+const payloadSecret = process.env.PAYLOAD_SECRET
+if (!payloadSecret) {
+	throw new Error(
+		'PAYLOAD_SECRET is not defined. Please set it in your environment.'
+	)
+}
+
 export default buildConfig({
 	admin: {
 		components: {
