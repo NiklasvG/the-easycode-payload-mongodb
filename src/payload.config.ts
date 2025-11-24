@@ -1,5 +1,6 @@
-// storage-adapter-import-placeholder
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 
 import sharp from 'sharp' // sharp-import
 import path from 'path'
@@ -80,9 +81,30 @@ export default buildConfig({
 	cors: [getServerSideURL()].filter(Boolean),
 	globals: [Header, Footer],
 	plugins: [
-		...plugins
-		// storage-adapter-placeholder
+		...plugins,
+		vercelBlobStorage({
+			enabled: true, // Optional, defaults to true
+			// Specify which collections should use Vercel Blob
+			collections: {
+				media: true
+			},
+			// Token provided by Vercel once Blob storage is added to your Vercel project
+			token: process.env.BLOB_READ_WRITE_TOKEN
+		})
 	],
+	email: nodemailerAdapter({
+		defaultFromAddress: 'info@payloadcms.com',
+		defaultFromName: 'Payload',
+		// Nodemailer transportOptions
+		transportOptions: {
+			host: process.env.SMTP_HOST,
+			port: Number(process.env.SMTP_PORT),
+			auth: {
+				user: process.env.SMTP_USER,
+				pass: process.env.SMTP_PASS
+			}
+		}
+	}),
 	secret: process.env.PAYLOAD_SECRET,
 	sharp,
 	typescript: {

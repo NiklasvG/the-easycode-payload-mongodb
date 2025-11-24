@@ -6,7 +6,6 @@ import { searchPlugin } from '@payloadcms/plugin-search'
 import { Plugin } from 'payload'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import {
 	FixedToolbarFeature,
 	HeadingFeature,
@@ -98,14 +97,5 @@ export const plugins: Plugin[] = [
 				return [...defaultFields, ...searchFields]
 			}
 		}
-	}),
-	vercelBlobStorage({
-		enabled: true, // Optional, defaults to true
-		// Specify which collections should use Vercel Blob
-		collections: {
-			media: true
-		},
-		// Token provided by Vercel once Blob storage is added to your Vercel project
-		token: process.env.BLOB_READ_WRITE_TOKEN
 	})
 ]
