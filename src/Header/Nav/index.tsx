@@ -42,9 +42,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
 	}
 
 	useEffect(() => {
-		let timeoutId: ReturnType<typeof setTimeout>
-
-		timeoutId = setTimeout(() => {
+		const timeoutId = setTimeout(() => {
 			setOpenNavigationDelay(openNavigation)
 		}, 10)
 
@@ -168,7 +166,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
 								if (!href || !label) return null
 
 								return (
-									<li key={href} className="nav-main__item nav-main__item--1">
+									<li key={i} className="nav-main__item nav-main__item--1">
 										<Link
 											href={href}
 											onClick={handleClick}
