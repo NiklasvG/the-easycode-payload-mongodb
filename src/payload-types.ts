@@ -157,7 +157,27 @@ export interface Page {
   id: string;
   title: string;
   hero: {
-    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
+    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'textAnimation';
+    phrases?:
+      | {
+          phrase: string;
+          id?: string | null;
+        }[]
+      | null;
+    title?: string | null;
+    description?: string | null;
+    tags?:
+      | {
+          tag: string;
+          id?: string | null;
+        }[]
+      | null;
+    icons?:
+      | {
+          icon: 'Laptop' | 'SquareCode' | 'Handshake' | 'Paintbrush';
+          id?: string | null;
+        }[]
+      | null;
     richText?: {
       root: {
         type: string;
@@ -1060,6 +1080,26 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         type?: T;
+        phrases?:
+          | T
+          | {
+              phrase?: T;
+              id?: T;
+            };
+        title?: T;
+        description?: T;
+        tags?:
+          | T
+          | {
+              tag?: T;
+              id?: T;
+            };
+        icons?:
+          | T
+          | {
+              icon?: T;
+              id?: T;
+            };
         richText?: T;
         links?:
           | T
