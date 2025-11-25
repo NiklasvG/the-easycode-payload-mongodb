@@ -74,7 +74,17 @@ export default buildConfig({
 	// This config helps us configure global or default features that the other editors can inherit
 	editor: defaultLexical,
 	db: mongooseAdapter({
-		url: process.env.MONGODB_URI || ''
+		url: process.env.MONGODB_URI || '',
+		connectOptions: {
+			// weniger lange „hängen“, wenn ein Node in der Replica-Set mal zickt
+			serverSelectionTimeoutMS: 5000,
+			// verlässlicher Pool, aber nicht zu groß für Vercel Lambdas
+			maxPoolSize: 10,
+			minPoolSize: 0,
+			maxIdleTimeMS: 60000,
+			// falls es DNS/IPv6-Probleme gibt:
+			family: 4
+		}
 	}),
 	collections: [Pages, Posts, Media, Categories, Users, Clients, Projects],
 	cors: [getServerSideURL()].filter(Boolean),
