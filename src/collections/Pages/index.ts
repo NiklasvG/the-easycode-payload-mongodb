@@ -4,9 +4,11 @@ import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { Archive } from '../../blocks/ArchiveBlock/config'
 import { CallToAction } from '../../blocks/CallToAction/config'
+import { ClientsSliderBlock } from '@/blocks/ClientsSlider/config'
 import { Content } from '../../blocks/Content/config'
 import { FormBlock } from '../../blocks/Form/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { ServicesBlock } from '@/blocks/Services/config'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
@@ -20,7 +22,6 @@ import {
 	OverviewField,
 	PreviewField
 } from '@payloadcms/plugin-seo/fields'
-import { ClientsSliderBlock } from '@/blocks/ClientsSlider/config'
 
 export const Pages: CollectionConfig<'pages'> = {
 	slug: 'pages',
@@ -79,7 +80,8 @@ export const Pages: CollectionConfig<'pages'> = {
 								MediaBlock,
 								Archive,
 								FormBlock,
-								ClientsSliderBlock
+								ClientsSliderBlock,
+								ServicesBlock
 							],
 							required: true,
 							admin: {

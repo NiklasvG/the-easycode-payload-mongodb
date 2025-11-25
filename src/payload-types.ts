@@ -221,7 +221,15 @@ export interface Page {
       | null;
     media?: (string | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock | ClientsSliderBlock)[];
+  layout: (
+    | CallToActionBlock
+    | ContentBlock
+    | MediaBlock
+    | ArchiveBlock
+    | FormBlock
+    | ClientsSliderBlock
+    | ServicesBlock
+  )[];
   meta?: {
     title?: string | null;
     /**
@@ -812,6 +820,48 @@ export interface ClientsSliderBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ServicesBlock".
+ */
+export interface ServicesBlock {
+  overhead?: string | null;
+  headline?: string | null;
+  accentText?: string | null;
+  subhead?: string | null;
+  services: {
+    link: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: string | Page;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: string | Post;
+          } | null);
+      url?: string | null;
+      label: string;
+    };
+    headline: string;
+    abstract: string;
+    icon?: ('computer' | 'cloud') | null;
+    image?: (string | null) | Media;
+    border?: boolean | null;
+    tags?:
+      | {
+          tag?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'services';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "clients".
  */
 export interface Client {
@@ -1168,6 +1218,7 @@ export interface PagesSelect<T extends boolean = true> {
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
         clientsSlider?: T | ClientsSliderBlockSelect<T>;
+        services?: T | ServicesBlockSelect<T>;
       };
   meta?:
     | T
@@ -1273,6 +1324,43 @@ export interface FormBlockSelect<T extends boolean = true> {
  */
 export interface ClientsSliderBlockSelect<T extends boolean = true> {
   heading?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ServicesBlock_select".
+ */
+export interface ServicesBlockSelect<T extends boolean = true> {
+  overhead?: T;
+  headline?: T;
+  accentText?: T;
+  subhead?: T;
+  services?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        headline?: T;
+        abstract?: T;
+        icon?: T;
+        image?: T;
+        border?: T;
+        tags?:
+          | T
+          | {
+              tag?: T;
+              id?: T;
+            };
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

@@ -11,7 +11,7 @@ export const ClientsSliderBlock: Block = {
 		{
 			name: 'heading',
 			type: 'text',
-			label: 'Überschrift (optional)',
+			label: 'Überschrift',
 			required: false
 		}
 	]

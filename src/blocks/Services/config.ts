@@ -1,0 +1,109 @@
+import { link } from '@/fields/link'
+
+import type { Block } from 'payload'
+
+export const ServicesBlock: Block = {
+	slug: 'services',
+	interfaceName: 'ServicesBlock',
+	labels: {
+		singular: 'Services',
+		plural: 'Services'
+	},
+	fields: [
+		{
+			name: 'overhead',
+			type: 'text',
+			label: 'Overhead (kleine Überschrift)',
+			required: false,
+			defaultValue: 'Leistungen'
+		},
+		{
+			name: 'headline',
+			type: 'text',
+			label: 'Überschrift',
+			required: false,
+			defaultValue: 'Zielgerichtet. Maßgeschneidert. Flexibel.'
+		},
+		{
+			name: 'accentText',
+			type: 'text',
+			label: 'Akzentwort (optional, farbig)',
+			required: false,
+			defaultValue: 'Maßgeschneidert.'
+		},
+		{
+			name: 'subhead',
+			type: 'textarea',
+			label: 'Subheadline',
+			required: false,
+			defaultValue:
+				'Von der Konzeption bis zum Live-Gang: Digitale Projekte, die ins Schwarze treffen.'
+		},
+		{
+			name: 'services',
+			type: 'array',
+			label: 'Service-Teaser',
+			labels: {
+				singular: 'Service',
+				plural: 'Services'
+			},
+			required: true,
+			fields: [
+				link({
+					appearances: false,
+					overrides: {
+						required: true
+					}
+				}),
+				{
+					name: 'headline',
+					type: 'text',
+					label: 'Titel',
+					required: true
+				},
+				{
+					name: 'abstract',
+					type: 'textarea',
+					label: 'Kurzbeschreibung',
+					required: true
+				},
+				{
+					name: 'icon',
+					type: 'select',
+					label: 'Icon',
+					required: false,
+					options: [
+						{ label: 'Computer', value: 'computer' },
+						{ label: 'Cloud', value: 'cloud' }
+					]
+				},
+				{
+					name: 'image',
+					type: 'upload',
+					relationTo: 'media',
+					label: 'Bild (optional statt Icon)',
+					required: false
+				},
+				{
+					name: 'border',
+					type: 'checkbox',
+					label: 'Rand anzeigen',
+					defaultValue: true
+				},
+				{
+					name: 'tags',
+					type: 'array',
+					label: 'Tags',
+					minRows: 0,
+					fields: [
+						{
+							name: 'tag',
+							type: 'text',
+							label: 'Tag'
+						}
+					]
+				}
+			]
+		}
+	]
+}
