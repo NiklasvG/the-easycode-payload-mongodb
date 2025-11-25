@@ -8,6 +8,7 @@ import { ClientsSliderBlock } from '@/blocks/ClientsSlider/config'
 import { Content } from '../../blocks/Content/config'
 import { FormBlock } from '../../blocks/Form/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { ProjectsGridBlock } from '@/blocks/ProjectsGrid/config'
 import { ServicesBlock } from '@/blocks/Services/config'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
@@ -81,7 +82,8 @@ export const Pages: CollectionConfig<'pages'> = {
 								Archive,
 								FormBlock,
 								ClientsSliderBlock,
-								ServicesBlock
+								ServicesBlock,
+								ProjectsGridBlock
 							],
 							required: true,
 							admin: {

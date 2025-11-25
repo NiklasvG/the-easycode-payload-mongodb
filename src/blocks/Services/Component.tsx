@@ -1,7 +1,7 @@
 import React from 'react'
 
 // Components
-import ServiceCard from './Component.client'
+import ServiceCard from '@/components/Cards/ServiceCard'
 
 // Types
 import type { ServicesBlock } from '@/payload-types'

@@ -6,10 +6,9 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { ArrowUpRight } from 'lucide-react'
-import { Media, Page, Post } from '@/payload-types'
-import { Media as MediaComponent } from '@/components/Media'
 
 // Components
+import { Media as MediaComponent } from '@/components/Media'
 const LottieIcon = dynamic(
 	() => import('@/components/shared/Functional/LottieIcon'),
 	{
@@ -17,6 +16,8 @@ const LottieIcon = dynamic(
 	}
 )
 
+// Types
+import { Media, Page, Post } from '@/payload-types'
 interface optionsProps {
 	border?: boolean
 }
@@ -102,8 +103,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 						{headline}
 					</Link>
 				</p>
-				<span className="flex items-center justify-center bg-accent rounded-full size-7 sm:size-8 -mt-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-300">
-					<ArrowUpRight className="stroke-3 text-primary! size-5 sm:size-6" />
+				<span className="shrink-0 flex items-center justify-center bg-accent rounded-full size-7 sm:size-8 -mt-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-300">
+					<ArrowUpRight className="stroke-3 text-primary! size-5 sm:size-6 shrink-0" />
 				</span>
 			</div>
 			<div className={`teaser__text ${icon ? 'hidden md:block' : ''}`}>

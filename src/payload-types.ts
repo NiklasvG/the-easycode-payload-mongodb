@@ -73,6 +73,7 @@ export interface Config {
     categories: Category;
     users: User;
     clients: Client;
+    projects: Project;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -96,6 +97,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     clients: ClientsSelect<false> | ClientsSelect<true>;
+    projects: ProjectsSelect<false> | ProjectsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -229,6 +231,7 @@ export interface Page {
     | FormBlock
     | ClientsSliderBlock
     | ServicesBlock
+    | ProjectsGridBlock
   )[];
   meta?: {
     title?: string | null;
@@ -862,6 +865,20 @@ export interface ServicesBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProjectsGridBlock".
+ */
+export interface ProjectsGridBlock {
+  overhead?: string | null;
+  headline?: string | null;
+  subhead?: string | null;
+  projectsPageUrl?: string | null;
+  projectsLimit?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'projectsGrid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "clients".
  */
 export interface Client {
@@ -882,6 +899,30 @@ export interface Client {
         id?: string | null;
       }[]
     | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: string;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  image: string | Media;
+  abstract: string;
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  clients?: (string | Client)[] | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1100,6 +1141,10 @@ export interface PayloadLockedDocument {
         value: string | Client;
       } | null)
     | ({
+        relationTo: 'projects';
+        value: string | Project;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: string | Redirect;
       } | null)
@@ -1219,6 +1264,7 @@ export interface PagesSelect<T extends boolean = true> {
         formBlock?: T | FormBlockSelect<T>;
         clientsSlider?: T | ClientsSliderBlockSelect<T>;
         services?: T | ServicesBlockSelect<T>;
+        projectsGrid?: T | ProjectsGridBlockSelect<T>;
       };
   meta?:
     | T
@@ -1361,6 +1407,19 @@ export interface ServicesBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProjectsGridBlock_select".
+ */
+export interface ProjectsGridBlockSelect<T extends boolean = true> {
+  overhead?: T;
+  headline?: T;
+  subhead?: T;
+  projectsPageUrl?: T;
+  projectsLimit?: T;
   id?: T;
   blockName?: T;
 }
@@ -1550,6 +1609,26 @@ export interface ClientsSelect<T extends boolean = true> {
         comment?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects_select".
+ */
+export interface ProjectsSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  image?: T;
+  abstract?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  clients?: T;
   updatedAt?: T;
   createdAt?: T;
 }
