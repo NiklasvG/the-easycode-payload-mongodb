@@ -39,7 +39,7 @@ const sentryWebpackPluginOptions = {
 	// Für alle Optionen:
 	// https://www.npmjs.com/package/@sentry/webpack-plugin#options
 	org: 'the-easycode',
-	project: 'javascript-nextjs',
+	project: 'the-easycode-website',
 
 	// Nur im CI loggen
 	silent: !process.env.CI,
