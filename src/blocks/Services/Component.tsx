@@ -52,8 +52,6 @@ export const ServicesBlockComponent: React.FC<Props> = ({
 
 				<div className="grid grid-cols-1 lg:grid-cols-2 pt-10 teaser__items">
 					{services.map((service, index) => {
-						console.log('Rendering service:', service)
-
 						return (
 							<ServiceCard
 								key={index}
