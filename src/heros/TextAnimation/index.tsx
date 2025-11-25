@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react'
 
 // Libraries
-import Image from 'next/image'
 import { ScrollParallax } from 'react-just-parallax'
 import 'aos/dist/aos.css'
 import AOS from 'aos'
