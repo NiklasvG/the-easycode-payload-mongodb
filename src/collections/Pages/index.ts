@@ -23,6 +23,7 @@ import {
 	OverviewField,
 	PreviewField
 } from '@payloadcms/plugin-seo/fields'
+import { ClientQuotesBlock } from '@/blocks/ClientQuotes/config'
 
 export const Pages: CollectionConfig<'pages'> = {
 	slug: 'pages',
@@ -83,7 +84,8 @@ export const Pages: CollectionConfig<'pages'> = {
 								FormBlock,
 								ClientsSliderBlock,
 								ServicesBlock,
-								ProjectsGridBlock
+								ProjectsGridBlock,
+								ClientQuotesBlock
 							],
 							required: true,
 							admin: {

@@ -40,18 +40,19 @@ interface MasonryGridProps {
 
 export default function MasonryGrid({ cards }: MasonryGridProps) {
 	return (
-		<div className="columns-1 sm:columns-2 gap-4 space-y-4">
+		<div className="columns-1 sm:columns-2 gap-4">
 			{cards.map((card, index) => (
-				<ServiceCard
-					key={index}
-					link={card.link}
-					icon={card.icon}
-					image={card.image}
-					headline={card.headline}
-					abstract={card.abstract}
-					tags={card.tags}
-					options={{ border: false }}
-				/>
+				<div key={index} className="mb-4 break-inside-avoid-column">
+					<ServiceCard
+						link={card.link}
+						icon={card.icon}
+						image={card.image}
+						headline={card.headline}
+						abstract={card.abstract}
+						tags={card.tags}
+						options={{ border: false }}
+					/>
+				</div>
 			))}
 		</div>
 	)

@@ -449,6 +449,8 @@ figure {
 }
 
 .quote__image {
+	/* should always be square */
+	aspect-ratio: 1 / 1;
 	background-color: #fff;
 	border-color: #fff;
 	border-radius: 50%;
@@ -741,7 +743,7 @@ figure {
 	.quote__content {
 		&&:before {
 			border-width: 2.6388888889vw 2.6388888889vw 0 0;
-			left: -1.25vw;
+			left: -1.2vw;
 			top: 2.4305555556vw;
 		}
 	}
