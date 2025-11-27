@@ -22,7 +22,7 @@ export const ServicesBlockComponent: React.FC<Props> = ({
 
 	return (
 		<section
-			className={['py-10 2xl:py-32 bg-secondary-background', className]
+			className={['py-10 lg:py-20 bg-secondary-background', className]
 				.filter(Boolean)
 				.join(' ')}
 		>

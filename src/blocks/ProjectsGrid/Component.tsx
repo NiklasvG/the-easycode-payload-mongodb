@@ -26,7 +26,7 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 	const { docs } = await payload.find({
 		collection: 'projects',
 		limit: projectsLimit ?? 4,
-		sort: '-createdAt', // letzte Projekte zuerst
+		sort: '-startDate', // letzte Projekte zuerst
 		depth: 1
 	})
 
@@ -51,7 +51,7 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 
 	return (
 		<section
-			className={['py-10 2xl:py-32 bg-background', className]
+			className={['py-10 lg:py-20 bg-background', className]
 				.filter(Boolean)
 				.join(' ')}
 		>

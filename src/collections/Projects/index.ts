@@ -5,7 +5,7 @@ export const Projects: CollectionConfig<'projects'> = {
 	slug: 'projects',
 	admin: {
 		useAsTitle: 'title',
-		defaultColumns: ['title', 'slug', 'clients', 'updatedAt']
+		defaultColumns: ['title', 'slug', 'clients', 'startDate', 'updatedAt']
 	},
 	access: {
 		read: () => true,
@@ -31,6 +31,34 @@ export const Projects: CollectionConfig<'projects'> = {
 			relationTo: 'media',
 			required: true
 		},
+
+		// 🔹 Start- und Enddatum
+		{
+			name: 'startDate',
+			label: 'Projektstart',
+			type: 'date',
+			required: true,
+			admin: {
+				description: 'Start des Projekts (z. B. Kick-off, Projektbeginn).',
+				date: {
+					pickerAppearance: 'dayOnly'
+				}
+			}
+		},
+		{
+			name: 'endDate',
+			label: 'Projektende',
+			type: 'date',
+			required: false,
+			admin: {
+				description:
+					'Optional, falls das Projekt abgeschlossen ist – sonst leer lassen.',
+				date: {
+					pickerAppearance: 'dayOnly'
+				}
+			}
+		},
+
 		{
 			name: 'abstract',
 			label: 'Kurzbeschreibung',
@@ -54,13 +82,43 @@ export const Projects: CollectionConfig<'projects'> = {
 				}
 			]
 		},
+
 		{
 			name: 'clients',
 			label: 'Client(s)',
 			type: 'relationship',
 			relationTo: 'clients',
-			hasMany: true, // falls es immer nur einen Client geben soll -> false
-			required: false
+			hasMany: true,
+			required: false,
+			admin: {
+				description:
+					'Direkte Auftraggeber (z. B. Agentur queo, mit der du zusammenarbeitest).'
+			}
+		},
+
+		// 🔹 Endkunde / Marke, für die das Projekt eigentlich ist (BMW etc.)
+		{
+			name: 'endCustomer',
+			label: 'Endkunde / Marke',
+			type: 'group',
+			admin: {
+				description:
+					'Optional: Firma/Marke, für die das Projekt letztlich umgesetzt wurde (z. B. Auftraggeber: queo, Endkunde: BMW).'
+			},
+			fields: [
+				{
+					name: 'name',
+					label: 'Name des Endkunden',
+					type: 'text',
+					required: false
+				},
+				{
+					name: 'website',
+					label: 'Website des Endkunden',
+					type: 'text',
+					required: false
+				}
+			]
 		}
 	],
 	defaultPopulate: {
@@ -69,6 +127,9 @@ export const Projects: CollectionConfig<'projects'> = {
 		image: true,
 		abstract: true,
 		tags: true,
-		clients: true
+		clients: true,
+		startDate: true,
+		endDate: true,
+		endCustomer: true
 	}
 }

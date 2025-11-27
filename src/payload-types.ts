@@ -929,6 +929,14 @@ export interface Project {
   generateSlug?: boolean | null;
   slug: string;
   image: string | Media;
+  /**
+   * Start des Projekts (z. B. Kick-off, Projektbeginn).
+   */
+  startDate: string;
+  /**
+   * Optional, falls das Projekt abgeschlossen ist – sonst leer lassen.
+   */
+  endDate?: string | null;
   abstract: string;
   tags?:
     | {
@@ -936,7 +944,17 @@ export interface Project {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Direkte Auftraggeber (z. B. Agentur queo, mit der du zusammenarbeitest).
+   */
   clients?: (string | Client)[] | null;
+  /**
+   * Optional: Firma/Marke, für die das Projekt letztlich umgesetzt wurde (z. B. Auftraggeber: queo, Endkunde: BMW).
+   */
+  endCustomer?: {
+    name?: string | null;
+    website?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -1648,6 +1666,8 @@ export interface ProjectsSelect<T extends boolean = true> {
   generateSlug?: T;
   slug?: T;
   image?: T;
+  startDate?: T;
+  endDate?: T;
   abstract?: T;
   tags?:
     | T
@@ -1656,6 +1676,12 @@ export interface ProjectsSelect<T extends boolean = true> {
         id?: T;
       };
   clients?: T;
+  endCustomer?:
+    | T
+    | {
+        name?: T;
+        website?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
