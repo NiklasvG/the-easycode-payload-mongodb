@@ -14,6 +14,7 @@ import { draftMode } from 'next/headers'
 
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
+import { AIChat } from '@/components/Chat/AIChat'
 
 const geistSans = Gabarito({
 	variable: '--font-geist-sans',
@@ -54,6 +55,7 @@ export default async function RootLayout({
 					<Header />
 					{children}
 					<Footer />
+					<AIChat />
 				</Providers>
 			</body>
 		</html>

@@ -22,6 +22,7 @@
 		"test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
 	},
 	"dependencies": {
+		"@google/genai": "^1.30.0",
 		"@payloadcms/admin-bar": "3.64.0",
 		"@payloadcms/db-mongodb": "3.64.0",
 		"@payloadcms/email-nodemailer": "^3.64.0",
@@ -62,6 +63,8 @@
 		"react-dom": "19.1.0",
 		"react-hook-form": "7.45.4",
 		"react-just-parallax": "^3.1.16",
+		"react-markdown": "^10.1.0",
+		"remark-gfm": "^4.0.1",
 		"sharp": "0.34.2",
 		"tailwind-merge": "^2.3.0",
 		"tailwindcss-animate": "^1.0.7"
