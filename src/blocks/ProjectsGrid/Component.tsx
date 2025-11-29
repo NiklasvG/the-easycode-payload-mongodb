@@ -35,10 +35,12 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 	if (!projects || projects.length === 0) return null
 
 	const cards = projects.map((project) => {
+		const clientSlug =
+			typeof project.client === 'string' ? project.client : project.client.slug
 		return {
 			link: {
 				type: 'custom' as const,
-				url: `/projekte/${project.slug}`, // ggf. Route anpassen
+				url: `/projekte/${clientSlug}/${project.slug}`,
 				label: project.title
 			},
 			image: project.image ?? null,
@@ -65,7 +67,7 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 					</h2>
 				)}
 
-				{subhead && <p className="subhead">{subhead}</p>}
+				{subhead && <p className="subhead big">{subhead}</p>}
 
 				<MasonryGrid cards={cards} />
 

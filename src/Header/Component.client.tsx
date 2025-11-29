@@ -38,16 +38,23 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
 	}, [headerTheme])
 
 	return (
-		<header
-			className="w-full z-40 lg:bg-background/90 lg:backdrop-blur-sm"
-			{...(theme ? { 'data-theme': 'dark' } : {})}
-		>
-			<div className="flex items-center container mx-auto w-full py-4 lg:py-8 gap-8">
-				<Link href="/" className="logo shrink-0">
-					<Logo />
-				</Link>
-				<HeaderNav data={data} />
-			</div>
-		</header>
+		<div>
+			<header
+				className="w-full z-40 lg:bg-transparent lg:backdrop-blur-sm relative"
+				{...(theme ? { 'data-theme': 'dark' } : {})}
+			>
+				{/* Background Gradients */}
+				<div className="absolute top-0 left-0 w-full h-full pointer-events-none z-30">
+					<div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/10 rounded-full blur-[120px]" />
+					{/* <div className="absolute bottom-[10%] left-[-10%] w-[400px] h-[400px] bg-purple-900/10 rounded-full blur-[100px]" /> */}
+				</div>
+				<div className="flex items-center container mx-auto w-full py-4 lg:py-8 gap-8">
+					<Link href="/" className="logo shrink-0">
+						<Logo />
+					</Link>
+					<HeaderNav data={data} />
+				</div>
+			</header>
+		</div>
 	)
 }

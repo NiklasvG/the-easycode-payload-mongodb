@@ -58,7 +58,7 @@ export const ClientQuotesBlockComponent: React.FC<Props> = async ({
 
 				{headline && <h2>{headline}</h2>}
 
-				{subhead && <p className="subhead">{subhead}</p>}
+				{subhead && <p className="subhead big">{subhead}</p>}
 
 				<QuoteSlider quotes={quotes} />
 			</div>

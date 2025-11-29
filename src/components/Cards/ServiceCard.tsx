@@ -108,7 +108,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 				</span>
 			</div>
 			<div className={`teaser__text ${icon ? 'hidden md:block' : ''}`}>
-				<p className="pb-6 2xl:pb-8">{abstract}</p>
+				<p className="pb-6 2xl:pb-8 big">{abstract}</p>
 				<ul className="list list--tag md:mt-4">
 					{tags.map((tag, index) => (
 						<li key={index}>{tag}</li>

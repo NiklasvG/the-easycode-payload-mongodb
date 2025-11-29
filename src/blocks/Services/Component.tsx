@@ -48,7 +48,7 @@ export const ServicesBlockComponent: React.FC<Props> = ({
 					</h2>
 				)}
 
-				{subhead && <p className="subhead">{subhead}</p>}
+				{subhead && <p className="subhead big">{subhead}</p>}
 
 				<div className="grid grid-cols-1 lg:grid-cols-2 pt-10 teaser__items">
 					{services.map((service, index) => {

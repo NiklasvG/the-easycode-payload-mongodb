@@ -4,52 +4,6 @@
 
 @layer base {
 	:root {
-		--background: 1 0 0;
-		--secondary-background: 0.2 0.005 269.5;
-		--foreground: 0.97 0.0054 95.1;
-
-		--card: 1 0 0;
-		--card-foreground: 0.145 0 0;
-		--popover: 1 0 0;
-		--popover-foreground: 0.145 0 0;
-
-		--primary: 0.205 0 0;
-		--primary-foreground: 0.985 0 0;
-
-		--secondary: 0.97 0 0;
-		--secondary-foreground: 0.205 0 0;
-
-		--muted: 0.97 0 0;
-		--muted-foreground: 0.556 0 0;
-
-		--accent: 0.68 0.1159 198.43;
-		--accent-foreground: 0.205 0 0;
-
-		--destructive: 0.577 0.245 27.325;
-
-		--border: 0.922 0 0;
-		--input: 0.922 0 0;
-		--ring: 0.708 0 0;
-
-		--chart-1: 0.646 0.222 41.116;
-		--chart-2: 0.6 0.118 184.704;
-		--chart-3: 0.398 0.07 227.392;
-		--chart-4: 0.828 0.189 84.429;
-		--chart-5: 0.769 0.188 70.08;
-
-		--sidebar: 0.985 0 0;
-		--sidebar-foreground: 0.145 0 0;
-		--sidebar-primary: 0.205 0 0;
-		--sidebar-primary-foreground: 0.985 0 0;
-		--sidebar-accent: 0.97 0 0;
-		--sidebar-accent-foreground: 0.205 0 0;
-		--sidebar-border: 0.922 0 0;
-		--sidebar-ring: 0.708 0 0;
-
-		--radius: 0.625rem;
-	}
-
-	[data-theme='dark'] {
 		--background: 0.145 0.005 269.5;
 		--secondary-background: 0.2 0.005 269.5;
 		--foreground: 0.985 0.001 0;
@@ -91,6 +45,8 @@
 		--sidebar-accent-foreground: 0.985 0 0;
 		--sidebar-border: 1 0 0;
 		--sidebar-ring: 0.556 0 0;
+
+		--radius: 0.625rem;
 	}
 }
 
@@ -213,7 +169,7 @@ h2 {
 		font-size: max(2.25rem, 3.21vw + 1.61rem);
 	}
 
-	p {
+	p.big {
 		font-size: var(--font-size-base, max(1rem, 0.357vw + 0.93rem));
 	}
 
@@ -233,7 +189,7 @@ h2 {
 		font-size: calc(4.5rem + (100vw - 1440px) / 100);
 	}
 
-	p {
+	p.big {
 		font-size: var(--font-size-base, calc(1.25rem + (100vw - 1440px) / 100));
 	}
 
@@ -257,7 +213,7 @@ h2 {
 		font-size: calc(4.5rem + (100vw - 1920px) / 100);
 	}
 
-	p {
+	p.big {
 		font-size: var(--font-size-base, calc(1.375rem + (100vw - 1920px) / 100));
 	}
 
@@ -451,6 +407,7 @@ figure {
 	border-style: solid;
 	filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.03))
 		drop-shadow(0 8px 11px rgba(0, 0, 0, 0.08));
+	overflow: hidden;
 }
 
 .quote__name {

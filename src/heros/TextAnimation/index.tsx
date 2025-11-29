@@ -56,7 +56,7 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
 
 							<span className="block relative z-10">{title}</span>
 						</h1>
-						<p>{description}</p>
+						<p className="big">{description}</p>
 						{tags && (
 							<ul className="list list--tag mt-4">
 								{tags.map((tag, index) => (

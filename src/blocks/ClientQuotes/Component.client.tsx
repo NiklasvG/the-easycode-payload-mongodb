@@ -13,6 +13,7 @@ import { ChevronLeft, ChevronRight, Quote as QuoteIcon } from 'lucide-react'
 
 import { Media as MediaComponent } from '@/components/Media'
 import type { Media } from '@/payload-types'
+import Image from 'next/image'
 
 export type QuoteItem = {
 	text: string
@@ -60,12 +61,16 @@ export const QuoteSlider: React.FC<Props> = ({ quotes }) => {
 									<QuoteIcon className="quote__icon" />
 									<div className="avatar">
 										{q.image ? (
-											<MediaComponent
-												resource={q.image}
-												className=""
-												imgClassName="quote__image"
-												priority={idx === 0}
-											/>
+											<div className="quote__image">
+												<Image
+													src={q.image.url!}
+													alt={q.image.alt || q.company || 'EasyCode Kunde'}
+													priority={idx === 0}
+													fill
+													className="w-full h-full object-cover"
+													sizes="(max-width: 1024px) 100vw, 1200px"
+												/>
+											</div>
 										) : (
 											<div className="quote__image bg-muted" />
 										)}
