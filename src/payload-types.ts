@@ -928,32 +928,137 @@ export interface Project {
    */
   generateSlug?: boolean | null;
   slug: string;
-  image: string | Media;
   /**
-   * Start des Projekts (z. B. Kick-off, Projektbeginn).
+   * Erscheint auf der Übersichtskarte.
    */
-  startDate: string;
-  /**
-   * Optional, falls das Projekt abgeschlossen ist – sonst leer lassen.
-   */
-  endDate?: string | null;
-  abstract: string;
+  shortDescription: string;
   tags?:
     | {
         tag: string;
         id?: string | null;
       }[]
     | null;
+  client: string | Client;
   /**
-   * Direkte Auftraggeber (z. B. Agentur queo, mit der du zusammenarbeitest).
+   * Falls abweichend vom verknüpften Client
    */
-  clients?: (string | Client)[] | null;
+  customer?: string | null;
+  industry: string;
+  startDate: string;
   /**
-   * Optional: Firma/Marke, für die das Projekt letztlich umgesetzt wurde (z. B. Auftraggeber: queo, Endkunde: BMW).
+   * Leer lassen, wenn noch aktiv.
    */
-  endCustomer?: {
-    name?: string | null;
-    website?: string | null;
+  endDate?: string | null;
+  demoUrl?: string | null;
+  repoUrl?: string | null;
+  /**
+   * z.B. "Konzeption, Frontend, Performance-Optimierung"
+   */
+  role: string;
+  /**
+   * z.B. "+47 % schnellere Ladezeiten & moderner Markenauftritt"
+   */
+  outcomeSentence: string;
+  image: string | Media;
+  heroImage: string | Media;
+  theChallenge?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  theGoal?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  theSolution?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  theOutcome?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  theNerdDetails?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  stats?:
+    | {
+        value: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  technologies?:
+    | {
+        name?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  secondaryImages?:
+    | {
+        image?: (string | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  quote?: {
+    text?: string | null;
+    author?: string | null;
+    position?: string | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -1665,22 +1770,54 @@ export interface ProjectsSelect<T extends boolean = true> {
   title?: T;
   generateSlug?: T;
   slug?: T;
-  image?: T;
-  startDate?: T;
-  endDate?: T;
-  abstract?: T;
+  shortDescription?: T;
   tags?:
     | T
     | {
         tag?: T;
         id?: T;
       };
-  clients?: T;
-  endCustomer?:
+  client?: T;
+  customer?: T;
+  industry?: T;
+  startDate?: T;
+  endDate?: T;
+  demoUrl?: T;
+  repoUrl?: T;
+  role?: T;
+  outcomeSentence?: T;
+  image?: T;
+  heroImage?: T;
+  theChallenge?: T;
+  theGoal?: T;
+  theSolution?: T;
+  theOutcome?: T;
+  theNerdDetails?: T;
+  stats?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  technologies?:
     | T
     | {
         name?: T;
-        website?: T;
+        id?: T;
+      };
+  secondaryImages?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  quote?:
+    | T
+    | {
+        text?: T;
+        author?: T;
+        position?: T;
       };
   updatedAt?: T;
   createdAt?: T;

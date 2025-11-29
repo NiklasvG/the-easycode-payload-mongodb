@@ -43,7 +43,7 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 			},
 			image: project.image ?? null,
 			headline: project.title,
-			abstract: project.abstract,
+			abstract: project.shortDescription,
 			tags: project.tags?.map((t) => t.tag).filter(Boolean) ?? [],
 			icon: undefined
 		}
