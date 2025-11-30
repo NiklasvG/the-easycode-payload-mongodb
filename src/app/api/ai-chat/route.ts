@@ -1,6 +1,6 @@
 // app/api/ai-chat/route.ts
 import { GoogleGenAI } from '@google/genai'
-import { generateSystemInstruction } from '@/constants/ai-systemprompt' // Import angepasst
+import { generateSystemInstruction } from '@/constants/ai-systemprompt'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
