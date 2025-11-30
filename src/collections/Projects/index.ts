@@ -1,18 +1,60 @@
+// src/collections/Projects/index.ts
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
 
+import { authenticated } from '../../access/authenticated'
+import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
+import { generatePreviewPath } from '../../utilities/generatePreviewPath'
+import { revalidateProject } from './hooks/revalidateProject'
+
 export const Projects: CollectionConfig = {
 	slug: 'projects',
+	// 1. Versions aktivieren (Drafts)
+	versions: {
+		drafts: {
+			autosave: {
+				interval: 100
+			},
+			schedulePublish: true
+		},
+		maxPerDoc: 50
+	},
 	admin: {
 		useAsTitle: 'title',
-		defaultColumns: ['title', 'client', 'industry', 'startDate', '_status']
+		defaultColumns: ['title', 'client', 'industry', 'startDate', '_status'],
+		// 2. Live Preview Konfiguration
+		livePreview: {
+			url: async ({ data, req }) => {
+				const path = await generatePreviewPath({
+					slug: data?.slug,
+					collection: 'projects',
+					req,
+					data // Wir übergeben data, damit wir an den Client kommen
+				})
+				return path || ''
+			}
+		},
+		preview: async (data, { req }) => {
+			const path = await generatePreviewPath({
+				slug: data?.slug as string,
+				collection: 'projects',
+				req,
+				data
+			})
+			return path || ''
+		}
 	},
+	// 3. Rechte anpassen (Drafts lesen erlauben)
 	access: {
-		read: () => true,
-		create: () => true,
-		update: () => true,
-		delete: () => true
+		read: authenticatedOrPublished,
+		create: authenticated,
+		update: authenticated,
+		delete: authenticated
+	},
+	// 4. Cache leeren beim Speichern
+	hooks: {
+		afterChange: [revalidateProject]
 	},
 	fields: [
 		{
