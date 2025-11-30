@@ -1,3 +1,4 @@
+// src\app\(frontend)\[slug]\page.tsx
 import type { Metadata } from 'next'
 
 import { PayloadRedirects } from '@/components/PayloadRedirects'

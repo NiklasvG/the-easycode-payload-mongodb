@@ -6,7 +6,8 @@ import { slugField } from 'payload'
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
-import { revalidateProject } from './hooks/revalidateProject'
+import { revalidateDelete, revalidateProject } from './hooks/revalidateProject'
+import { populatePublishedAt } from '@/hooks/populatePublishedAt'
 
 export const Projects: CollectionConfig = {
 	slug: 'projects',
@@ -19,6 +20,11 @@ export const Projects: CollectionConfig = {
 			schedulePublish: true
 		},
 		maxPerDoc: 50
+	},
+	defaultPopulate: {
+		title: true,
+		slug: true,
+		client: true
 	},
 	admin: {
 		useAsTitle: 'title',
@@ -54,7 +60,9 @@ export const Projects: CollectionConfig = {
 	},
 	// 4. Cache leeren beim Speichern
 	hooks: {
-		afterChange: [revalidateProject]
+		beforeChange: [populatePublishedAt], // Sorgt dafür, dass publishedAt beim Publishen gesetzt wird
+		afterChange: [revalidateProject], // Leert den Cache (Smart: neu & alt)
+		afterDelete: [revalidateDelete] // Leert Cache beim Löschen
 	},
 	fields: [
 		{
@@ -71,10 +79,11 @@ export const Projects: CollectionConfig = {
 						},
 						slugField({
 							name: 'slug',
-							fieldToUse: 'title'
+							fieldToUse: 'title',
+							required: true
 						}),
 						{
-							name: 'shortDescription', // Renamed from 'abstract' to match frontend types
+							name: 'shortDescription',
 							label: 'Kurzbeschreibung (Card)',
 							type: 'textarea',
 							required: true,

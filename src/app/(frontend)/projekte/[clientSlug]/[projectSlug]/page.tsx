@@ -18,6 +18,7 @@ import {
 	Github
 } from 'lucide-react'
 import RichText from '@/components/RichText'
+import { LivePreviewListener } from '@/components/LivePreviewListener'
 
 type Project = RequiredDataFromCollectionSlug<'projects'>
 type Client = RequiredDataFromCollectionSlug<'clients'>
@@ -68,7 +69,11 @@ type Args = {
 export default async function ProjectDetailPage({
 	params: paramsPromise
 }: Args) {
+	// 1. Draft Mode Status abrufen
+	const { isEnabled: draft } = await draftMode()
 	const { projectSlug } = await paramsPromise
+
+	// Deine Query Funktion berücksichtigt bereits "draft: isEnabled", das passt also!
 	const project = await queryProjectBySlug({
 		slug: decodeURIComponent(projectSlug)
 	})
@@ -113,6 +118,8 @@ export default async function ProjectDetailPage({
 
 	return (
 		<article className="min-h-screen bg-background text-foreground animate-in fade-in duration-500 selection:bg-accent selection:text-white">
+			{draft && <LivePreviewListener />}
+
 			{/* --- HERO SECTION --- */}
 			<section className="bg-background w-full h-full py-10 lg:py-20 2xl:py-28">
 				<div className="container mx-auto px-6 relative z-10">
