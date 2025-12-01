@@ -232,6 +232,7 @@ export interface Page {
     | ClientsSliderBlock
     | ServicesBlock
     | ProjectsGridBlock
+    | ClientQuotesBlock
     | InfoTwoColumnBlock
     | ProjectCtaBlock
   )[];
@@ -911,6 +912,19 @@ export interface ProjectsGridBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ClientQuotesBlock".
+ */
+export interface ClientQuotesBlock {
+  overhead?: string | null;
+  headline?: string | null;
+  subhead?: string | null;
+  maxQuotes?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'clientQuotes';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "InfoTwoColumnBlock".
  */
 export interface InfoTwoColumnBlock {
@@ -1482,6 +1496,7 @@ export interface PagesSelect<T extends boolean = true> {
         clientsSlider?: T | ClientsSliderBlockSelect<T>;
         services?: T | ServicesBlockSelect<T>;
         projectsGrid?: T | ProjectsGridBlockSelect<T>;
+        clientQuotes?: T | ClientQuotesBlockSelect<T>;
         infoTwoColumn?: T | InfoTwoColumnBlockSelect<T>;
         projectCta?: T | ProjectCtaBlockSelect<T>;
       };
@@ -1657,6 +1672,18 @@ export interface ProjectsGridBlockSelect<T extends boolean = true> {
         label?: T;
       };
   projectsLimit?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ClientQuotesBlock_select".
+ */
+export interface ClientQuotesBlockSelect<T extends boolean = true> {
+  overhead?: T;
+  headline?: T;
+  subhead?: T;
+  maxQuotes?: T;
   id?: T;
   blockName?: T;
 }

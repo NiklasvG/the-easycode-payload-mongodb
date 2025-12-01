@@ -87,6 +87,7 @@ export const Pages: CollectionConfig<'pages'> = {
 								ClientsSliderBlock,
 								ServicesBlock,
 								ProjectsGridBlock,
+								ClientQuotesBlock,
 								InfoTwoColumnBlock,
 								ProjectCtaBlock
 							],
