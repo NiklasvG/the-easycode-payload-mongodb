@@ -19,6 +19,7 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 	subhead,
 	link,
 	projectsLimit,
+	backgroundVariant = 'primary',
 	className
 }) => {
 	const payload = await getPayload({ config: configPromise })
@@ -51,9 +52,14 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 		}
 	})
 
+	const bgClass =
+		backgroundVariant === 'primary'
+			? 'bg-background'
+			: 'bg-secondary-background'
+
 	return (
 		<section
-			className={['py-24 lg:py-36 bg-background', className]
+			className={['py-24 lg:py-36', bgClass, className]
 				.filter(Boolean)
 				.join(' ')}
 		>

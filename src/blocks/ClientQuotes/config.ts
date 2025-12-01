@@ -9,6 +9,23 @@ export const ClientQuotesBlock: Block = {
 	},
 	fields: [
 		{
+			name: 'backgroundVariant',
+			type: 'select',
+			label: 'Hintergrund',
+			required: true,
+			defaultValue: 'primary',
+			options: [
+				{
+					label: 'Primär (bg-background)',
+					value: 'primary'
+				},
+				{
+					label: 'Sekundär (bg-secondary-background)',
+					value: 'secondary'
+				}
+			]
+		},
+		{
 			name: 'overhead',
 			type: 'text',
 			label: 'Overhead (kleine Überschrift)',

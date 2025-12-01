@@ -14,6 +14,7 @@ export const ClientQuotesBlockComponent: React.FC<Props> = async ({
 	headline,
 	subhead,
 	maxQuotes,
+	backgroundVariant = 'primary',
 	className
 }) => {
 	const payload = await getPayload({ config: configPromise })
@@ -47,9 +48,14 @@ export const ClientQuotesBlockComponent: React.FC<Props> = async ({
 
 	const quotes = allQuotes.slice(0, maxQuotes ?? 6)
 
+	const bgClass =
+		backgroundVariant === 'primary'
+			? 'bg-background'
+			: 'bg-secondary-background'
+
 	return (
 		<section
-			className={['py-24 lg:py-36 bg-background', className]
+			className={['py-24 lg:py-36', bgClass, className]
 				.filter(Boolean)
 				.join(' ')}
 		>

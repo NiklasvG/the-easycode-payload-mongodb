@@ -887,6 +887,7 @@ export interface ServicesBlock {
  * via the `definition` "ProjectsGridBlock".
  */
 export interface ProjectsGridBlock {
+  backgroundVariant: 'primary' | 'secondary';
   overhead?: string | null;
   headline?: string | null;
   subhead?: string | null;
@@ -915,6 +916,7 @@ export interface ProjectsGridBlock {
  * via the `definition` "ClientQuotesBlock".
  */
 export interface ClientQuotesBlock {
+  backgroundVariant: 'primary' | 'secondary';
   overhead?: string | null;
   headline?: string | null;
   subhead?: string | null;
@@ -1659,6 +1661,7 @@ export interface ServicesBlockSelect<T extends boolean = true> {
  * via the `definition` "ProjectsGridBlock_select".
  */
 export interface ProjectsGridBlockSelect<T extends boolean = true> {
+  backgroundVariant?: T;
   overhead?: T;
   headline?: T;
   subhead?: T;
@@ -1680,6 +1683,7 @@ export interface ProjectsGridBlockSelect<T extends boolean = true> {
  * via the `definition` "ClientQuotesBlock_select".
  */
 export interface ClientQuotesBlockSelect<T extends boolean = true> {
+  backgroundVariant?: T;
   overhead?: T;
   headline?: T;
   subhead?: T;

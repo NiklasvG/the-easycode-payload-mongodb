@@ -35,29 +35,45 @@ export const RenderBlocks: React.FC<{
 
 	const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
 
-	if (hasBlocks) {
-		return (
-			<Fragment>
-				{blocks.map((block, index) => {
-					const { blockType } = block
+	if (!hasBlocks) return null
 
-					if (blockType && blockType in blockComponents) {
-						const Block = blockComponents[blockType]
+	// if the current block has same backgroundVariant like previous block, we reduce the padding
+	let previousBackground: string | null = null
+	return (
+		<Fragment>
+			{blocks.map((block, index) => {
+				const { blockType } = block
+				const backgroundVariant =
+					'backgroundVariant' in block ? block.backgroundVariant : null
 
-						if (Block) {
-							return (
-								<div key={index}>
-									{/* @ts-expect-error there may be some mismatch between the expected types here */}
-									<Block {...block} disableInnerContainer />
-								</div>
-							)
-						}
+				if (blockType && blockType in blockComponents) {
+					const Block = blockComponents[blockType]
+
+					// Prüfen, ob gleiche Hintergrundfarbe wie vorher
+					const sameBackground =
+						previousBackground &&
+						backgroundVariant &&
+						previousBackground === backgroundVariant
+
+					// Dynamische Margin (kannst du beliebig anpassen)
+					const outerClassName = sameBackground
+						? '-mt-16' // → enger zusammen
+						: 'mt-0' // → normaler Abstand
+
+					// für nächsten Durchlauf speichern
+					previousBackground = backgroundVariant ?? null
+
+					if (Block) {
+						return (
+							<div key={index} className={outerClassName}>
+								{/* @ts-expect-error there may be some mismatch between the expected types here */}
+								<Block {...block} disableInnerContainer />
+							</div>
+						)
 					}
-					return null
-				})}
-			</Fragment>
-		)
-	}
-
-	return null
+				}
+				return null
+			})}
+		</Fragment>
+	)
 }
