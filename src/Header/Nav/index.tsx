@@ -15,6 +15,7 @@ import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import MenuSvg from '@/components/shared/Designs/svg/MenuSvg'
 import { Logo } from '@/components/Logo/Logo'
+import { CMSLink } from '@/components/Link'
 
 export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
 	const pathname = usePathname()
@@ -77,11 +78,11 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
 
 					return (
 						<li key={i} className="nav-main__item">
-							<Link href={link.url} onClick={handleClick}>
+							<CMSLink {...link} label={null} onClick={handleClick}>
 								<Button variant={variant} size="lg">
 									{link?.label}
 								</Button>
-							</Link>
+							</CMSLink>
 						</li>
 					)
 				})}
@@ -89,7 +90,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
 
 			<ul className="hidden md:flex gap-6 items-center justify-end w-full">
 				<li className="nav-main__item">
-					<Link href="/Suche" onClick={handleClick}>
+					<Link href="/suche" onClick={handleClick}>
 						<Button variant="secondary" size="lg">
 							<Search />
 							Suche
@@ -97,7 +98,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
 					</Link>
 				</li>
 				<li className="nav-main__item">
-					<Link href="/Kontakt" onClick={handleClick}>
+					<Link href="/kontakt" onClick={handleClick}>
 						<Button variant="outline" size="lg">
 							Kontakt
 							<span className="block bg-accent rounded-full p-1">

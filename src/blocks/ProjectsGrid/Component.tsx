@@ -6,8 +6,8 @@ import { getPayload } from 'payload'
 import type { ProjectsGridBlock, Project } from '@/payload-types'
 import MasonryGrid from '@/components/layout/MasonryGrid'
 import { Button } from '@/components/ui/button'
-import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
+import { CMSLink } from '@/components/Link'
 
 type Props = ProjectsGridBlock & {
 	className?: string
@@ -17,7 +17,7 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 	overhead,
 	headline,
 	subhead,
-	projectsPageUrl,
+	link,
 	projectsLimit,
 	className
 }) => {
@@ -71,15 +71,15 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 
 				<MasonryGrid cards={cards} />
 
-				{projectsPageUrl && (
-					<Link href={projectsPageUrl} className="mx-auto my-5">
+				{link && (
+					<CMSLink {...link} label={null} className="mx-auto my-5">
 						<Button variant="outline" size="lg">
-							Alle Projekte
+							{link?.label || 'Mehr erfahren'}
 							<span className="block bg-accent rounded-full p-1">
 								<ArrowUpRight className="stroke-3 text-primary!" />
 							</span>
 						</Button>
-					</Link>
+					</CMSLink>
 				)}
 			</div>
 		</section>

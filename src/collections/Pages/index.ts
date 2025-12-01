@@ -25,6 +25,7 @@ import {
 } from '@payloadcms/plugin-seo/fields'
 import { ClientQuotesBlock } from '@/blocks/ClientQuotes/config'
 import { InfoTwoColumnBlock } from '@/blocks/InfoTwoColumn/config'
+import { ProjectCtaBlock } from '@/blocks/ProjectCta/config'
 
 export const Pages: CollectionConfig<'pages'> = {
 	slug: 'pages',
@@ -86,7 +87,8 @@ export const Pages: CollectionConfig<'pages'> = {
 								ClientsSliderBlock,
 								ServicesBlock,
 								ProjectsGridBlock,
-								InfoTwoColumnBlock
+								InfoTwoColumnBlock,
+								ProjectCtaBlock
 							],
 							required: true,
 							admin: {

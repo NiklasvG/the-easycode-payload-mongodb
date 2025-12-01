@@ -1,3 +1,5 @@
+import { link } from '@/fields/link'
+
 import type { Block } from 'payload'
 
 export const ProjectsGridBlock: Block = {
@@ -29,13 +31,13 @@ export const ProjectsGridBlock: Block = {
 			required: false,
 			defaultValue: 'Der Erfolg deiner Projekte treibt uns an.'
 		},
-		{
-			name: 'projectsPageUrl',
-			type: 'text',
-			label: 'URL für „Alle Projekte“',
-			required: false,
-			defaultValue: '/projekte'
-		},
+		link({
+			appearances: false,
+			overrides: {
+				required: true,
+				label: 'CTA-Link'
+			}
+		}),
 		{
 			name: 'projectsLimit',
 			type: 'number',

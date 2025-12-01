@@ -56,6 +56,13 @@ export const ServicesBlock: Block = {
 			defaultValue:
 				'Von der Konzeption bis zum Live-Gang: Digitale Projekte, die ins Schwarze treffen.'
 		},
+		link({
+			appearances: false,
+			overrides: {
+				required: true,
+				label: 'CTA-Link'
+			}
+		}),
 		{
 			name: 'services',
 			type: 'array',

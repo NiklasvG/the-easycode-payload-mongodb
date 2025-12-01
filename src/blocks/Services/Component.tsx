@@ -6,6 +6,9 @@ import ServiceCard from '@/components/Cards/ServiceCard'
 // Types
 import type { ServicesBlock } from '@/payload-types'
 import { highlightPhrase } from '@/utilities/highlightPhrase'
+import { CMSLink } from '@/components/Link'
+import { Button } from '@/components/ui/button'
+import { ArrowUpRight } from 'lucide-react'
 
 type Props = ServicesBlock & {
 	className?: string
@@ -16,6 +19,7 @@ export const ServicesBlockComponent: React.FC<Props> = ({
 	headline,
 	accentText,
 	subhead,
+	link,
 	services,
 	backgroundVariant = 'secondary',
 	className
@@ -64,6 +68,17 @@ export const ServicesBlockComponent: React.FC<Props> = ({
 						)
 					})}
 				</div>
+
+				{link && (
+					<CMSLink {...link} label={null} className="mx-auto my-5">
+						<Button variant="outline" size="lg">
+							{link?.label || 'Mehr erfahren'}
+							<span className="block bg-accent rounded-full p-1">
+								<ArrowUpRight className="stroke-3 text-primary!" />
+							</span>
+						</Button>
+					</CMSLink>
+				)}
 			</div>
 		</section>
 	)

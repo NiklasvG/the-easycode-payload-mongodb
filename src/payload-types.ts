@@ -233,6 +233,7 @@ export interface Page {
     | ServicesBlock
     | ProjectsGridBlock
     | InfoTwoColumnBlock
+    | ProjectCtaBlock
   )[];
   meta?: {
     title?: string | null;
@@ -832,6 +833,21 @@ export interface ServicesBlock {
   headline?: string | null;
   accentText?: string | null;
   subhead?: string | null;
+  link: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: string | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: string | Post;
+        } | null);
+    url?: string | null;
+    label: string;
+  };
   services: {
     link: {
       type?: ('reference' | 'custom') | null;
@@ -873,7 +889,21 @@ export interface ProjectsGridBlock {
   overhead?: string | null;
   headline?: string | null;
   subhead?: string | null;
-  projectsPageUrl?: string | null;
+  link: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: string | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: string | Post;
+        } | null);
+    url?: string | null;
+    label: string;
+  };
   projectsLimit?: number | null;
   id?: string | null;
   blockName?: string | null;
@@ -900,6 +930,32 @@ export interface InfoTwoColumnBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'infoTwoColumn';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProjectCtaBlock".
+ */
+export interface ProjectCtaBlock {
+  headline: string;
+  link: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: string | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: string | Post;
+        } | null);
+    url?: string | null;
+    label: string;
+  };
+  backgroundVariant: 'secondary' | 'primary';
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'projectCta';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1427,6 +1483,7 @@ export interface PagesSelect<T extends boolean = true> {
         services?: T | ServicesBlockSelect<T>;
         projectsGrid?: T | ProjectsGridBlockSelect<T>;
         infoTwoColumn?: T | InfoTwoColumnBlockSelect<T>;
+        projectCta?: T | ProjectCtaBlockSelect<T>;
       };
   meta?:
     | T
@@ -1545,6 +1602,15 @@ export interface ServicesBlockSelect<T extends boolean = true> {
   headline?: T;
   accentText?: T;
   subhead?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
   services?:
     | T
     | {
@@ -1581,7 +1647,15 @@ export interface ProjectsGridBlockSelect<T extends boolean = true> {
   overhead?: T;
   headline?: T;
   subhead?: T;
-  projectsPageUrl?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
   projectsLimit?: T;
   id?: T;
   blockName?: T;
@@ -1604,6 +1678,25 @@ export interface InfoTwoColumnBlockSelect<T extends boolean = true> {
         text?: T;
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProjectCtaBlock_select".
+ */
+export interface ProjectCtaBlockSelect<T extends boolean = true> {
+  headline?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  backgroundVariant?: T;
   id?: T;
   blockName?: T;
 }
