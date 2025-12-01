@@ -5,6 +5,7 @@ import ServiceCard from '@/components/Cards/ServiceCard'
 
 // Types
 import type { ServicesBlock } from '@/payload-types'
+import { highlightPhrase } from '@/utilities/highlightPhrase'
 
 type Props = ServicesBlock & {
 	className?: string
@@ -16,13 +17,19 @@ export const ServicesBlockComponent: React.FC<Props> = ({
 	accentText,
 	subhead,
 	services,
+	backgroundVariant = 'secondary',
 	className
 }) => {
 	if (!services || services.length === 0) return null
 
+	const bgClass =
+		backgroundVariant === 'primary'
+			? 'bg-background'
+			: 'bg-secondary-background'
+
 	return (
 		<section
-			className={['py-10 lg:py-20 bg-secondary-background', className]
+			className={['py-24 lg:py-36', bgClass, className]
 				.filter(Boolean)
 				.join(' ')}
 		>
@@ -30,21 +37,8 @@ export const ServicesBlockComponent: React.FC<Props> = ({
 				{overhead && <p className="overhead">{overhead}</p>}
 
 				{headline && (
-					<h2>
-						{headline.split(' ').map((word, i) => {
-							// kleine Spielerei: wenn das Wort dem AccentText entspricht, highlighten
-							if (
-								accentText &&
-								word.replace(/[.]/g, '') === accentText.replace(/[.]/g, '')
-							) {
-								return (
-									<span key={i} className="text-accent">
-										{word + ' '}
-									</span>
-								)
-							}
-							return word + ' '
-						})}
+					<h2 className="h2">
+						{accentText ? highlightPhrase(headline, accentText) : headline}
 					</h2>
 				)}
 

@@ -178,7 +178,7 @@ export interface Page {
       | null;
     icons?:
       | {
-          icon: 'Laptop' | 'SquareCode' | 'Handshake' | 'Paintbrush';
+          icon: 'Laptop' | 'SquareCode' | 'Handshake' | 'Paintbrush' | 'Smartphone' | 'Server';
           id?: string | null;
         }[]
       | null;
@@ -232,7 +232,7 @@ export interface Page {
     | ClientsSliderBlock
     | ServicesBlock
     | ProjectsGridBlock
-    | ClientQuotesBlock
+    | InfoTwoColumnBlock
   )[];
   meta?: {
     title?: string | null;
@@ -827,6 +827,7 @@ export interface ClientsSliderBlock {
  * via the `definition` "ServicesBlock".
  */
 export interface ServicesBlock {
+  backgroundVariant: 'primary' | 'secondary';
   overhead?: string | null;
   headline?: string | null;
   accentText?: string | null;
@@ -880,16 +881,25 @@ export interface ProjectsGridBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ClientQuotesBlock".
+ * via the `definition` "InfoTwoColumnBlock".
  */
-export interface ClientQuotesBlock {
+export interface InfoTwoColumnBlock {
+  backgroundVariant: 'primary' | 'secondary';
+  reverseOnDesktop?: boolean | null;
   overhead?: string | null;
   headline?: string | null;
-  subhead?: string | null;
-  maxQuotes?: number | null;
+  accentText?: string | null;
+  body?: string | null;
+  listHeadline?: string | null;
+  items?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'clientQuotes';
+  blockType: 'infoTwoColumn';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1416,7 +1426,7 @@ export interface PagesSelect<T extends boolean = true> {
         clientsSlider?: T | ClientsSliderBlockSelect<T>;
         services?: T | ServicesBlockSelect<T>;
         projectsGrid?: T | ProjectsGridBlockSelect<T>;
-        clientQuotes?: T | ClientQuotesBlockSelect<T>;
+        infoTwoColumn?: T | InfoTwoColumnBlockSelect<T>;
       };
   meta?:
     | T
@@ -1530,6 +1540,7 @@ export interface ClientsSliderBlockSelect<T extends boolean = true> {
  * via the `definition` "ServicesBlock_select".
  */
 export interface ServicesBlockSelect<T extends boolean = true> {
+  backgroundVariant?: T;
   overhead?: T;
   headline?: T;
   accentText?: T;
@@ -1577,13 +1588,22 @@ export interface ProjectsGridBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ClientQuotesBlock_select".
+ * via the `definition` "InfoTwoColumnBlock_select".
  */
-export interface ClientQuotesBlockSelect<T extends boolean = true> {
+export interface InfoTwoColumnBlockSelect<T extends boolean = true> {
+  backgroundVariant?: T;
+  reverseOnDesktop?: T;
   overhead?: T;
   headline?: T;
-  subhead?: T;
-  maxQuotes?: T;
+  accentText?: T;
+  body?: T;
+  listHeadline?: T;
+  items?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

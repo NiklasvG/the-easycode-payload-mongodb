@@ -11,6 +11,23 @@ export const ServicesBlock: Block = {
 	},
 	fields: [
 		{
+			name: 'backgroundVariant',
+			type: 'select',
+			label: 'Hintergrund',
+			required: true,
+			defaultValue: 'secondary',
+			options: [
+				{
+					label: 'Primär (bg-background)',
+					value: 'primary'
+				},
+				{
+					label: 'Sekundär (bg-secondary-background)',
+					value: 'secondary'
+				}
+			]
+		},
+		{
 			name: 'overhead',
 			type: 'text',
 			label: 'Overhead (kleine Überschrift)',

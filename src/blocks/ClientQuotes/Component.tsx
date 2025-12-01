@@ -49,7 +49,7 @@ export const ClientQuotesBlockComponent: React.FC<Props> = async ({
 
 	return (
 		<section
-			className={['py-10 lg:py-20 bg-background', className]
+			className={['py-24 lg:py-36 bg-background', className]
 				.filter(Boolean)
 				.join(' ')}
 		>

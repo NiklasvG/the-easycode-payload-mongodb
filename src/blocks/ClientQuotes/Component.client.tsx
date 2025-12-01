@@ -11,7 +11,6 @@ import '@splidejs/splide/css'
 import '@splidejs/splide/css/core'
 import { ChevronLeft, ChevronRight, Quote as QuoteIcon } from 'lucide-react'
 
-import { Media as MediaComponent } from '@/components/Media'
 import type { Media } from '@/payload-types'
 import Image from 'next/image'
 

@@ -11,6 +11,7 @@ import { ClientsSliderBlock } from '@/blocks/ClientsSlider/Component'
 import { ClientQuotesBlockComponent } from './ClientQuotes/Component'
 import { ServicesBlockComponent } from './Services/Component'
 import { ProjectsGridBlockComponent } from './ProjectsGrid/Component'
+import { InfoTwoColumnBlockComponent } from './InfoTwoColumn/Component'
 
 const blockComponents = {
 	archive: ArchiveBlock,
@@ -21,7 +22,8 @@ const blockComponents = {
 	clientsSlider: ClientsSliderBlock,
 	clientQuotes: ClientQuotesBlockComponent,
 	services: ServicesBlockComponent,
-	projectsGrid: ProjectsGridBlockComponent
+	projectsGrid: ProjectsGridBlockComponent,
+	infoTwoColumn: InfoTwoColumnBlockComponent
 }
 
 export const RenderBlocks: React.FC<{
@@ -42,7 +44,7 @@ export const RenderBlocks: React.FC<{
 
 						if (Block) {
 							return (
-								<div className="my-16" key={index}>
+								<div key={index}>
 									{/* @ts-expect-error there may be some mismatch between the expected types here */}
 									<Block {...block} disableInnerContainer />
 								</div>

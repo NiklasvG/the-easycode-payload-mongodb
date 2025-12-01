@@ -109,7 +109,9 @@ export const hero: Field = {
 						{ label: 'Laptop', value: 'Laptop' },
 						{ label: 'SquareCode', value: 'SquareCode' },
 						{ label: 'Handshake', value: 'Handshake' },
-						{ label: 'Paintbrush', value: 'Paintbrush' }
+						{ label: 'Paintbrush', value: 'Paintbrush' },
+						{ label: 'Smartphone', value: 'Smartphone' },
+						{ label: 'Server', value: 'Server' }
 					]
 				}
 			]
