@@ -1003,7 +1003,21 @@ export interface FAQBlock {
   intro?: string | null;
   items: {
     question: string;
-    answer: string;
+    answer?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
     id?: string | null;
   }[];
   id?: string | null;

@@ -6,6 +6,7 @@ import {
 	AccordionTrigger,
 	AccordionContent
 } from '@/components/ui/accordion'
+import RichText from '@/components/RichText'
 
 type Props = FAQBlock & {
 	className?: string
@@ -27,19 +28,6 @@ export const FAQBlockComponent: React.FC<Props> = ({
 		backgroundVariant === 'primary'
 			? 'bg-background'
 			: 'bg-secondary-background'
-
-	const faqJsonLd = {
-		'@context': 'https://schema.org',
-		'@type': 'FAQPage',
-		mainEntity: items.map((item) => ({
-			'@type': 'Question',
-			name: item.question,
-			acceptedAnswer: {
-				'@type': 'Answer',
-				text: item.answer
-			}
-		}))
-	}
 
 	return (
 		<section
@@ -76,19 +64,19 @@ export const FAQBlockComponent: React.FC<Props> = ({
 									{item.question}
 								</AccordionTrigger>
 								<AccordionContent className="accordion__body">
-									<p>{item.answer}</p>
+									{item.answer && (
+										<RichText
+											data={item.answer}
+											enableGutter={false}
+											enableProse={true}
+										/>
+									)}
 								</AccordionContent>
 							</AccordionItem>
 						))}
 					</Accordion>
 				</div>
 			</div>
-
-			{/* FAQ Schema.org JSON-LD */}
-			<script
-				type="application/ld+json"
-				dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-			/>
 		</section>
 	)
 }

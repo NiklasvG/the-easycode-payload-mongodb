@@ -1,3 +1,11 @@
+import {
+	FixedToolbarFeature,
+	HeadingFeature,
+	InlineToolbarFeature,
+	lexicalEditor,
+	OrderedListFeature,
+	UnorderedListFeature
+} from '@payloadcms/richtext-lexical'
 import type { Block } from 'payload'
 
 export const FAQBlock: Block = {
@@ -62,12 +70,22 @@ export const FAQBlock: Block = {
 				},
 				{
 					name: 'answer',
-					label: 'Antwort',
-					type: 'textarea',
-					required: true,
-					admin: {
-						rows: 4
-					}
+					type: 'richText',
+					editor: lexicalEditor({
+						features: ({ rootFeatures }) => {
+							return [
+								...rootFeatures,
+								HeadingFeature({
+									enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4']
+								}),
+								FixedToolbarFeature(),
+								InlineToolbarFeature(),
+								UnorderedListFeature(),
+								OrderedListFeature()
+							]
+						}
+					}),
+					label: 'Antwort'
 				}
 			]
 		}
