@@ -235,6 +235,7 @@ export interface Page {
     | ClientQuotesBlock
     | InfoTwoColumnBlock
     | ProjectCtaBlock
+    | FAQBlock
   )[];
   meta?: {
     title?: string | null;
@@ -250,6 +251,15 @@ export interface Page {
    */
   generateSlug?: boolean | null;
   slug: string;
+  parent?: (string | null) | Page;
+  breadcrumbs?:
+    | {
+        doc?: (string | null) | Page;
+        url?: string | null;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -975,6 +985,26 @@ export interface ProjectCtaBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FAQBlock".
+ */
+export interface FAQBlock {
+  /**
+   * Kleiner Text oberhalb der Überschrift (optional)
+   */
+  overline?: string | null;
+  headline: string;
+  intro?: string | null;
+  items: {
+    question: string;
+    answer: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'faq';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "clients".
  */
 export interface Client {
@@ -1501,6 +1531,7 @@ export interface PagesSelect<T extends boolean = true> {
         clientQuotes?: T | ClientQuotesBlockSelect<T>;
         infoTwoColumn?: T | InfoTwoColumnBlockSelect<T>;
         projectCta?: T | ProjectCtaBlockSelect<T>;
+        faq?: T | FAQBlockSelect<T>;
       };
   meta?:
     | T
@@ -1512,6 +1543,15 @@ export interface PagesSelect<T extends boolean = true> {
   publishedAt?: T;
   generateSlug?: T;
   slug?: T;
+  parent?: T;
+  breadcrumbs?:
+    | T
+    | {
+        doc?: T;
+        url?: T;
+        label?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1728,6 +1768,24 @@ export interface ProjectCtaBlockSelect<T extends boolean = true> {
         label?: T;
       };
   backgroundVariant?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FAQBlock_select".
+ */
+export interface FAQBlockSelect<T extends boolean = true> {
+  overline?: T;
+  headline?: T;
+  intro?: T;
+  items?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

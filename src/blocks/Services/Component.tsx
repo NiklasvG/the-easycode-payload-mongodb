@@ -33,7 +33,7 @@ export const ServicesBlockComponent: React.FC<Props> = ({
 
 	return (
 		<section
-			className={['py-24 lg:py-36', bgClass, className]
+			className={['py-12 lg:py-24 2xl:py-36', bgClass, className]
 				.filter(Boolean)
 				.join(' ')}
 		>
@@ -69,7 +69,7 @@ export const ServicesBlockComponent: React.FC<Props> = ({
 					})}
 				</div>
 
-				{link && (
+				{link?.label !== 'no-link' && (
 					<CMSLink {...link} label={null} className="mx-auto my-5">
 						<Button variant="outline" size="lg">
 							{link?.label || 'Mehr erfahren'}

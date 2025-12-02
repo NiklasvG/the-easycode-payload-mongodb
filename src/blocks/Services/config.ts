@@ -59,7 +59,7 @@ export const ServicesBlock: Block = {
 		link({
 			appearances: false,
 			overrides: {
-				required: true,
+				required: false,
 				label: 'CTA-Link'
 			}
 		}),
@@ -118,7 +118,6 @@ export const ServicesBlock: Block = {
 					name: 'tags',
 					type: 'array',
 					label: 'Tags',
-					minRows: 0,
 					fields: [
 						{
 							name: 'tag',

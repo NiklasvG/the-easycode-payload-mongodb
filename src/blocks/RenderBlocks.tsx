@@ -13,6 +13,7 @@ import { ServicesBlockComponent } from './Services/Component'
 import { ProjectsGridBlockComponent } from './ProjectsGrid/Component'
 import { InfoTwoColumnBlockComponent } from './InfoTwoColumn/Component'
 import { ProjectCtaBlockComponent } from './ProjectCta/Component'
+import { FAQBlockComponent } from './FAQ/Component'
 
 const blockComponents = {
 	archive: ArchiveBlock,
@@ -25,7 +26,8 @@ const blockComponents = {
 	services: ServicesBlockComponent,
 	projectsGrid: ProjectsGridBlockComponent,
 	infoTwoColumn: InfoTwoColumnBlockComponent,
-	projectCta: ProjectCtaBlockComponent
+	projectCta: ProjectCtaBlockComponent,
+	faq: FAQBlockComponent
 }
 
 export const RenderBlocks: React.FC<{

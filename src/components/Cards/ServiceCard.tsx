@@ -94,15 +94,23 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 			)}
 
 			<div className="flex gap-4 sm:gap-4 items-center">
-				<p className="teaser__title group-hover:underline">
-					<CMSLink
-						{...link}
-						className="after:absolute after:inset-0 after:z-10"
-					/>
+				<p
+					className={`teaser__title ${link?.label === 'no-link' ? '' : 'group-hover:underline'}`}
+				>
+					{link?.label === 'no-link' ? (
+						<>{headline}</>
+					) : (
+						<CMSLink
+							{...link}
+							className="after:absolute after:inset-0 after:z-10"
+						/>
+					)}
 				</p>
-				<span className="shrink-0 flex items-center justify-center bg-accent rounded-full size-7 sm:size-8 -mt-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-300">
-					<ArrowUpRight className="stroke-3 text-primary! size-5 sm:size-6 shrink-0" />
-				</span>
+				{link?.label !== 'no-link' && (
+					<span className="shrink-0 flex items-center justify-center bg-accent rounded-full size-7 sm:size-8 -mt-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-300">
+						<ArrowUpRight className="stroke-3 text-primary! size-5 sm:size-6 shrink-0" />
+					</span>
+				)}
 			</div>
 			<div className={`teaser__text ${icon ? 'hidden md:block' : ''}`}>
 				<p className="pb-6 2xl:pb-8 big">{abstract}</p>
