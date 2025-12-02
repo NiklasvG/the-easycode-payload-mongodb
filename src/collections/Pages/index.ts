@@ -45,7 +45,8 @@ export const Pages: CollectionConfig<'pages'> = {
 	// Type safe if the collection slug generic is passed to `CollectionConfig` - `CollectionConfig<'pages'>
 	defaultPopulate: {
 		title: true,
-		slug: true
+		slug: true,
+		breadcrumbs: true
 	},
 	admin: {
 		useAsTitle: 'title',

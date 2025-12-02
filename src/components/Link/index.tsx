@@ -35,14 +35,42 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 		onClick
 	} = props
 
-	const href =
-		type === 'reference' &&
-		typeof reference?.value === 'object' &&
-		reference.value.slug
-			? `${reference?.relationTo !== 'pages' ? `/${reference?.relationTo}` : ''}/${
-					reference.value.slug
-				}`
-			: url
+	// Wir berechnen die HREF nun mit einer Logik, die Breadcrumbs bevorzugt
+	const getHref = () => {
+		if (type === 'custom') return url || ''
+
+		if (
+			type === 'reference' &&
+			typeof reference?.value === 'object' &&
+			reference.value.slug
+		) {
+			// 1. Spezifische Logik für Pages mit Nested Docs (Breadcrumbs)
+			if (
+				reference.relationTo === 'pages' &&
+				'breadcrumbs' in reference.value
+			) {
+				const breadcrumbs = reference.value.breadcrumbs
+				// Nimm den letzten Breadcrumb, dieser enthält den vollen Pfad
+				const lastBreadcrumb = Array.isArray(breadcrumbs)
+					? breadcrumbs[breadcrumbs.length - 1]
+					: null
+
+				if (lastBreadcrumb?.url) {
+					return lastBreadcrumb.url
+				}
+			}
+
+			// 2. Standard Fallback (z.B. für Posts oder wenn keine Breadcrumbs da sind)
+			// Generiert: /slug (für Pages) oder /posts/slug (für Posts)
+			const prefix =
+				reference.relationTo !== 'pages' ? `/${reference.relationTo}` : ''
+			return `${prefix}/${reference.value.slug}`
+		}
+
+		return ''
+	}
+
+	const href = getHref()
 
 	if (!href) return null
 
@@ -54,7 +82,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 	/* Ensure we don't break any styles set by richText */
 	if (appearance === 'inline') {
 		return (
-			<Link className={cn(className)} href={href || url || ''} {...newTabProps}>
+			<Link className={cn(className)} href={href} {...newTabProps}>
 				{label && label}
 				{children && children}
 			</Link>
@@ -65,7 +93,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 		<Button asChild className={className} size={size} variant={appearance}>
 			<Link
 				className={cn(className)}
-				href={href || url || ''}
+				href={href}
 				{...newTabProps}
 				onClick={onClick}
 			>
