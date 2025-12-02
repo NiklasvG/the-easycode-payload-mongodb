@@ -17,10 +17,16 @@ export const FAQBlockComponent: React.FC<Props> = ({
 	headline,
 	intro,
 	items,
+	backgroundVariant = 'primary',
 	className,
 	id
 }) => {
 	if (!items || items.length === 0) return null
+
+	const bgClass =
+		backgroundVariant === 'primary'
+			? 'bg-background'
+			: 'bg-secondary-background'
 
 	const faqJsonLd = {
 		'@context': 'https://schema.org',
@@ -38,21 +44,21 @@ export const FAQBlockComponent: React.FC<Props> = ({
 	return (
 		<section
 			id={id}
-			className={`section--main section--content accordion ${className ?? ''}`}
+			className={['py-12 lg:py-24 2xl:py-36', bgClass, className]
+				.filter(Boolean)
+				.join(' ')}
 		>
-			<div className="accordion__container grid gap-8 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-				<div className="accordion__text space-y-4">
-					{overline && (
-						<p className="text-sm uppercase tracking-[0.2em] text-accent">
-							{overline}
-						</p>
-					)}
+			<div className="container grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+				{/* Linke Spalte: Overline + Headline */}
+				<div>
+					{overline && <p className="overhead mb-3">{overline}</p>}
 
-					{headline && <h2 className="h1">{headline}</h2>}
+					{headline && <h2 className="h2">{headline}</h2>}
 
-					{intro && <p className="text-muted-foreground">{intro}</p>}
+					{intro && <p className="subhead big">{intro}</p>}
 				</div>
 
+				{/* Rechte Spalte: FAQ */}
 				<div data-js="accordion">
 					<Accordion
 						type="single"

@@ -988,6 +988,7 @@ export interface ProjectCtaBlock {
  * via the `definition` "FAQBlock".
  */
 export interface FAQBlock {
+  backgroundVariant: 'primary' | 'secondary';
   /**
    * Kleiner Text oberhalb der Überschrift (optional)
    */
@@ -1776,6 +1777,7 @@ export interface ProjectCtaBlockSelect<T extends boolean = true> {
  * via the `definition` "FAQBlock_select".
  */
 export interface FAQBlockSelect<T extends boolean = true> {
+  backgroundVariant?: T;
   overline?: T;
   headline?: T;
   intro?: T;
