@@ -57,6 +57,12 @@ export const ServicesBlockComponent: React.FC<Props> = ({
 								icon={service.icon ?? undefined}
 								headline={service.headline}
 								abstract={service.abstract}
+								items={
+									service.items
+										?.map((item) => ({ text: item.text }))
+										.filter((item): item is { text: string } => item != null) ??
+									[]
+								}
 								tags={
 									service.tags
 										?.map((t) => t.tag)

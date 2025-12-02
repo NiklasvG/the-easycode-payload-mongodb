@@ -27,7 +27,7 @@ type LinkProp = {
 
 type MasonryCard = {
 	link: LinkProp
-	icon?: 'computer' | 'cloud'
+	icon?: 'computer' | 'cloud' | 'apple' | 'cart' | 'pen'
 	image?: string | Media | null
 	headline: string
 	abstract: string

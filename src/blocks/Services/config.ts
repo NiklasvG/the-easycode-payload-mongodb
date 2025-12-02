@@ -80,6 +80,26 @@ export const ServicesBlock: Block = {
 					}
 				}),
 				{
+					name: 'icon',
+					type: 'select',
+					label: 'Icon',
+					required: false,
+					options: [
+						{ label: 'Computer', value: 'computer' },
+						{ label: 'Cloud', value: 'cloud' },
+						{ label: 'Apple', value: 'apple' },
+						{ label: 'Cart', value: 'cart' },
+						{ label: 'Pen', value: 'pen' }
+					]
+				},
+				{
+					name: 'image',
+					type: 'upload',
+					relationTo: 'media',
+					label: 'Bild (optional statt Icon)',
+					required: false
+				},
+				{
 					name: 'headline',
 					type: 'text',
 					label: 'Titel',
@@ -91,22 +111,24 @@ export const ServicesBlock: Block = {
 					label: 'Kurzbeschreibung',
 					required: true
 				},
+
 				{
-					name: 'icon',
-					type: 'select',
-					label: 'Icon',
-					required: false,
-					options: [
-						{ label: 'Computer', value: 'computer' },
-						{ label: 'Cloud', value: 'cloud' }
+					name: 'items',
+					type: 'array',
+					label: 'Listenpunkte',
+					labels: {
+						singular: 'Listenpunkt',
+						plural: 'Listenpunkte'
+					},
+					minRows: 0,
+					fields: [
+						{
+							name: 'text',
+							type: 'text',
+							label: 'Text',
+							required: true
+						}
 					]
-				},
-				{
-					name: 'image',
-					type: 'upload',
-					relationTo: 'media',
-					label: 'Bild (optional statt Icon)',
-					required: false
 				},
 				{
 					name: 'border',

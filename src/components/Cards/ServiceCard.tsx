@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 
 // Libraries
 import dynamic from 'next/dynamic'
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, BadgeCheck } from 'lucide-react'
 
 // Components
 import { Media as MediaComponent } from '@/components/Media'
@@ -40,12 +40,15 @@ interface ServiceCardProps {
 		url?: string | null
 		label: string
 	}
-	icon?: 'computer' | 'cloud'
+	icon?: 'computer' | 'cloud' | 'apple' | 'cart' | 'pen'
 	image?: string | Media | null | undefined
 	headline: string
 	abstract: string
 	tags: string[]
 	options?: optionsProps
+	items?: {
+		text: string
+	}[]
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({
@@ -54,6 +57,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 	image,
 	headline,
 	abstract,
+	items,
 	tags,
 	options = {
 		border: true
@@ -114,6 +118,15 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 			</div>
 			<div className={`teaser__text ${icon ? 'hidden md:block' : ''}`}>
 				<p className="pb-6 2xl:pb-8 big">{abstract}</p>
+				{items && items.length > 0 && (
+					<ul className="list list--check list--icon list--line space-y-2 !mb-0">
+						{items.map((item, index) => (
+							<li key={index} className="flex items-center gap-3">
+								<BadgeCheck className="size-8 text-accent" /> {item.text}
+							</li>
+						))}
+					</ul>
+				)}
 				<ul className="list list--tag md:mt-4">
 					{tags.map((tag, index) => (
 						<li key={index}>{tag}</li>

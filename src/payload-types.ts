@@ -875,10 +875,16 @@ export interface ServicesBlock {
       url?: string | null;
       label: string;
     };
+    icon?: ('computer' | 'cloud' | 'apple' | 'cart' | 'pen') | null;
+    image?: (string | null) | Media;
     headline: string;
     abstract: string;
-    icon?: ('computer' | 'cloud') | null;
-    image?: (string | null) | Media;
+    items?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
     border?: boolean | null;
     tags?:
       | {
@@ -1681,10 +1687,16 @@ export interface ServicesBlockSelect<T extends boolean = true> {
               url?: T;
               label?: T;
             };
-        headline?: T;
-        abstract?: T;
         icon?: T;
         image?: T;
+        headline?: T;
+        abstract?: T;
+        items?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
         border?: T;
         tags?:
           | T
