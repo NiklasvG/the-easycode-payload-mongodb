@@ -908,6 +908,10 @@ export interface ProjectsGridBlock {
   overhead?: string | null;
   headline?: string | null;
   subhead?: string | null;
+  /**
+   * Wenn gesetzt, werden nur Projekte mit diesen Typen angezeigt.
+   */
+  projectTypes?: ('brand-webseite' | 'individualsoftware' | 'e-commerce' | 'app-entwicklung' | 'hosting')[] | null;
   link: {
     type?: ('reference' | 'custom') | null;
     newTab?: boolean | null;
@@ -1066,6 +1070,10 @@ export interface Project {
    * Erscheint auf der Übersichtskarte.
    */
   shortDescription: string;
+  /**
+   * Wird u.a. für Filter & Badges verwendet.
+   */
+  projectType: 'brand-webseite' | 'individualsoftware' | 'e-commerce' | 'app-entwicklung' | 'hosting';
   tags?:
     | {
         tag: string;
@@ -1733,6 +1741,7 @@ export interface ProjectsGridBlockSelect<T extends boolean = true> {
   overhead?: T;
   headline?: T;
   subhead?: T;
+  projectTypes?: T;
   link?:
     | T
     | {
@@ -2016,6 +2025,7 @@ export interface ProjectsSelect<T extends boolean = true> {
   generateSlug?: T;
   slug?: T;
   shortDescription?: T;
+  projectType?: T;
   tags?:
     | T
     | {

@@ -1,5 +1,4 @@
 import { link } from '@/fields/link'
-
 import type { Block } from 'payload'
 
 export const ProjectsGridBlock: Block = {
@@ -48,6 +47,25 @@ export const ProjectsGridBlock: Block = {
 			required: false,
 			defaultValue: 'Der Erfolg deiner Projekte treibt uns an.'
 		},
+		{
+			name: 'projectTypes',
+			label: 'Projekt-Typen filtern',
+			type: 'select',
+			hasMany: true,
+			required: false,
+			admin: {
+				description:
+					'Wenn gesetzt, werden nur Projekte mit diesen Typen angezeigt.'
+			},
+			options: [
+				{ label: 'Brand Webseite', value: 'brand-webseite' },
+				{ label: 'Individualsoftware', value: 'individualsoftware' },
+				{ label: 'E-Commerce', value: 'e-commerce' },
+				{ label: 'App-Entwicklung', value: 'app-entwicklung' },
+				{ label: 'Hosting', value: 'hosting' }
+			]
+		},
+
 		link({
 			appearances: false,
 			overrides: {
@@ -61,7 +79,7 @@ export const ProjectsGridBlock: Block = {
 			label: 'Anzahl Projekte',
 			defaultValue: 4,
 			min: 1,
-			max: 12
+			max: 100
 		}
 	]
 }

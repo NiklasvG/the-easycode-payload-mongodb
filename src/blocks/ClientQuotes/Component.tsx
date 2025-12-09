@@ -55,7 +55,7 @@ export const ClientQuotesBlockComponent: React.FC<Props> = async ({
 
 	return (
 		<section
-			className={['py-12 lg:py-24 2xl:py-36', bgClass, className]
+			className={['py-12 lg:py-24 2xl:py-32', bgClass, className]
 				.filter(Boolean)
 				.join(' ')}
 		>

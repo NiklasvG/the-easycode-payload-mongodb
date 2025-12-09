@@ -33,7 +33,7 @@ export const ServicesBlockComponent: React.FC<Props> = ({
 
 	return (
 		<section
-			className={['py-12 lg:py-24 2xl:py-36', bgClass, className]
+			className={['py-12 lg:py-24 2xl:py-32', bgClass, className]
 				.filter(Boolean)
 				.join(' ')}
 		>

@@ -32,7 +32,7 @@ export const FAQBlockComponent: React.FC<Props> = ({
 	return (
 		<section
 			id={id}
-			className={['py-12 lg:py-24 2xl:py-36', bgClass, className]
+			className={['py-12 lg:py-24 2xl:py-32', bgClass, className]
 				.filter(Boolean)
 				.join(' ')}
 		>

@@ -2,7 +2,6 @@ import React from 'react'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
-// Types aus den generierten Payload-Types
 import type { ProjectsGridBlock, Project } from '@/payload-types'
 import MasonryGrid from '@/components/layout/MasonryGrid'
 import { Button } from '@/components/ui/button'
@@ -13,6 +12,20 @@ type Props = ProjectsGridBlock & {
 	className?: string
 }
 
+// Mapping von Value -> Label wie im Select-Feld
+const projectTypeLabelMap: Record<string, string> = {
+	'brand-webseite': 'Brand Webseite',
+	individualsoftware: 'Individualsoftware',
+	'e-commerce': 'E-Commerce',
+	'app-entwicklung': 'App-Entwicklung',
+	hosting: 'Hosting'
+}
+
+function getProjectTypeLabel(value?: string | null): string | null {
+	if (!value) return null
+	return projectTypeLabelMap[value] ?? null
+}
+
 export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 	overhead,
 	headline,
@@ -20,16 +33,28 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 	link,
 	projectsLimit,
 	backgroundVariant = 'primary',
+	projectTypes,
 	className
 }) => {
 	const payload = await getPayload({ config: configPromise })
 
-	const { docs } = await payload.find({
+	const query: any = {
 		collection: 'projects',
 		limit: projectsLimit ?? 4,
-		sort: '-startDate', // letzte Projekte zuerst
+		sort: '-startDate',
 		depth: 1
-	})
+	}
+
+	// 🔽 Wenn im Block Kategorien ausgewählt sind -> nach projectType filtern
+	if (projectTypes && Array.isArray(projectTypes) && projectTypes.length > 0) {
+		query.where = {
+			projectType: {
+				in: projectTypes
+			}
+		}
+	}
+
+	const { docs } = await payload.find(query)
 
 	const projects = docs as Project[]
 
@@ -38,6 +63,18 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 	const cards = projects.map((project) => {
 		const clientSlug =
 			typeof project.client === 'string' ? project.client : project.client.slug
+
+		// 🔽 Kategorie-Label ermitteln
+		const categoryLabel = getProjectTypeLabel(
+			(project as any).projectType as string | null
+		)
+
+		// 🔽 Kategorie als erster Tag, danach alle regulären Tags
+		const tags = [
+			...(categoryLabel ? [categoryLabel] : []),
+			...(project.tags?.map((t) => t.tag).filter(Boolean) ?? [])
+		]
+
 		return {
 			link: {
 				type: 'custom' as const,
@@ -47,7 +84,7 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 			image: project.image ?? null,
 			headline: project.title,
 			abstract: project.shortDescription,
-			tags: project.tags?.map((t) => t.tag).filter(Boolean) ?? [],
+			tags,
 			icon: undefined
 		}
 	})
@@ -59,7 +96,7 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 
 	return (
 		<section
-			className={['py-12 lg:py-24 2xl:py-36', bgClass, className]
+			className={['py-12 lg:py-24 2xl:py-32', bgClass, className]
 				.filter(Boolean)
 				.join(' ')}
 		>
@@ -71,13 +108,15 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 						<span className="text-accent">Websites. E-Commerce.</span>{' '}
 						individuelle Lösungen
 					</h2>
+					// Optional: wenn du wirklich das Feld nutzen willst:
+					// <h2>{headline}</h2>
 				)}
 
 				{subhead && <p className="subhead big">{subhead}</p>}
 
 				<MasonryGrid cards={cards} />
 
-				{link && (
+				{link?.label !== 'no-link' && (
 					<CMSLink {...link} label={null} className="mx-auto my-5">
 						<Button variant="outline" size="lg">
 							{link?.label || 'Mehr erfahren'}

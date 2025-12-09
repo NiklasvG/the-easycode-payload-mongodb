@@ -129,7 +129,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 				)}
 				<ul className="list list--tag md:mt-4">
 					{tags.map((tag, index) => (
-						<li key={index}>{tag}</li>
+						<li className={`${index === 0 ? 'highlight' : ''}`} key={index}>
+							{tag}
+						</li>
 					))}
 				</ul>
 			</div>

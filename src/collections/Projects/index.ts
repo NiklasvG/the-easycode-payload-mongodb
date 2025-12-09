@@ -92,6 +92,37 @@ export const Projects: CollectionConfig = {
 							}
 						},
 						{
+							name: 'projectType',
+							label: 'Projekt-Typ',
+							type: 'select',
+							required: true,
+							admin: {
+								description: 'Wird u.a. für Filter & Badges verwendet.'
+							},
+							options: [
+								{
+									label: 'Brand Webseite',
+									value: 'brand-webseite'
+								},
+								{
+									label: 'Individualsoftware',
+									value: 'individualsoftware'
+								},
+								{
+									label: 'E-Commerce',
+									value: 'e-commerce'
+								},
+								{
+									label: 'App-Entwicklung',
+									value: 'app-entwicklung'
+								},
+								{
+									label: 'Hosting',
+									value: 'hosting'
+								}
+							]
+						},
+						{
 							name: 'tags',
 							label: 'Tags',
 							type: 'array',
