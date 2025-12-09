@@ -44,7 +44,7 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
 	}, [])
 
 	return (
-		<section className="bg-background w-full h-full py-12 lg:py-24 2xl:py-36 flex 2xl:my-9 items-start relative">
+		<section className="bg-background w-full h-full py-12 lg:py-24 2xl:py-36 flex 2xl:mb-9 items-start relative">
 			<div className="container mx-auto w-full h-full">
 				<div className="grid grid-cols-1 lg:grid-cols-2">
 					<div className="flex flex-col gap-6 lg:gap-10">

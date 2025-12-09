@@ -44,7 +44,11 @@ export default async function RootLayout({
 				<link href="/favicon.ico" rel="icon" sizes="32x32" />
 				<link href="/favicon.svg" rel="icon" type="image/svg+xml" />
 			</head>
-			<body className="overflow-x-hidden">
+			<body>
+				{/* Background Gradients */}
+				<div className="absolute top-0 left-0 w-full h-full pointer-events-none z-30 overflow-hidden">
+					<div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/10 rounded-full blur-[120px]" />
+				</div>
 				<Providers>
 					<AdminBar
 						adminBarProps={{
