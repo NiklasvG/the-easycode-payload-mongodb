@@ -20,6 +20,7 @@ const LottieIcon = dynamic(
 import { Media, Page, Post } from '@/payload-types'
 interface optionsProps {
 	border?: boolean
+	highlightTag?: boolean
 }
 
 interface ServiceCardProps {
@@ -60,7 +61,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 	items,
 	tags,
 	options = {
-		border: true
+		border: true,
+		highlightTag: false
 	}
 }) => {
 	const [playAnimation, setPlayAnimation] = useState(false)
@@ -129,7 +131,10 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 				)}
 				<ul className="list list--tag md:mt-4">
 					{tags.map((tag, index) => (
-						<li className={`${index === 0 ? 'highlight' : ''}`} key={index}>
+						<li
+							className={`${index === 0 && options.highlightTag ? 'highlight' : ''}`}
+							key={index}
+						>
 							{tag}
 						</li>
 					))}

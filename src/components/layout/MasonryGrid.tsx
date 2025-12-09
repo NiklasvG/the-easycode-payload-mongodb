@@ -50,7 +50,7 @@ export default function MasonryGrid({ cards }: MasonryGridProps) {
 						headline={card.headline}
 						abstract={card.abstract}
 						tags={card.tags}
-						options={{ border: false }}
+						options={{ border: false, highlightTag: true }}
 					/>
 				</div>
 			))}
