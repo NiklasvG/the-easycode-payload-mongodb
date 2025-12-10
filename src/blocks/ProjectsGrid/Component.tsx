@@ -76,6 +76,7 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 		]
 
 		return {
+			enableTeaserLink: true,
 			link: {
 				type: 'custom' as const,
 				url: `/projekte/${clientSlug}/${project.slug}`,

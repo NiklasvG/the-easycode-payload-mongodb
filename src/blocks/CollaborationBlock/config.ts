@@ -43,7 +43,7 @@ export const CollaborationBlock: Block = {
 				plural: 'Bullet Points'
 			},
 			minRows: 1,
-			maxRows: 3,
+			maxRows: 10,
 			fields: [
 				{
 					name: 'title',

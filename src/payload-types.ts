@@ -846,7 +846,8 @@ export interface ServicesBlock {
   headline?: string | null;
   accentText?: string | null;
   subhead?: string | null;
-  link: {
+  enableLink?: boolean | null;
+  link?: {
     type?: ('reference' | 'custom') | null;
     newTab?: boolean | null;
     reference?:
@@ -862,7 +863,8 @@ export interface ServicesBlock {
     label: string;
   };
   services: {
-    link: {
+    enableTeaserLink?: boolean | null;
+    link?: {
       type?: ('reference' | 'custom') | null;
       newTab?: boolean | null;
       reference?:
@@ -877,7 +879,7 @@ export interface ServicesBlock {
       url?: string | null;
       label: string;
     };
-    icon?: ('computer' | 'cloud' | 'apple' | 'cart' | 'pen') | null;
+    icon?: ('computer' | 'cloud' | 'apple' | 'cart' | 'pen' | 'engagement' | 'code' | 'clock' | 'applause') | null;
     image?: (string | null) | Media;
     headline: string;
     abstract: string;
@@ -1730,6 +1732,7 @@ export interface ServicesBlockSelect<T extends boolean = true> {
   headline?: T;
   accentText?: T;
   subhead?: T;
+  enableLink?: T;
   link?:
     | T
     | {
@@ -1742,6 +1745,7 @@ export interface ServicesBlockSelect<T extends boolean = true> {
   services?:
     | T
     | {
+        enableTeaserLink?: T;
         link?:
           | T
           | {

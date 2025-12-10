@@ -8,9 +8,22 @@ import CartAnimation from '@/Icons/Cart.json'
 import CloudAnimation from '@/Icons/Cloud.json'
 import ComputerAnimation from '@/Icons/Computer.json'
 import PenAnimation from '@/Icons/Pen.json'
+import EngagementAnimation from '@/Icons/Engagement.json'
+import CodeAnimation from '@/Icons/Code.json'
+import ClockAnimation from '@/Icons/Clock.json'
+import ApplauseAnimation from '@/Icons/Applause.json'
 
 interface LottieIconProps {
-	icon: 'computer' | 'cloud' | 'apple' | 'cart' | 'pen'
+	icon:
+		| 'computer'
+		| 'cloud'
+		| 'apple'
+		| 'cart'
+		| 'pen'
+		| 'engagement'
+		| 'code'
+		| 'clock'
+		| 'applause'
 	triggerPlay: boolean
 }
 
@@ -37,6 +50,18 @@ const LottieIcon: React.FC<LottieIconProps> = ({ icon, triggerPlay }) => {
 			break
 		case 'pen':
 			animationData = PenAnimation
+			break
+		case 'engagement':
+			animationData = EngagementAnimation
+			break
+		case 'code':
+			animationData = CodeAnimation
+			break
+		case 'clock':
+			animationData = ClockAnimation
+			break
+		case 'applause':
+			animationData = ApplauseAnimation
 			break
 		default:
 			animationData = ComputerAnimation

@@ -3,15 +3,14 @@ import React from 'react'
 import Image from 'next/image'
 import {
 	BadgeCheck,
-	BadgePlus,
-	Coffee,
-	HandCoins,
-	Home,
-	ShoppingBasket,
-	Truck,
-	Users,
-	UserRound,
-	Wallet
+	Handshake,
+	GitBranch,
+	LayoutDashboard,
+	Code2,
+	Rocket,
+	Repeat,
+	Workflow,
+	CheckCircle2
 } from 'lucide-react'
 
 import type { CollaborationBlock } from '@/payload-types'
@@ -39,7 +38,10 @@ export const CollaborationBlockComponent: React.FC<CollaborationBlock> = (
 	return (
 		<section
 			id={id ?? undefined}
-			className={['py-12 lg:py-24 2xl:py-32 overflow-hidden', bgClass]
+			className={[
+				'overflow-hidden pt-12 pb-20 lg:pt-24 lg:pb-32 2xl:py-32',
+				bgClass
+			]
 				.filter(Boolean)
 				.join(' ')}
 		>
@@ -49,15 +51,15 @@ export const CollaborationBlockComponent: React.FC<CollaborationBlock> = (
 					{title && <h2 className="h2 mb-4 md:mb-8">{title}</h2>}
 
 					{items && items.length > 0 && (
-						<ul className="max-w-[22rem] mb-8 md:mb-14">
+						<ul className="max-w-lg mb-8 md:mb-14">
 							{items.map((item, index) => (
 								<li key={item.id ?? index} className="mb-3 py-3">
 									<div className="flex items-center">
 										<BadgeCheck className="text-accent size-6 shrink-0" />
-										<h6 className="body-2 ml-5">{item.title}</h6>
+										<p className="ml-5 big">{item.title}</p>
 									</div>
 									{item.description && (
-										<p className="body-2 mt-3 text-muted-foreground">
+										<p className="mt-3 text-muted-foreground">
 											{item.description}
 										</p>
 									)}
@@ -70,7 +72,7 @@ export const CollaborationBlockComponent: React.FC<CollaborationBlock> = (
 				{/* Rechte Spalte: Beschreibung + Icon-Kreis */}
 				<div className="lg:ml-auto xl:w-[38rem] mt-14 lg:mt-4">
 					{sideDescription && (
-						<p className="body-2 mb-16 text-muted-foreground lg:mb-32 lg:max-w-sm lg:mx-auto">
+						<p className="body-2 mb-16 text-muted-foreground lg:mb-32 lg:max-w-sm lg:mx-auto big">
 							{sideDescription}
 						</p>
 					)}
@@ -94,56 +96,56 @@ export const CollaborationBlockComponent: React.FC<CollaborationBlock> = (
 							<li className="absolute top-0 left-1/2 h-1/2 -ml-[1.6rem] origin-bottom">
 								<div className="relative -top-[1.6rem] flex w-[3.2rem] h-[3.2rem] bg-secondary-background border border-white/5 rounded-xl">
 									<div className="m-auto grid place-items-center text-accent size-8">
-										<UserRound />
+										<Handshake />
 									</div>
 								</div>
 							</li>
 							<li className="absolute top-0 left-1/2 h-1/2 -ml-[1.6rem] origin-bottom rotate-45">
 								<div className="relative -top-[1.6rem] flex w-[3.2rem] h-[3.2rem] bg-secondary-background border border-white/5 rounded-xl -rotate-45">
 									<div className="m-auto grid place-items-center text-accent size-8">
-										<Coffee />
+										<GitBranch />
 									</div>
 								</div>
 							</li>
 							<li className="absolute top-0 left-1/2 h-1/2 -ml-[1.6rem] origin-bottom rotate-90">
 								<div className="relative -top-[1.6rem] flex w-[3.2rem] h-[3.2rem] bg-secondary-background border border-white/5 rounded-xl -rotate-90">
 									<div className="m-auto grid place-items-center text-accent size-8">
-										<HandCoins />
+										<LayoutDashboard />
 									</div>
 								</div>
 							</li>
 							<li className="absolute top-0 left-1/2 h-1/2 -ml-[1.6rem] origin-bottom rotate-135">
 								<div className="relative -top-[1.6rem] flex w-[3.2rem] h-[3.2rem] bg-secondary-background border border-white/5 rounded-xl -rotate-135">
 									<div className="m-auto grid place-items-center text-accent size-8">
-										<Users />
+										<Code2 />
 									</div>
 								</div>
 							</li>
 							<li className="absolute top-0 left-1/2 h-1/2 -ml-[1.6rem] origin-bottom rotate-180">
 								<div className="relative -top-[1.6rem] flex w-[3.2rem] h-[3.2rem] bg-secondary-background border border-white/5 rounded-xl -rotate-180">
 									<div className="m-auto grid place-items-center text-accent size-8">
-										<ShoppingBasket />
+										<Rocket />
 									</div>
 								</div>
 							</li>
 							<li className="absolute top-0 left-1/2 h-1/2 -ml-[1.6rem] origin-bottom rotate-225">
 								<div className="relative -top-[1.6rem] flex w-[3.2rem] h-[3.2rem] bg-secondary-background border border-white/5 rounded-xl -rotate-225">
 									<div className="m-auto grid place-items-center text-accent size-8">
-										<Wallet />
+										<Repeat />
 									</div>
 								</div>
 							</li>
 							<li className="absolute top-0 left-1/2 h-1/2 -ml-[1.6rem] origin-bottom rotate-270">
 								<div className="relative -top-[1.6rem] flex w-[3.2rem] h-[3.2rem] bg-secondary-background border border-white/5 rounded-xl -rotate-270">
 									<div className="m-auto grid place-items-center text-accent size-8">
-										<BadgePlus />
+										<Workflow />
 									</div>
 								</div>
 							</li>
 							<li className="absolute top-0 left-1/2 h-1/2 -ml-[1.6rem] origin-bottom rotate-315">
 								<div className="relative -top-[1.6rem] flex w-[3.2rem] h-[3.2rem] bg-secondary-background border border-white/5 rounded-xl -rotate-315">
 									<div className="m-auto grid place-items-center text-accent size-8">
-										<Home />
+										<CheckCircle2 />
 									</div>
 								</div>
 							</li>

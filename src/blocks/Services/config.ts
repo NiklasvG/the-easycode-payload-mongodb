@@ -56,10 +56,18 @@ export const ServicesBlock: Block = {
 			defaultValue:
 				'Von der Konzeption bis zum Live-Gang: Digitale Projekte, die ins Schwarze treffen.'
 		},
+		{
+			name: 'enableLink',
+			type: 'checkbox'
+		},
 		link({
 			appearances: false,
 			overrides: {
-				required: false,
+				admin: {
+					condition: (_data, siblingData) => {
+						return Boolean(siblingData?.enableLink)
+					}
+				},
 				label: 'CTA-Link'
 			}
 		}),
@@ -73,10 +81,18 @@ export const ServicesBlock: Block = {
 			},
 			required: true,
 			fields: [
+				{
+					name: 'enableTeaserLink',
+					type: 'checkbox'
+				},
 				link({
 					appearances: false,
 					overrides: {
-						required: true
+						admin: {
+							condition: (_data, siblingData) => {
+								return Boolean(siblingData?.enableTeaserLink)
+							}
+						}
 					}
 				}),
 				{
@@ -89,7 +105,11 @@ export const ServicesBlock: Block = {
 						{ label: 'Cloud', value: 'cloud' },
 						{ label: 'Apple', value: 'apple' },
 						{ label: 'Cart', value: 'cart' },
-						{ label: 'Pen', value: 'pen' }
+						{ label: 'Pen', value: 'pen' },
+						{ label: 'Engagement', value: 'engagement' },
+						{ label: 'Code', value: 'code' },
+						{ label: 'Clock', value: 'clock' },
+						{ label: 'Applause', value: 'applause' }
 					]
 				},
 				{

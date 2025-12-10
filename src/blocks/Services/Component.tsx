@@ -20,6 +20,7 @@ export const ServicesBlockComponent: React.FC<Props> = ({
 	accentText,
 	subhead,
 	link,
+	enableLink,
 	services,
 	backgroundVariant = 'secondary',
 	className
@@ -53,7 +54,8 @@ export const ServicesBlockComponent: React.FC<Props> = ({
 						return (
 							<ServiceCard
 								key={index}
-								link={service.link}
+								link={service.link ?? { label: '', type: 'custom', url: '' }}
+								enableLink={service.enableTeaserLink ? true : false}
 								icon={service.icon ?? undefined}
 								headline={service.headline}
 								abstract={service.abstract}
@@ -75,7 +77,7 @@ export const ServicesBlockComponent: React.FC<Props> = ({
 					})}
 				</div>
 
-				{link?.label !== 'no-link' && (
+				{enableLink && (
 					<CMSLink {...link} label={null} className="mx-auto my-5">
 						<Button variant="outline" size="lg">
 							{link?.label || 'Mehr erfahren'}

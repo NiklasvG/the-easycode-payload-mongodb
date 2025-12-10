@@ -54,7 +54,7 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
 								className="text-accent"
 							/>
 
-							<span className="block relative z-10">{title}</span>
+							<span className="block relative z-10 -mt-2">{title}</span>
 						</h1>
 						<p className="big">{description}</p>
 						{tags && (

@@ -24,6 +24,7 @@ interface optionsProps {
 }
 
 interface ServiceCardProps {
+	enableLink: boolean
 	link: {
 		type?: 'custom' | 'reference' | null | undefined
 		newTab?: boolean | null | undefined
@@ -41,7 +42,16 @@ interface ServiceCardProps {
 		url?: string | null
 		label: string
 	}
-	icon?: 'computer' | 'cloud' | 'apple' | 'cart' | 'pen'
+	icon?:
+		| 'computer'
+		| 'cloud'
+		| 'apple'
+		| 'cart'
+		| 'pen'
+		| 'engagement'
+		| 'code'
+		| 'clock'
+		| 'applause'
 	image?: string | Media | null | undefined
 	headline: string
 	abstract: string
@@ -53,6 +63,7 @@ interface ServiceCardProps {
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({
+	enableLink,
 	link,
 	icon,
 	image,
@@ -101,9 +112,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
 			<div className="flex gap-4 sm:gap-4 items-center">
 				<p
-					className={`teaser__title ${link?.label === 'no-link' ? '' : 'group-hover:underline'}`}
+					className={`teaser__title ${!enableLink ? '' : 'group-hover:underline'}`}
 				>
-					{link?.label === 'no-link' ? (
+					{!enableLink ? (
 						<>{headline}</>
 					) : (
 						<CMSLink
@@ -112,7 +123,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 						/>
 					)}
 				</p>
-				{link?.label !== 'no-link' && (
+				{enableLink && (
 					<span className="shrink-0 flex items-center justify-center bg-accent rounded-full size-7 sm:size-8 -mt-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-300">
 						<ArrowUpRight className="stroke-3 text-primary! size-5 sm:size-6 shrink-0" />
 					</span>

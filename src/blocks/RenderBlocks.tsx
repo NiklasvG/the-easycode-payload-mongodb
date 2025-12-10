@@ -65,7 +65,7 @@ export const RenderBlocks: React.FC<{
 					// Dynamische Margin (kannst du beliebig anpassen)
 					const outerClassName =
 						sameBackground || firstPrimary
-							? '-mt-16' // → enger zusammen
+							? '-mt-12 lg:-mt-16' // → enger zusammen
 							: 'mt-0' // → normaler Abstand
 
 					// für nächsten Durchlauf speichern

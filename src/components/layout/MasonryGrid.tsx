@@ -26,8 +26,18 @@ type LinkProp = {
 }
 
 type MasonryCard = {
+	enableTeaserLink: boolean
 	link: LinkProp
-	icon?: 'computer' | 'cloud' | 'apple' | 'cart' | 'pen'
+	icon?:
+		| 'computer'
+		| 'cloud'
+		| 'apple'
+		| 'cart'
+		| 'pen'
+		| 'engagement'
+		| 'code'
+		| 'clock'
+		| 'applause'
 	image?: string | Media | null
 	headline: string
 	abstract: string
@@ -44,6 +54,7 @@ export default function MasonryGrid({ cards }: MasonryGridProps) {
 			{cards.map((card, index) => (
 				<div key={index} className="mb-4 break-inside-avoid-column">
 					<ServiceCard
+						enableLink={card.enableTeaserLink}
 						link={card.link}
 						icon={card.icon}
 						image={card.image}
