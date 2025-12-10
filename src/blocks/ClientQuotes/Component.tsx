@@ -4,6 +4,7 @@ import configPromise from '@payload-config'
 
 import type { ClientQuotesBlock, Client } from '@/payload-types'
 import { QuoteSlider, type QuoteItem } from './Component.client'
+import { highlightPhrase } from '@/utilities/highlightPhrase'
 
 type Props = ClientQuotesBlock & {
 	className?: string
@@ -12,6 +13,7 @@ type Props = ClientQuotesBlock & {
 export const ClientQuotesBlockComponent: React.FC<Props> = async ({
 	overhead,
 	headline,
+	accentText,
 	subhead,
 	maxQuotes,
 	backgroundVariant = 'primary',
@@ -62,7 +64,11 @@ export const ClientQuotesBlockComponent: React.FC<Props> = async ({
 			<div className="container flex flex-col gap-6 lg:gap-10">
 				{overhead && <p className="overhead">{overhead}</p>}
 
-				{headline && <h2>{headline}</h2>}
+				{headline && (
+					<h2 className="h2">
+						{accentText ? highlightPhrase(headline, accentText) : headline}
+					</h2>
+				)}
 
 				{subhead && <p className="subhead big">{subhead}</p>}
 

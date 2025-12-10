@@ -943,6 +943,7 @@ export interface ClientQuotesBlock {
   backgroundVariant: 'primary' | 'secondary';
   overhead?: string | null;
   headline?: string | null;
+  accentText?: string | null;
   subhead?: string | null;
   maxQuotes?: number | null;
   id?: string | null;
@@ -1808,6 +1809,7 @@ export interface ClientQuotesBlockSelect<T extends boolean = true> {
   backgroundVariant?: T;
   overhead?: T;
   headline?: T;
+  accentText?: T;
   subhead?: T;
   maxQuotes?: T;
   id?: T;

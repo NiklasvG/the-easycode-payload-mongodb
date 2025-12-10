@@ -37,7 +37,14 @@ export const ClientQuotesBlock: Block = {
 			type: 'text',
 			label: 'Überschrift',
 			required: false,
-			defaultValue: 'Was unsere Kund:innen über uns sagen'
+			defaultValue: 'Was Kund:innen sagen'
+		},
+		{
+			name: 'accentText',
+			type: 'text',
+			label: 'Akzentwort (optional, farbig)',
+			required: false,
+			defaultValue: 'Erfolgsgeschichten'
 		},
 		{
 			name: 'subhead',
