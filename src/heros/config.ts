@@ -111,7 +111,9 @@ export const hero: Field = {
 						{ label: 'Handshake', value: 'Handshake' },
 						{ label: 'Paintbrush', value: 'Paintbrush' },
 						{ label: 'Smartphone', value: 'Smartphone' },
-						{ label: 'Server', value: 'Server' }
+						{ label: 'Server', value: 'Server' },
+						{ label: 'Braces', value: 'Braces' },
+						{ label: 'Sparkles', value: 'Sparkles' }
 					]
 				}
 			]

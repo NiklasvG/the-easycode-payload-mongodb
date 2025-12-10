@@ -71,16 +71,34 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
 		<>
 			<ul className="hidden lg:flex relative z-20 items-center justify-center gap-4 lg:gap-8 m-auto">
 				{navItems.map(({ link }, i) => {
-					const isActive = pathname.startsWith(link?.url || '')
+					let label
+					let url
+
+					if (link?.reference?.relationTo === 'pages') {
+						const value = link?.reference?.value
+						const breadcrumbs =
+							typeof value !== 'string' && value ? value.breadcrumbs || [] : []
+						label = link?.label
+							? link?.label
+							: breadcrumbs.length > 0
+								? breadcrumbs[breadcrumbs.length - 1].label
+								: 'Seite'
+						url = typeof value !== 'string' && value ? value.slug || '/' : '/'
+					} else {
+						label = link?.label
+						url = link?.url
+					}
+
+					const isActive = pathname.startsWith(`/${url}` || '')
 					const variant = isActive ? 'default' : 'ghost'
 
-					if (!link?.url) return null
+					if (!url) return null
 
 					return (
 						<li key={i} className="nav-main__item">
-							<CMSLink {...link} label={null} onClick={handleClick}>
+							<CMSLink {...link} label={null} url={url} onClick={handleClick}>
 								<Button variant={variant} size="lg">
-									{link?.label}
+									{label}
 								</Button>
 							</CMSLink>
 						</li>
@@ -161,15 +179,33 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
 					<div className="container py-4">
 						<ul className="pb-14 flex flex-col gap-4 lg:gap-8">
 							{navItems.map(({ link }, i) => {
-								const href = link?.url
-								const label = link?.label
+								let label
+								let url
 
-								if (!href || !label) return null
+								if (link?.reference?.relationTo === 'pages') {
+									const value = link?.reference?.value
+									const breadcrumbs =
+										typeof value !== 'string' && value
+											? value.breadcrumbs || []
+											: []
+									label = link?.label
+										? link?.label
+										: breadcrumbs.length > 0
+											? breadcrumbs[breadcrumbs.length - 1].label
+											: 'Seite'
+									url =
+										typeof value !== 'string' && value ? value.slug || '/' : '/'
+								} else {
+									label = link?.label
+									url = link?.url
+								}
+
+								if (!url) return null
 
 								return (
 									<li key={i} className="nav-main__item nav-main__item--1">
 										<Link
-											href={href}
+											href={url}
 											onClick={handleClick}
 											className="nav-main__link nav-main__link--1"
 										>

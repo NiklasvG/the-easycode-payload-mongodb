@@ -121,7 +121,7 @@ export default async function ProjectDetailPage({
 			{draft && <LivePreviewListener />}
 
 			{/* --- HERO SECTION --- */}
-			<section className="bg-background w-full h-full py-12 lg:py-24 2xl:py-32">
+			<section className="bg-background w-full h-full py-12 lg:py-24 2xl:pb-32">
 				<div className="container mx-auto px-6 relative z-10">
 					<Link
 						href="/projekte"

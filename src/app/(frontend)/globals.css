@@ -94,6 +94,14 @@
 	.container {
 		@apply w-full mx-auto px-4 sm:px-6 lg:px-8;
 	}
+
+	.glasCenterSmall {
+		background: rgba(0, 173, 181, 0.3);
+		filter: blur(28px); /* Weichzeichnen für den Leuchteffekt */
+		border-radius: 50%; /* Rundes Licht */
+		z-index: -1;
+		@apply transition-all duration-700 absolute size-28 opacity-100;
+	}
 }
 
 @media (min-width: 1920px) {

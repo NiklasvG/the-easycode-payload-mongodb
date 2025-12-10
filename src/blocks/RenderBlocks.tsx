@@ -14,6 +14,7 @@ import { ProjectsGridBlockComponent } from './ProjectsGrid/Component'
 import { InfoTwoColumnBlockComponent } from './InfoTwoColumn/Component'
 import { ProjectCtaBlockComponent } from './ProjectCta/Component'
 import { FAQBlockComponent } from './FAQ/Component'
+import { CollaborationBlockComponent } from './CollaborationBlock/Component'
 
 const blockComponents = {
 	archive: ArchiveBlock,
@@ -27,7 +28,8 @@ const blockComponents = {
 	projectsGrid: ProjectsGridBlockComponent,
 	infoTwoColumn: InfoTwoColumnBlockComponent,
 	projectCta: ProjectCtaBlockComponent,
-	faq: FAQBlockComponent
+	faq: FAQBlockComponent,
+	collaboration: CollaborationBlockComponent
 }
 
 export const RenderBlocks: React.FC<{
@@ -57,10 +59,14 @@ export const RenderBlocks: React.FC<{
 						backgroundVariant &&
 						previousBackground === backgroundVariant
 
+					// Falls der erste Block primary ist, ebenfalls enger zusammenrücken
+					const firstPrimary = index === 0 && backgroundVariant === 'primary'
+
 					// Dynamische Margin (kannst du beliebig anpassen)
-					const outerClassName = sameBackground
-						? '-mt-16' // → enger zusammen
-						: 'mt-0' // → normaler Abstand
+					const outerClassName =
+						sameBackground || firstPrimary
+							? '-mt-16' // → enger zusammen
+							: 'mt-0' // → normaler Abstand
 
 					// für nächsten Durchlauf speichern
 					previousBackground = backgroundVariant ?? null

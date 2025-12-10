@@ -111,6 +111,17 @@ const config = {
 			strokeWidth: {
 				3: '3px'
 			},
+			rotate: {
+				135: '135deg',
+				225: '225deg',
+				270: '270deg',
+				315: '315deg'
+			},
+			backgroundImage: {
+				'radial-gradient': 'radial-gradient(var(--tw-gradient-stops))',
+				'conic-gradient':
+					'conic-gradient(from 225deg, #00ADB5, #79FFF7, #D633FF, #FF98E2, #00ADB5)'
+			},
 			typography: () => ({
 				DEFAULT: {
 					css: [

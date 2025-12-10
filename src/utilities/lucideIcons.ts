@@ -1,24 +1,28 @@
 import {
-    Handshake,
-    Laptop,
-    Paintbrush,
-    Server,
-    Smartphone,
-    SquareCode,
-} from "lucide-react";
-import type { LucideIcon as LucideIconType } from "lucide-react";
+	Braces,
+	Handshake,
+	Laptop,
+	Paintbrush,
+	Server,
+	Smartphone,
+	Sparkles,
+	SquareCode
+} from 'lucide-react'
+import type { LucideIcon as LucideIconType } from 'lucide-react'
 
 export const lucideIconMap = {
-    Laptop: Laptop,
-    SquareCode: SquareCode,
-    Handshake: Handshake,
-    Paintbrush: Paintbrush,
-    Smartphone: Smartphone,
-    Server: Server,
-} as const;
+	Laptop: Laptop,
+	SquareCode: SquareCode,
+	Handshake: Handshake,
+	Paintbrush: Paintbrush,
+	Smartphone: Smartphone,
+	Server: Server,
+	Braces: Braces,
+	Sparkles: Sparkles
+} as const
 
-export type LucideIconName = keyof typeof lucideIconMap;
+export type LucideIconName = keyof typeof lucideIconMap
 
 export const getLucideIcon = (name: LucideIconName): LucideIconType => {
-    return lucideIconMap[name];
-};
+	return lucideIconMap[name]
+}

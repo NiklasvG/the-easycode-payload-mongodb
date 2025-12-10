@@ -31,6 +31,7 @@ import {
 	OverviewField,
 	PreviewField
 } from '@payloadcms/plugin-seo/fields'
+import { CollaborationBlock } from '@/blocks/CollaborationBlock/config'
 
 export const Pages: CollectionConfig<'pages'> = {
 	slug: 'pages',
@@ -96,7 +97,8 @@ export const Pages: CollectionConfig<'pages'> = {
 								ClientQuotesBlock,
 								InfoTwoColumnBlock,
 								ProjectCtaBlock,
-								FAQBlock
+								FAQBlock,
+								CollaborationBlock
 							],
 							required: true,
 							admin: {

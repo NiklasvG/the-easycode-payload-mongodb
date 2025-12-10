@@ -179,7 +179,7 @@ export interface Page {
       | null;
     icons?:
       | {
-          icon: 'Laptop' | 'SquareCode' | 'Handshake' | 'Paintbrush' | 'Smartphone' | 'Server';
+          icon: 'Laptop' | 'SquareCode' | 'Handshake' | 'Paintbrush' | 'Smartphone' | 'Server' | 'Braces' | 'Sparkles';
           id?: string | null;
         }[]
       | null;
@@ -237,6 +237,7 @@ export interface Page {
     | InfoTwoColumnBlock
     | ProjectCtaBlock
     | FAQBlock
+    | CollaborationBlock
   )[];
   meta?: {
     title?: string | null;
@@ -1031,6 +1032,45 @@ export interface FAQBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CollaborationBlock".
+ */
+export interface CollaborationBlock {
+  backgroundVariant: 'primary' | 'secondary';
+  title: string;
+  items?:
+    | {
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  sideDescription?: string | null;
+  enableLink?: boolean | null;
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: string | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: string | Post;
+        } | null);
+    url?: string | null;
+    label: string;
+    /**
+     * Choose how the link should be rendered.
+     */
+    appearance?: ('default' | 'outline') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'collaboration';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "clients".
  */
 export interface Client {
@@ -1562,6 +1602,7 @@ export interface PagesSelect<T extends boolean = true> {
         infoTwoColumn?: T | InfoTwoColumnBlockSelect<T>;
         projectCta?: T | ProjectCtaBlockSelect<T>;
         faq?: T | FAQBlockSelect<T>;
+        collaboration?: T | CollaborationBlockSelect<T>;
       };
   meta?:
     | T
@@ -1823,6 +1864,35 @@ export interface FAQBlockSelect<T extends boolean = true> {
         question?: T;
         answer?: T;
         id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CollaborationBlock_select".
+ */
+export interface CollaborationBlockSelect<T extends boolean = true> {
+  backgroundVariant?: T;
+  title?: T;
+  items?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  sideDescription?: T;
+  enableLink?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+        appearance?: T;
       };
   id?: T;
   blockName?: T;
