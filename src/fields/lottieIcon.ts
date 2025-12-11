@@ -2,37 +2,37 @@ import type { Field } from 'payload'
 import deepMerge from '@/utilities/deepMerge'
 
 export type LottieIconNames =
-	| 'computer'
-	| 'cloud'
 	| 'apple'
-	| 'cart'
-	| 'pen'
-	| 'engagement'
-	| 'code'
-	| 'clock'
 	| 'applause'
-	| 'git'
 	| 'book'
-	| 'firework'
+	| 'cart'
+	| 'clock'
+	| 'cloud'
+	| 'code'
+	| 'computer'
 	| 'confetti'
 	| 'developer'
+	| 'engagement'
+	| 'firework'
+	| 'git'
+	| 'pen'
 	| 'school'
 
 export const lottieIconOptions: { label: string; value: LottieIconNames }[] = [
-	{ label: 'Computer', value: 'computer' },
-	{ label: 'Cloud', value: 'cloud' },
 	{ label: 'Apple', value: 'apple' },
-	{ label: 'Cart', value: 'cart' },
-	{ label: 'Pen', value: 'pen' },
-	{ label: 'Engagement', value: 'engagement' },
-	{ label: 'Code', value: 'code' },
-	{ label: 'Clock', value: 'clock' },
 	{ label: 'Applause', value: 'applause' },
-	{ label: 'Git', value: 'git' },
 	{ label: 'Book', value: 'book' },
-	{ label: 'Firework', value: 'firework' },
+	{ label: 'Cart', value: 'cart' },
+	{ label: 'Clock', value: 'clock' },
+	{ label: 'Cloud', value: 'cloud' },
+	{ label: 'Code', value: 'code' },
+	{ label: 'Computer', value: 'computer' },
 	{ label: 'Confetti', value: 'confetti' },
 	{ label: 'Developer', value: 'developer' },
+	{ label: 'Engagement', value: 'engagement' },
+	{ label: 'Firework', value: 'firework' },
+	{ label: 'Git', value: 'git' },
+	{ label: 'Pen', value: 'pen' },
 	{ label: 'School', value: 'school' }
 ]
 
@@ -60,7 +60,6 @@ export const lottieIcon: LottieIconFieldType = ({
 		required,
 		options: lottieIconOptions,
 		admin: {
-			// du kannst hier z. B. nochmal Standard-Layout setzen
 			width: '50%'
 		}
 	}

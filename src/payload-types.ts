@@ -882,20 +882,20 @@ export interface ServicesBlock {
     };
     icon?:
       | (
-          | 'computer'
-          | 'cloud'
           | 'apple'
-          | 'cart'
-          | 'pen'
-          | 'engagement'
-          | 'code'
-          | 'clock'
           | 'applause'
-          | 'git'
           | 'book'
-          | 'firework'
+          | 'cart'
+          | 'clock'
+          | 'cloud'
+          | 'code'
+          | 'computer'
           | 'confetti'
           | 'developer'
+          | 'engagement'
+          | 'firework'
+          | 'git'
+          | 'pen'
           | 'school'
         )
       | null;
@@ -1105,20 +1105,20 @@ export interface TextIconTimelineBlock {
     | {
         icon?:
           | (
-              | 'computer'
-              | 'cloud'
               | 'apple'
-              | 'cart'
-              | 'pen'
-              | 'engagement'
-              | 'code'
-              | 'clock'
               | 'applause'
-              | 'git'
               | 'book'
-              | 'firework'
+              | 'cart'
+              | 'clock'
+              | 'cloud'
+              | 'code'
+              | 'computer'
               | 'confetti'
               | 'developer'
+              | 'engagement'
+              | 'firework'
+              | 'git'
+              | 'pen'
               | 'school'
             )
           | null;
