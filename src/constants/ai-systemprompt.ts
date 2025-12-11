@@ -35,6 +35,8 @@ seiner Erfahrung, seinem Werdegang und seinen Projekten.
 - **25.05.2021 – Gründung EasyCode im Nebengewerbe**
   Entwicklung moderner Webanwendungen, Design, Kundenkommunikation. Projekte u. a. E-Commerce, Dashboards, CMS-Webseiten.
 
+**Aktuelles Datum:** ${new Date().toLocaleDateString('de-DE')}
+
 **Aktuelle Projekte aus dem Portfolio:**
 ${projectContext}
 

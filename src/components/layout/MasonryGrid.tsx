@@ -6,7 +6,7 @@ import React from 'react'
 import ServiceCard from '@/components/Cards/ServiceCard'
 
 // Types
-import type { Media, Page, Post } from '@/payload-types'
+import type { Media, Page, Post, ServicesBlock } from '@/payload-types'
 
 type LinkProp = {
 	type?: 'custom' | 'reference' | null
@@ -28,16 +28,7 @@ type LinkProp = {
 type MasonryCard = {
 	enableTeaserLink: boolean
 	link: LinkProp
-	icon?:
-		| 'computer'
-		| 'cloud'
-		| 'apple'
-		| 'cart'
-		| 'pen'
-		| 'engagement'
-		| 'code'
-		| 'clock'
-		| 'applause'
+	icon?: ServicesBlock['services'][0]['icon'] | undefined
 	image?: string | Media | null
 	headline: string
 	abstract: string

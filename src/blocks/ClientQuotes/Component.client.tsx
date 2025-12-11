@@ -42,7 +42,7 @@ export const QuoteSlider: React.FC<Props> = ({ quotes }) => {
 	if (!quotes || quotes.length === 0) return null
 
 	return (
-		<div className="quote my-10 lg:my-20">
+		<div className="quote mt-10 lg:mt-20">
 			<Splide
 				options={splideOptions}
 				className="splide"

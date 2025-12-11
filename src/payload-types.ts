@@ -238,6 +238,7 @@ export interface Page {
     | ProjectCtaBlock
     | FAQBlock
     | CollaborationBlock
+    | TextIconTimelineBlock
   )[];
   meta?: {
     title?: string | null;
@@ -879,7 +880,25 @@ export interface ServicesBlock {
       url?: string | null;
       label: string;
     };
-    icon?: ('computer' | 'cloud' | 'apple' | 'cart' | 'pen' | 'engagement' | 'code' | 'clock' | 'applause') | null;
+    icon?:
+      | (
+          | 'computer'
+          | 'cloud'
+          | 'apple'
+          | 'cart'
+          | 'pen'
+          | 'engagement'
+          | 'code'
+          | 'clock'
+          | 'applause'
+          | 'git'
+          | 'book'
+          | 'firework'
+          | 'confetti'
+          | 'developer'
+          | 'school'
+        )
+      | null;
     image?: (string | null) | Media;
     headline: string;
     abstract: string;
@@ -1071,6 +1090,49 @@ export interface CollaborationBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'collaboration';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TextIconTimelineBlock".
+ */
+export interface TextIconTimelineBlock {
+  backgroundVariant: 'primary' | 'secondary';
+  overhead?: string | null;
+  headline?: string | null;
+  accentText?: string | null;
+  subhead?: string | null;
+  items?:
+    | {
+        icon?:
+          | (
+              | 'computer'
+              | 'cloud'
+              | 'apple'
+              | 'cart'
+              | 'pen'
+              | 'engagement'
+              | 'code'
+              | 'clock'
+              | 'applause'
+              | 'git'
+              | 'book'
+              | 'firework'
+              | 'confetti'
+              | 'developer'
+              | 'school'
+            )
+          | null;
+        /**
+         * z.B. "1999:", "2015", "Launch Biome Cards" …
+         */
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'textIconTimeline';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1606,6 +1668,7 @@ export interface PagesSelect<T extends boolean = true> {
         projectCta?: T | ProjectCtaBlockSelect<T>;
         faq?: T | FAQBlockSelect<T>;
         collaboration?: T | CollaborationBlockSelect<T>;
+        textIconTimeline?: T | TextIconTimelineBlockSelect<T>;
       };
   meta?:
     | T
@@ -1899,6 +1962,27 @@ export interface CollaborationBlockSelect<T extends boolean = true> {
         url?: T;
         label?: T;
         appearance?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TextIconTimelineBlock_select".
+ */
+export interface TextIconTimelineBlockSelect<T extends boolean = true> {
+  backgroundVariant?: T;
+  overhead?: T;
+  headline?: T;
+  accentText?: T;
+  subhead?: T;
+  items?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        text?: T;
+        id?: T;
       };
   id?: T;
   blockName?: T;

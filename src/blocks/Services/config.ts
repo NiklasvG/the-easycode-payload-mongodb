@@ -1,4 +1,5 @@
 import { link } from '@/fields/link'
+import { lottieIcon } from '@/fields/lottieIcon'
 
 import type { Block } from 'payload'
 
@@ -95,23 +96,7 @@ export const ServicesBlock: Block = {
 						}
 					}
 				}),
-				{
-					name: 'icon',
-					type: 'select',
-					label: 'Icon',
-					required: false,
-					options: [
-						{ label: 'Computer', value: 'computer' },
-						{ label: 'Cloud', value: 'cloud' },
-						{ label: 'Apple', value: 'apple' },
-						{ label: 'Cart', value: 'cart' },
-						{ label: 'Pen', value: 'pen' },
-						{ label: 'Engagement', value: 'engagement' },
-						{ label: 'Code', value: 'code' },
-						{ label: 'Clock', value: 'clock' },
-						{ label: 'Applause', value: 'applause' }
-					]
-				},
+				lottieIcon(),
 				{
 					name: 'image',
 					type: 'upload',

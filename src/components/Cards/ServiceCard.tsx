@@ -17,7 +17,7 @@ const LottieIcon = dynamic(
 )
 
 // Types
-import { Media, Page, Post } from '@/payload-types'
+import { Media, Page, Post, ServicesBlock } from '@/payload-types'
 interface optionsProps {
 	border?: boolean
 	highlightTag?: boolean
@@ -42,16 +42,7 @@ interface ServiceCardProps {
 		url?: string | null
 		label: string
 	}
-	icon?:
-		| 'computer'
-		| 'cloud'
-		| 'apple'
-		| 'cart'
-		| 'pen'
-		| 'engagement'
-		| 'code'
-		| 'clock'
-		| 'applause'
+	icon?: ServicesBlock['services'][0]['icon'] | undefined
 	image?: string | Media | null | undefined
 	headline: string
 	abstract: string

@@ -15,6 +15,7 @@ import { InfoTwoColumnBlockComponent } from './InfoTwoColumn/Component'
 import { ProjectCtaBlockComponent } from './ProjectCta/Component'
 import { FAQBlockComponent } from './FAQ/Component'
 import { CollaborationBlockComponent } from './CollaborationBlock/Component'
+import { TextIconTimelineBlockComponent } from './TextIconTimeline/Component'
 
 const blockComponents = {
 	archive: ArchiveBlock,
@@ -29,7 +30,8 @@ const blockComponents = {
 	infoTwoColumn: InfoTwoColumnBlockComponent,
 	projectCta: ProjectCtaBlockComponent,
 	faq: FAQBlockComponent,
-	collaboration: CollaborationBlockComponent
+	collaboration: CollaborationBlockComponent,
+	textIconTimeline: TextIconTimelineBlockComponent
 }
 
 export const RenderBlocks: React.FC<{

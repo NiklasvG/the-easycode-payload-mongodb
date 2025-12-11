@@ -16,6 +16,8 @@ import { FormBlock } from '@/blocks/Form/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
 import { ProjectsGridBlock } from '@/blocks/ProjectsGrid/config'
 import { ServicesBlock } from '@/blocks/Services/config'
+import { CollaborationBlock } from '@/blocks/CollaborationBlock/config'
+import { TextIconTimelineBlock } from '@/blocks/TextIconTimeline/config'
 
 import { hero } from '@/heros/config'
 
@@ -31,7 +33,6 @@ import {
 	OverviewField,
 	PreviewField
 } from '@payloadcms/plugin-seo/fields'
-import { CollaborationBlock } from '@/blocks/CollaborationBlock/config'
 
 export const Pages: CollectionConfig<'pages'> = {
 	slug: 'pages',
@@ -98,7 +99,8 @@ export const Pages: CollectionConfig<'pages'> = {
 								InfoTwoColumnBlock,
 								ProjectCtaBlock,
 								FAQBlock,
-								CollaborationBlock
+								CollaborationBlock,
+								TextIconTimelineBlock
 							],
 							required: true,
 							admin: {
