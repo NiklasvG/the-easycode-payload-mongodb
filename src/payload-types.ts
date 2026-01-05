@@ -1370,16 +1370,16 @@ export interface Search {
         value: string | Post;
       }
     | {
-        relationTo: 'pages';
-        value: string | Page;
-      }
-    | {
         relationTo: 'projects';
         value: string | Project;
       }
     | {
         relationTo: 'clients';
         value: string | Client;
+      }
+    | {
+        relationTo: 'pages';
+        value: string | Page;
       };
   slug?: string | null;
   meta?: {
@@ -1392,6 +1392,16 @@ export interface Search {
         relationTo?: string | null;
         categoryID?: string | null;
         title?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  clientSlug?: string | null;
+  shortDescription?: string | null;
+  projectType?: string | null;
+  image?: (string | null) | Media;
+  tags?:
+    | {
+        tag?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -2425,6 +2435,16 @@ export interface SearchSelect<T extends boolean = true> {
         relationTo?: T;
         categoryID?: T;
         title?: T;
+        id?: T;
+      };
+  clientSlug?: T;
+  shortDescription?: T;
+  projectType?: T;
+  image?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
         id?: T;
       };
   updatedAt?: T;

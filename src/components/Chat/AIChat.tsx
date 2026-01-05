@@ -26,7 +26,9 @@ export const AIChat: React.FC = () => {
 	])
 	const [inputValue, setInputValue] = useState('')
 	const [isLoading, setIsLoading] = useState(false)
+
 	const messagesEndRef = useRef<HTMLDivElement>(null)
+	const inputRef = useRef<HTMLInputElement>(null) // ✅ NEW
 
 	// Beim Mount aus sessionStorage lesen
 	useEffect(() => {
@@ -44,6 +46,15 @@ export const AIChat: React.FC = () => {
 	useEffect(() => {
 		scrollToBottom()
 	}, [messages])
+
+	// ✅ NEW: Fokus setzen, sobald der Chat geöffnet ist
+	useEffect(() => {
+		if (!isOpen) return
+		// nach dem Render fokussieren
+		requestAnimationFrame(() => {
+			inputRef.current?.focus()
+		})
+	}, [isOpen])
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
@@ -116,6 +127,8 @@ export const AIChat: React.FC = () => {
 			])
 		} finally {
 			setIsLoading(false)
+			// optional: nach dem Senden wieder fokussieren
+			requestAnimationFrame(() => inputRef.current?.focus())
 		}
 	}
 
@@ -235,6 +248,7 @@ export const AIChat: React.FC = () => {
 					>
 						<div className="relative">
 							<input
+								ref={inputRef} // ✅ NEW
 								type="text"
 								value={inputValue}
 								onChange={(e) => setInputValue(e.target.value)}
