@@ -1,3 +1,4 @@
+// src\blocks\RenderBlocks.tsx
 import React, { Fragment } from 'react'
 
 import type { Page } from '@/payload-types'
@@ -16,8 +17,11 @@ import { ProjectCtaBlockComponent } from './ProjectCta/Component'
 import { FAQBlockComponent } from './FAQ/Component'
 import { CollaborationBlockComponent } from './CollaborationBlock/Component'
 import { TextIconTimelineBlockComponent } from './TextIconTimeline/Component'
+import { SplitLayoutBlockComponent } from '@/blocks/SplitLayout/Component'
+import { ContactIntroBlockComponent } from '@/blocks/ContactIntro/Component'
+import { ContactLinksBlockComponent } from '@/blocks/ContactLinks/Component'
 
-const blockComponents = {
+export const blockComponents = {
 	archive: ArchiveBlock,
 	content: ContentBlock,
 	cta: CallToActionBlock,
@@ -31,7 +35,10 @@ const blockComponents = {
 	projectCta: ProjectCtaBlockComponent,
 	faq: FAQBlockComponent,
 	collaboration: CollaborationBlockComponent,
-	textIconTimeline: TextIconTimelineBlockComponent
+	textIconTimeline: TextIconTimelineBlockComponent,
+	splitLayout: SplitLayoutBlockComponent,
+	contactIntro: ContactIntroBlockComponent,
+	contactLinks: ContactLinksBlockComponent
 }
 
 export const RenderBlocks: React.FC<{

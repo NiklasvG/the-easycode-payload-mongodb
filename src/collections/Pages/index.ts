@@ -18,6 +18,9 @@ import { ProjectsGridBlock } from '@/blocks/ProjectsGrid/config'
 import { ServicesBlock } from '@/blocks/Services/config'
 import { CollaborationBlock } from '@/blocks/CollaborationBlock/config'
 import { TextIconTimelineBlock } from '@/blocks/TextIconTimeline/config'
+import { SplitLayoutBlock } from '@/blocks/SplitLayout/config'
+import { ContactIntroBlock } from '@/blocks/ContactIntro/config'
+import { ContactLinksBlock } from '@/blocks/ContactLinks/config'
 
 import { hero } from '@/heros/config'
 
@@ -100,7 +103,10 @@ export const Pages: CollectionConfig<'pages'> = {
 								ProjectCtaBlock,
 								FAQBlock,
 								CollaborationBlock,
-								TextIconTimelineBlock
+								TextIconTimelineBlock,
+								SplitLayoutBlock,
+								ContactIntroBlock,
+								ContactLinksBlock
 							],
 							required: true,
 							admin: {

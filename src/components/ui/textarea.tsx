@@ -2,20 +2,20 @@ import { cn } from '@/utilities/ui'
 import * as React from 'react'
 
 const Textarea: React.FC<
-  {
-    ref?: React.Ref<HTMLTextAreaElement>
-  } & React.TextareaHTMLAttributes<HTMLTextAreaElement>
+	{
+		ref?: React.Ref<HTMLTextAreaElement>
+	} & React.TextareaHTMLAttributes<HTMLTextAreaElement>
 > = ({ className, ref, ...props }) => {
-  return (
-    <textarea
-      className={cn(
-        'flex min-h-[80px] w-full rounded border border-border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-        className,
-      )}
-      ref={ref}
-      {...props}
-    />
-  )
+	return (
+		<textarea
+			className={cn(
+				'w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-white hover:border-accent/30 outline-none focus:border-accent/50 transition-all resize-none',
+				className
+			)}
+			ref={ref}
+			{...props}
+		/>
+	)
 }
 
 export { Textarea }

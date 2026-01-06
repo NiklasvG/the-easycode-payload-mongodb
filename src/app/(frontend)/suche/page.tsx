@@ -58,7 +58,7 @@ function PageTiles({ pages }: { pages: SearchDoc[] }) {
 		<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 			{pages.map((p) => {
 				const href = p.slug ? `/${p.slug}` : '#'
-				const label = p.meta?.title || p.title || 'Seite'
+				const label = p.title || p.meta?.title || 'Seite'
 
 				return (
 					<Link
@@ -188,6 +188,8 @@ export default async function Page({
 		},
 		where: pagesWhere
 	})
+
+	console.log('pagesSearch', pagesSearch)
 
 	const pageDocs = (pagesSearch.docs ?? []) as SearchDoc[]
 

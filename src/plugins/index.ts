@@ -69,6 +69,7 @@ export const plugins: Plugin[] = [
 		formOverrides: {
 			fields: ({ defaultFields }) => {
 				return defaultFields.map((field) => {
+					// Editor-Override für confirmationMessage beibehalten
 					if ('name' in field && field.name === 'confirmationMessage') {
 						return {
 							...field,
@@ -85,6 +86,37 @@ export const plugins: Plugin[] = [
 							})
 						}
 					}
+
+					// Placeholder zu relevanten Block-Typen hinzufügen
+					if (
+						'name' in field &&
+						field.name === 'fields' &&
+						'type' in field &&
+						field.type === 'blocks'
+					) {
+						const blocks = (field as any).blocks?.map((block: any) => {
+							if (
+								['text', 'number', 'email', 'textarea'].includes(block.slug)
+							) {
+								return {
+									...block,
+									fields: [
+										...block.fields,
+										{
+											name: 'placeholder',
+											type: 'text',
+											label: 'Placeholder',
+											required: false
+										}
+									]
+								}
+							}
+							return block
+						})
+
+						return { ...field, blocks }
+					}
+
 					return field
 				})
 			}

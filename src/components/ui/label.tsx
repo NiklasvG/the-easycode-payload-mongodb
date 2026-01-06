@@ -6,14 +6,24 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
 
 const labelVariants = cva(
-  'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+	'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
 )
 
 const Label: React.FC<
-  { ref?: React.Ref<HTMLLabelElement> } & React.ComponentProps<typeof LabelPrimitive.Root> &
-    VariantProps<typeof labelVariants>
+	{ ref?: React.Ref<HTMLLabelElement> } & React.ComponentProps<
+		typeof LabelPrimitive.Root
+	> &
+		VariantProps<typeof labelVariants>
 > = ({ className, ref, ...props }) => (
-  <LabelPrimitive.Root className={cn(labelVariants(), className)} ref={ref} {...props} />
+	<LabelPrimitive.Root
+		className={cn(
+			labelVariants(),
+			className,
+			'block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2'
+		)}
+		ref={ref}
+		{...props}
+	/>
 )
 
 export { Label }

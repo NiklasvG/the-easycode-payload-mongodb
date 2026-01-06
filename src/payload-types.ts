@@ -239,6 +239,9 @@ export interface Page {
     | FAQBlock
     | CollaborationBlock
     | TextIconTimelineBlock
+    | SplitLayoutBlock
+    | ContactIntroBlock
+    | ContactLinksBlock
   )[];
   meta?: {
     title?: string | null;
@@ -686,6 +689,7 @@ export interface Form {
             label?: string | null;
             width?: number | null;
             required?: boolean | null;
+            placeholder?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'email';
@@ -716,6 +720,7 @@ export interface Form {
             width?: number | null;
             defaultValue?: number | null;
             required?: boolean | null;
+            placeholder?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'number';
@@ -753,6 +758,7 @@ export interface Form {
             width?: number | null;
             defaultValue?: string | null;
             required?: boolean | null;
+            placeholder?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'text';
@@ -763,6 +769,7 @@ export interface Form {
             width?: number | null;
             defaultValue?: string | null;
             required?: boolean | null;
+            placeholder?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'textarea';
@@ -1133,6 +1140,64 @@ export interface TextIconTimelineBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'textIconTimeline';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SplitLayoutBlock".
+ */
+export interface SplitLayoutBlock {
+  layout?: ('50-50' | '40-60' | '60-40') | null;
+  gap?: ('sm' | 'md' | 'lg') | null;
+  left?: (ContactIntroBlock | ContactLinksBlock | FormBlock)[] | null;
+  right?: (ContactIntroBlock | ContactLinksBlock | FormBlock)[] | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'splitLayout';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactIntroBlock".
+ */
+export interface ContactIntroBlock {
+  badge?: string | null;
+  headline: string;
+  accentText?: string | null;
+  subline?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contactIntro';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactLinksBlock".
+ */
+export interface ContactLinksBlock {
+  email: string;
+  socials?:
+    | {
+        type: 'linkedin' | 'instagram' | 'github' | 'website';
+        label?: string | null;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contactLinks';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1679,6 +1744,9 @@ export interface PagesSelect<T extends boolean = true> {
         faq?: T | FAQBlockSelect<T>;
         collaboration?: T | CollaborationBlockSelect<T>;
         textIconTimeline?: T | TextIconTimelineBlockSelect<T>;
+        splitLayout?: T | SplitLayoutBlockSelect<T>;
+        contactIntro?: T | ContactIntroBlockSelect<T>;
+        contactLinks?: T | ContactLinksBlockSelect<T>;
       };
   meta?:
     | T
@@ -1999,6 +2067,59 @@ export interface TextIconTimelineBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SplitLayoutBlock_select".
+ */
+export interface SplitLayoutBlockSelect<T extends boolean = true> {
+  layout?: T;
+  gap?: T;
+  left?:
+    | T
+    | {
+        contactIntro?: T | ContactIntroBlockSelect<T>;
+        contactLinks?: T | ContactLinksBlockSelect<T>;
+        formBlock?: T | FormBlockSelect<T>;
+      };
+  right?:
+    | T
+    | {
+        contactIntro?: T | ContactIntroBlockSelect<T>;
+        contactLinks?: T | ContactLinksBlockSelect<T>;
+        formBlock?: T | FormBlockSelect<T>;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactIntroBlock_select".
+ */
+export interface ContactIntroBlockSelect<T extends boolean = true> {
+  badge?: T;
+  headline?: T;
+  accentText?: T;
+  subline?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactLinksBlock_select".
+ */
+export interface ContactLinksBlockSelect<T extends boolean = true> {
+  email?: T;
+  socials?:
+    | T
+    | {
+        type?: T;
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
@@ -2301,6 +2422,7 @@ export interface FormsSelect<T extends boolean = true> {
               label?: T;
               width?: T;
               required?: T;
+              placeholder?: T;
               id?: T;
               blockName?: T;
             };
@@ -2319,6 +2441,7 @@ export interface FormsSelect<T extends boolean = true> {
               width?: T;
               defaultValue?: T;
               required?: T;
+              placeholder?: T;
               id?: T;
               blockName?: T;
             };
@@ -2359,6 +2482,7 @@ export interface FormsSelect<T extends boolean = true> {
               width?: T;
               defaultValue?: T;
               required?: T;
+              placeholder?: T;
               id?: T;
               blockName?: T;
             };
@@ -2370,6 +2494,7 @@ export interface FormsSelect<T extends boolean = true> {
               width?: T;
               defaultValue?: T;
               required?: T;
+              placeholder?: T;
               id?: T;
               blockName?: T;
             };
