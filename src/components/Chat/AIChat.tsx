@@ -11,6 +11,7 @@ interface ChatMessage {
 	role: 'user' | 'model'
 	text: string
 	isStreaming?: boolean
+	thoughtSignature?: string
 }
 
 const STORAGE_KEY = 'easycode-ai-chat-opened'
@@ -77,7 +78,14 @@ export const AIChat: React.FC = () => {
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ message: userText })
+				body: JSON.stringify({
+					message: userText,
+					history: messages.map((m) => ({
+						role: m.role,
+						text: m.text,
+						thoughtSignature: m.thoughtSignature
+					}))
+				})
 			})
 
 			if (!res.ok || !res.body) {
@@ -96,12 +104,24 @@ export const AIChat: React.FC = () => {
 				const chunkText = decoder.decode(value, { stream: true })
 				fullText += chunkText
 
+				// Extrahiere Thought Signature falls vorhanden
+				let displayToUser = fullText
+				let foundSig = ''
+				if (fullText.includes('\n__THOUGHT_SIG__:')) {
+					const parts = fullText.split('\n__THOUGHT_SIG__:')
+					displayToUser = parts[0]
+					foundSig = parts[1]
+				}
+
 				// Letzte model-Nachricht updaten
 				setMessages((prev) => {
 					const newMessages = [...prev]
 					const last = newMessages[newMessages.length - 1]
 					if (last && last.role === 'model' && last.isStreaming) {
-						last.text = fullText
+						last.text = displayToUser
+						if (foundSig) {
+							last.thoughtSignature = foundSig.trim()
+						}
 					}
 					return newMessages
 				})
@@ -253,7 +273,7 @@ export const AIChat: React.FC = () => {
 								value={inputValue}
 								onChange={(e) => setInputValue(e.target.value)}
 								placeholder="Frag mich etwas ..."
-								className="w-full bg-background/50 border border-white/10 rounded-xl pl-4 pr-12 py-3 text-sm text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all placeholder:text-gray-400"
+								className="w-full bg-background/50 border border-white/10 rounded-xl pl-4 pr-12 py-3 text-base md:text-sm text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all placeholder:text-gray-400"
 							/>
 							<button
 								type="submit"

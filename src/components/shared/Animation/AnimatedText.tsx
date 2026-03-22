@@ -9,7 +9,7 @@ export function AnimatedText({
 }) {
 	return (
 		<div
-			className={`inline-block h-[1.2em] overflow-hidden translate-y-4 ${className || ''}`}
+			className={`inline-block h-[1.2em] overflow-hidden lg:translate-y-2 ${className || ''}`}
 		>
 			<AnimatePresence mode="wait">
 				<motion.span

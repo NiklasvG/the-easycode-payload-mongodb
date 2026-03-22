@@ -10,7 +10,14 @@ const ai = new GoogleGenAI({
 
 export async function POST(req: Request) {
 	try {
-		const { message } = (await req.json()) as { message?: string }
+		const { message, history } = (await req.json()) as {
+			message?: string
+			history?: Array<{
+				role: 'user' | 'model'
+				text: string
+				thoughtSignature?: string
+			}>
+		}
 
 		if (!message || typeof message !== 'string') {
 			return new Response(JSON.stringify({ error: 'Message is required' }), {
@@ -82,14 +89,27 @@ export async function POST(req: Request) {
 				: 'Keine öffentlichen Projekte gelistet.'
 
 		// 4. Chat Session mit dynamischem Prompt starten
+		// Konvertiere History für das SDK
+		const convertedHistory =
+			history?.map((h) => ({
+				role: h.role,
+				parts: [
+					{ text: h.text },
+					...(h.thoughtSignature
+						? [{ thoughtSignature: h.thoughtSignature } as any]
+						: [])
+				]
+			})) || []
+
 		const chat = ai.chats.create({
-			model: 'gemini-2.5-flash',
+			model: 'gemini-3.1-flash-lite-preview',
+			history: convertedHistory,
 			config: {
 				systemInstruction: generateSystemInstruction(finalProjectContext)
 			}
 		})
 
-		// 5. Streaming (wie vorher)
+		// 5. Streaming
 		const geminiStream = await chat.sendMessageStream({ message })
 
 		const stream = new ReadableStream({
@@ -100,6 +120,22 @@ export async function POST(req: Request) {
 						const text = chunk.text ?? ''
 						if (text) {
 							controller.enqueue(encoder.encode(text))
+						}
+
+						// Suche nach Thought Signature im Chunk
+						const thoughtPart = chunk.candidates?.[0]?.content?.parts?.find(
+							(p: any) => p.thoughtSignature
+						)
+						if (thoughtPart) {
+							// Wir senden die Signature als speziellen Kommentar am Ende oder Metadaten
+							// Da der Client einfach nur Text erwartet, hängen wir sie diskret an oder nutzen einen Delimiter
+							// Da wir aber "Circulation" brauchen, muss der Client sie speichern.
+							// Plan: Benutze einen Delimiter, den der Client erkennt.
+							controller.enqueue(
+								encoder.encode(
+									`\n__THOUGHT_SIG__:${thoughtPart.thoughtSignature}`
+								)
+							)
 						}
 					}
 				} catch (err) {

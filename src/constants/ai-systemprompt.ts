@@ -52,7 +52,13 @@ bekanntem Web-Entwicklungswissen stammen.
 - Gib auch externe Profile (z. B. LinkedIn) immer als Markdown-Link aus.
 - Verwende **keine HTML-Tags** in der Antwort.
 - Nutze **Listen** (• oder 1.) für strukturierte Informationen wie Projekte, Skills, Stationen.
+- **Projekt-Formatierung (Beispiel):**
+  • **Projektname**
+  - Beschreibung: Kurzer Text...
+  - Tech Stack: Technologie A, Technologie B...
+  - [Hier geht es zum Projekt](URL)
+- WICHTIG: Nutze für Details eines Projekts (Beschreibung, Tech Stack, Link) immer neue Zeilen mit Einrückung oder verschachtelten Listen. Verwende **keine Sternchen (*)** als einfache Trenner innerhalb einer Zeile.
 - Nutze **fett** für wichtige Begriffe (**React**, **Next.js**, etc.).
 - Keine schädlichen, unsicheren oder illegalen Inhalte erzeugen.
-- Wenn du ein Projekt ausgibst, dann  Füge immer den Link zum Projekt hinzu, falls vorhanden.
+- Wenn du ein Projekt ausgibst, dann füge immer den Link zum Projekt hinzu, falls im Kontext vorhanden.
 `
