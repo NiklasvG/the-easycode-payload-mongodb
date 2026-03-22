@@ -9,8 +9,12 @@ import {
 	COOKIE_CONSENT_KEY,
 	ConsentSettings,
 	getConsent,
-	dispatchConsentUpdate
+	dispatchConsentUpdate,
+	clearGoogleAnalyticsCookies,
+	setGoogleAnalyticsDisable
 } from '@/utilities/cookieConsent'
+import { GA_MEASUREMENT_ID } from '@/components/GoogleAnalytics'
+import Link from 'next/link'
 
 export const CookieBanner = () => {
 	const [isOpen, setIsOpen] = useState(false)
@@ -48,6 +52,14 @@ export const CookieBanner = () => {
 				ad_personalization: consent.marketing ? 'granted' : 'denied',
 				analytics_storage: consent.analytics ? 'granted' : 'denied'
 			})
+
+			// Set disable flag
+			setGoogleAnalyticsDisable(GA_MEASUREMENT_ID, !consent.analytics)
+
+			// Manually clear cookies if analytics is disabled
+			if (!consent.analytics) {
+				clearGoogleAnalyticsCookies(GA_MEASUREMENT_ID)
+			}
 		}
 	}
 
@@ -107,12 +119,12 @@ export const CookieBanner = () => {
 									Website sicherzustellen sowie zur Analyse der Nutzung (Google
 									Analytics). Weitere Informationen und Details finden Sie in
 									unserer{' '}
-									<a
-										href="/privacy"
+									<Link
+										href="/datenschutz"
 										className="text-accent underline hover:no-underline"
 									>
 										Datenschutzerklärung
-									</a>
+									</Link>
 									.
 								</p>
 							</div>
@@ -240,18 +252,18 @@ export const CookieBanner = () => {
 						)}
 
 						<div className="mt-6 pt-4 border-t border-border flex justify-center gap-4">
-							<a
-								href="/privacy"
+							<Link
+								href="/datenschutz"
 								className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground hover:text-accent transition-colors"
 							>
 								Datenschutz
-							</a>
-							<a
+							</Link>
+							<Link
 								href="/impressum"
 								className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground hover:text-accent transition-colors"
 							>
 								Impressum
-							</a>
+							</Link>
 						</div>
 					</div>
 				</motion.div>
