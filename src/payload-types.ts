@@ -1274,7 +1274,7 @@ export interface Project {
    */
   outcomeSentence: string;
   image: string | Media;
-  heroImage: string | Media;
+  heroImage?: (string | null) | Media;
   theChallenge?: {
     root: {
       type: string;

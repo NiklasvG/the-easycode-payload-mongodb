@@ -121,7 +121,9 @@ export default async function ProjectDetailPage({
 			{draft && <LivePreviewListener />}
 
 			{/* --- HERO SECTION --- */}
-			<section className="bg-background w-full h-full py-12 lg:py-24 2xl:pb-32">
+			<section
+				className={`bg-background w-full h-full  ${!!project?.heroImage ? 'py-12 lg:py-24 2xl:pb-32' : 'pt-12 lg:pt-24'}`}
+			>
 				<div className="container mx-auto px-6 relative z-10">
 					<Link
 						href="/projekte"
@@ -137,6 +139,14 @@ export default async function ProjectDetailPage({
 								<span className="text-accent font-bold tracking-wider uppercase text-sm border border-accent/20 px-3 py-1 rounded-full bg-accent/5">
 									{clientName}
 								</span>
+								{project.customer && project.customer !== clientName && (
+									<>
+										<span className="w-1 h-1 bg-gray-600 rounded-full"></span>
+										<span className="text-gray-300 text-sm uppercase tracking-wider font-medium">
+											für {project.customer}
+										</span>
+									</>
+								)}
 								<span className="w-1 h-1 bg-gray-600 rounded-full"></span>
 								<span className="text-gray-300 text-sm uppercase tracking-wider">
 									{project.industry}

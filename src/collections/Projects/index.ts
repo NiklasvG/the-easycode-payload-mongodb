@@ -240,8 +240,7 @@ export const Projects: CollectionConfig = {
 							name: 'heroImage',
 							label: 'Hero Bild (Detailseite)',
 							type: 'upload',
-							relationTo: 'media',
-							required: true
+							relationTo: 'media'
 						}
 					]
 				},
