@@ -15,6 +15,8 @@ import { draftMode } from 'next/headers'
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 import { AIChat } from '@/components/Chat/AIChat'
+import { GoogleAnalytics } from '@/components/GoogleAnalytics'
+import { CookieBanner } from '@/components/CookieBanner'
 
 const geistSans = Gabarito({
 	variable: '--font-geist-sans',
@@ -60,6 +62,8 @@ export default async function RootLayout({
 					{children}
 					<Footer />
 					<AIChat />
+					<GoogleAnalytics />
+					<CookieBanner />
 				</Providers>
 			</body>
 		</html>

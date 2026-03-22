@@ -1226,6 +1226,21 @@ figure {
 	@apply mb-4 mt-8;
 }
 
+.payload-richtext p {
+	@apply mt-4;
+}
+
+.payload-richtext a {
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 2px;
+}
+
+.payload-richtext a:hover {
+	text-decoration-thickness: 2px;
+	@apply text-accent;
+}
+
 .payload-richtext ul {
 	list-style-type: disc;
 	@apply mt-2 mb-4 ml-4 ps-4;

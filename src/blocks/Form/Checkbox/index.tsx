@@ -24,7 +24,7 @@ export const Checkbox: React.FC<
 		required: required,
 		validate: (value) => {
 			if (required && value !== true) {
-				return 'Bitte aktivieren Sie das Kontrollkästchen.'
+				return 'Bitte aktiviere das Kontrollkästchen.'
 			}
 			return true
 		}

@@ -1,3 +1,5 @@
+'use client'
+
 import { Button, type ButtonProps } from '@/components/ui/button'
 import { cn } from '@/utilities/ui'
 import Link from 'next/link'
@@ -79,10 +81,23 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 		? { rel: 'noopener noreferrer', target: '_blank' }
 		: {}
 
+	const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+		if (href === '#cookie-settings') {
+			e.preventDefault()
+			window.dispatchEvent(new CustomEvent('show-cookie-banner'))
+		}
+		if (onClick) onClick(e)
+	}
+
 	/* Ensure we don't break any styles set by richText */
 	if (appearance === 'inline') {
 		return (
-			<Link className={cn(className)} href={href} {...newTabProps}>
+			<Link
+				className={cn(className)}
+				href={href}
+				{...newTabProps}
+				onClick={handleClick}
+			>
 				{label && label}
 				{children && children}
 			</Link>
@@ -95,7 +110,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 				className={cn(className)}
 				href={href}
 				{...newTabProps}
-				onClick={onClick}
+				onClick={handleClick}
 			>
 				{label && label}
 				{children && children}

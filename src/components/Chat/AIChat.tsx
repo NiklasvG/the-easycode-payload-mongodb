@@ -5,7 +5,8 @@ import React, { useState, useRef, useEffect } from 'react'
 
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { MessageSquare, Send, Sparkles, X } from 'lucide-react'
+import { MessageSquare, Send, Sparkles, X, ShieldCheck } from 'lucide-react'
+import Link from 'next/link'
 
 interface ChatMessage {
 	role: 'user' | 'model'
@@ -15,10 +16,12 @@ interface ChatMessage {
 }
 
 const STORAGE_KEY = 'easycode-ai-chat-opened'
+const DISCLAIMER_KEY = 'easycode-ai-chat-disclaimer-confirmed'
 
 export const AIChat: React.FC = () => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [hasOpenedOnce, setHasOpenedOnce] = useState(false)
+	const [hasConfirmedDisclaimer, setHasConfirmedDisclaimer] = useState(false)
 	const [messages, setMessages] = useState<ChatMessage[]>([
 		{
 			role: 'model',
@@ -31,12 +34,17 @@ export const AIChat: React.FC = () => {
 	const messagesEndRef = useRef<HTMLDivElement>(null)
 	const inputRef = useRef<HTMLInputElement>(null) // ✅ NEW
 
-	// Beim Mount aus sessionStorage lesen
+	// Beim Mount aus sessionStorage/localStorage lesen
 	useEffect(() => {
 		if (typeof window === 'undefined') return
-		const stored = window.sessionStorage.getItem(STORAGE_KEY)
-		if (stored === 'true') {
+		const storedOpened = window.sessionStorage.getItem(STORAGE_KEY)
+		if (storedOpened === 'true') {
 			setHasOpenedOnce(true)
+		}
+
+		const storedDisclaimer = window.localStorage.getItem(DISCLAIMER_KEY)
+		if (storedDisclaimer === 'true') {
+			setHasConfirmedDisclaimer(true)
 		}
 	}, [])
 
@@ -61,10 +69,10 @@ export const AIChat: React.FC = () => {
 		e.preventDefault()
 		if (!inputValue.trim() || isLoading) return
 
+		setIsLoading(true) // ✅ Early locking
 		const userText = inputValue.trim()
 		setInputValue('')
 		setMessages((prev) => [...prev, { role: 'user', text: userText }])
-		setIsLoading(true)
 
 		try {
 			// Platzhalter für Streaming-Antwort
@@ -80,6 +88,7 @@ export const AIChat: React.FC = () => {
 				},
 				body: JSON.stringify({
 					message: userText,
+					_hp: (e.target as any).elements?.hp_field?.value || '', // Honeypot
 					history: messages.map((m) => ({
 						role: m.role,
 						text: m.text,
@@ -88,8 +97,14 @@ export const AIChat: React.FC = () => {
 				})
 			})
 
+			if (res.status === 429) {
+				const data = await res.json()
+				throw new Error(data.error || 'Too many requests')
+			}
+
 			if (!res.ok || !res.body) {
-				throw new Error('Request failed')
+				const errorData = await res.json().catch(() => ({}))
+				throw new Error(errorData.error || 'Request failed')
 			}
 
 			const reader = res.body.getReader()
@@ -136,15 +151,31 @@ export const AIChat: React.FC = () => {
 				}
 				return newMessages
 			})
-		} catch (error) {
+		} catch (error: any) {
 			console.error('Chat error:', error)
-			setMessages((prev) => [
-				...prev,
-				{
-					role: 'model',
-					text: 'Sorry, ich habe einen Verbindungsfehler festgestellt. Bitte versuche es später erneut.'
+			setMessages((prev) => {
+				// Alle trailing placeholders (falls vorhanden) entfernen
+				const filtered = [...prev]
+				while (
+					filtered.length > 0 &&
+					filtered[filtered.length - 1].role === 'model' &&
+					(filtered[filtered.length - 1].isStreaming ||
+						filtered[filtered.length - 1].text === '')
+				) {
+					filtered.pop()
 				}
-			])
+				// Einzelne Fehlermeldung hinzufügen
+				return [
+					...filtered,
+					{
+						role: 'model',
+						text:
+							error.message ||
+							'Sorry, ich habe einen Verbindungsfehler festgestellt. Bitte versuche es später erneut.',
+						isStreaming: false
+					}
+				]
+			})
 		} finally {
 			setIsLoading(false)
 			// optional: nach dem Senden wieder fokussieren
@@ -162,6 +193,13 @@ export const AIChat: React.FC = () => {
 			if (typeof window !== 'undefined') {
 				window.sessionStorage.setItem(STORAGE_KEY, 'true')
 			}
+		}
+	}
+
+	const handleConfirmDisclaimer = () => {
+		setHasConfirmedDisclaimer(true)
+		if (typeof window !== 'undefined') {
+			window.localStorage.setItem(DISCLAIMER_KEY, 'true')
 		}
 	}
 
@@ -185,105 +223,151 @@ export const AIChat: React.FC = () => {
 						</button>
 					</div>
 
-					{/* Messages */}
-					<div className="flex-1 overflow-y-auto p-4 space-y-4 bg-black bg-opacity-95 scroll-smooth chat-scroll">
-						{messages.map((msg, idx) => (
-							<div
-								key={idx}
-								className={`flex ${
-									msg.role === 'user' ? 'justify-end' : 'justify-start'
-								}`}
-							>
+					<div className="flex-1 relative flex flex-col overflow-hidden">
+						{!hasConfirmedDisclaimer && (
+							<div className="absolute inset-0 z-20 bg-black/95 backdrop-blur-sm p-8 flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
+								<div className="p-4 bg-accent/10 rounded-full text-accent mb-6 ring-1 ring-accent/20">
+									<ShieldCheck className="w-8 h-8" />
+								</div>
+								<h3 className="text-xl font-bold text-white mb-4">
+									Wichtiger Hinweis
+								</h3>
+								<p className="text-sm text-gray-300 leading-relaxed mb-8 payload-richtext">
+									Bitte keine sensiblen personenbezogenen Daten,
+									Gesundheitsdaten, Zugangsdaten oder vertraulichen
+									Informationen eingeben. Mehr Infos in der
+									<Link href="/datenschutz"> Datenschutzerklärung</Link>.
+								</p>
+								<button
+									onClick={handleConfirmDisclaimer}
+									className="w-full bg-accent hover:bg-accent-dark text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+								>
+									Verstanden
+								</button>
+							</div>
+						)}
+						<div className="flex-1 overflow-y-auto p-4 space-y-4 bg-black bg-opacity-95 scroll-smooth chat-scroll">
+							{messages.map((msg, idx) => (
 								<div
-									className={`max-w-[80%] p-3 rounded-2xl text-sm leading-relaxed
+									key={idx}
+									className={`flex ${
+										msg.role === 'user' ? 'justify-end' : 'justify-start'
+									}`}
+								>
+									<div
+										className={`max-w-[80%] p-3 rounded-2xl text-sm leading-relaxed
 												${
 													msg.role === 'user'
 														? 'bg-accent text-white rounded-br-sm'
 														: 'bg-black border border-white/10 text-gray-200 rounded-bl-sm'
 												}`}
-								>
-									<div className="markdown markdown-chat">
-										<ReactMarkdown
-											remarkPlugins={[remarkGfm]}
-											components={{
-												strong: ({ children }) => (
-													<strong className="font-semibold text-accent">
-														{children}
-													</strong>
-												),
-												a: ({ children, href, ...props }) => (
-													<a
-														href={href}
-														{...props}
-														className="text-accent hover:underline"
-														target="_blank"
-														rel="noreferrer"
-													>
-														{children}
-													</a>
-												),
-												code: ({ node, children, ...props }) => {
-													const isInline =
-														!node?.position ||
-														node.position.start.line === node.position.end.line
-													return isInline ? (
-														<code
-															className="px-1 py-0.5 rounded bg-black/40 text-[0.8rem]"
+									>
+										<div className="markdown markdown-chat">
+											<ReactMarkdown
+												remarkPlugins={[remarkGfm]}
+												components={{
+													strong: ({ children }) => (
+														<strong className="font-semibold text-accent">
+															{children}
+														</strong>
+													),
+													a: ({ children, href, ...props }) => (
+														<a
+															href={href}
 															{...props}
+															className="text-accent hover:underline"
+															target="_blank"
+															rel="noreferrer"
 														>
 															{children}
-														</code>
-													) : (
-														<code
-															className="block p-2 rounded bg-black/60 text-[0.75rem] overflow-x-auto"
-															{...props}
-														>
-															{children}
-														</code>
-													)
-												}
-											}}
-										>
-											{msg.text}
-										</ReactMarkdown>
-									</div>
-
-									{msg.isStreaming && (
-										<div className="inline-flex gap-1 justify-start items-center">
-											<div className="size-2 bg-accent rounded-full animate-bounce [animation-delay:-0.3s]" />
-											<div className="size-2 bg-accent rounded-full animate-bounce [animation-delay:-0.15s]" />
-											<div className="size-2 bg-accent rounded-full animate-bounce" />
+														</a>
+													),
+													code: ({ node, children, ...props }) => {
+														const isInline =
+															!node?.position ||
+															node.position.start.line ===
+																node.position.end.line
+														return isInline ? (
+															<code
+																className="px-1 py-0.5 rounded bg-black/40 text-[0.8rem]"
+																{...props}
+															>
+																{children}
+															</code>
+														) : (
+															<code
+																className="block p-2 rounded bg-black/60 text-[0.75rem] overflow-x-auto"
+																{...props}
+															>
+																{children}
+															</code>
+														)
+													}
+												}}
+											>
+												{msg.text}
+											</ReactMarkdown>
 										</div>
-									)}
-								</div>
-							</div>
-						))}
-						<div ref={messagesEndRef} />
-					</div>
 
-					{/* Input */}
-					<form
-						onSubmit={handleSubmit}
-						className="p-4 bg-secondary-background border-t border-white/10"
-					>
-						<div className="relative">
-							<input
-								ref={inputRef} // ✅ NEW
-								type="text"
-								value={inputValue}
-								onChange={(e) => setInputValue(e.target.value)}
-								placeholder="Frag mich etwas ..."
-								className="w-full bg-background/50 border border-white/10 rounded-xl pl-4 pr-12 py-3 text-base md:text-sm text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all placeholder:text-gray-400"
-							/>
-							<button
-								type="submit"
-								disabled={isLoading || !inputValue.trim()}
-								className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-accent hover:text-accent-light disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-							>
-								<Send className="w-4 h-4" />
-							</button>
+										{msg.isStreaming && (
+											<div className="inline-flex gap-1 justify-start items-center">
+												<div className="size-2 bg-accent rounded-full animate-bounce [animation-delay:-0.3s]" />
+												<div className="size-2 bg-accent rounded-full animate-bounce [animation-delay:-0.15s]" />
+												<div className="size-2 bg-accent rounded-full animate-bounce" />
+											</div>
+										)}
+									</div>
+								</div>
+							))}
+							<div ref={messagesEndRef} />
 						</div>
-					</form>
+
+						{/* Input */}
+						<form
+							onSubmit={handleSubmit}
+							className="p-4 bg-secondary-background border-t border-white/10"
+						>
+							{/* Honeypot Field */}
+							<input
+								type="text"
+								name="hp_field"
+								className="hidden"
+								autoComplete="off"
+								tabIndex={-1}
+							/>
+
+							<div className="relative">
+								<input
+									ref={inputRef}
+									type="text"
+									value={inputValue}
+									onChange={(e) => setInputValue(e.target.value)}
+									disabled={!hasConfirmedDisclaimer}
+									maxLength={1000}
+									placeholder={
+										hasConfirmedDisclaimer
+											? 'Frag mich etwas ...'
+											: 'Bitte erst Hinweis bestätigen'
+									}
+									className="w-full bg-background/50 border border-white/10 rounded-xl pl-4 pr-12 py-3 text-base md:text-sm text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all placeholder:text-gray-400 disabled:opacity-50"
+								/>
+								{inputValue.length > 800 && (
+									<div className="absolute -top-4 right-0 text-[10px] text-gray-500 font-mono">
+										{inputValue.length}/1000
+									</div>
+								)}
+								<button
+									type="submit"
+									disabled={
+										isLoading || !inputValue.trim() || !hasConfirmedDisclaimer
+									}
+									className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-accent hover:text-accent-light disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+								>
+									<Send className="w-4 h-4" />
+								</button>
+							</div>
+						</form>
+					</div>
 				</div>
 			)}
 
