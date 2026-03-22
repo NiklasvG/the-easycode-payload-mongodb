@@ -65,15 +65,15 @@ export const GoogleAnalytics = () => {
 			{/* Base Gtag Setup - Always rendered to provide the gtag() stub and default denial */}
 			<Script
 				id="gtag-init"
-				strategy="afterInteractive"
+				strategy="beforeInteractive"
 				dangerouslySetInnerHTML={{
 					__html: `
                         window.dataLayer = window.dataLayer || [];
-                        window.gtag = function(){ window.dataLayer.push(arguments); };
-                        window.gtag('js', new Date());
+                        function gtag(){window.dataLayer.push(arguments);}
+                        gtag('js', new Date());
 
                         // Default-Zustand für den Consent Mode auf 'denied' setzen
-                        window.gtag('consent', 'default', {
+                        gtag('consent', 'default', {
                             'ad_storage': 'denied',
                             'ad_user_data': 'denied',
                             'ad_personalization': 'denied',
