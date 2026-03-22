@@ -1239,3 +1239,20 @@ figure {
 .payload-richtext li {
 	@apply mb-2;
 }
+
+/* Form */
+.form-checkbox-label {
+	@apply normal-case;
+}
+
+.form-checkbox-label a {
+	@apply transition-colors duration-300 ease-in-out;
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 2px;
+}
+
+.form-checkbox-label a:hover {
+	text-decoration-thickness: 2px;
+	@apply text-accent;
+}

@@ -20,7 +20,15 @@ export const Checkbox: React.FC<
 		register: UseFormRegister<FieldValues>
 	}
 > = ({ name, defaultValue, errors, label, register, required, width }) => {
-	const props = register(name, { required: required })
+	const props = register(name, {
+		required: required,
+		validate: (value) => {
+			if (required && value !== true) {
+				return 'Bitte aktivieren Sie das Kontrollkästchen.'
+			}
+			return true
+		}
+	})
 	const { setValue } = useFormContext()
 
 	return (
@@ -31,16 +39,16 @@ export const Checkbox: React.FC<
 					id={name}
 					{...props}
 					onCheckedChange={(checked) => {
-						setValue(props.name, checked)
+						setValue(props.name, checked, { shouldValidate: true })
 					}}
 				/>
-				<Label htmlFor={name}>
+				<Label htmlFor={name} className="form-checkbox-label">
 					{required && (
 						<span className="required">
 							* <span className="sr-only">(required)</span>
 						</span>
 					)}
-					{label}
+					<span dangerouslySetInnerHTML={{ __html: label || '' }} />
 				</Label>
 			</div>
 			{errors[name] && <Error name={name} />}
