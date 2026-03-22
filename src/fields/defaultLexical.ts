@@ -1,11 +1,15 @@
 import type { TextFieldSingleValidation } from 'payload'
 import {
   BoldFeature,
+  FixedToolbarFeature,
+  HeadingFeature,
   ItalicFeature,
   LinkFeature,
+  OrderedListFeature,
   ParagraphFeature,
-  lexicalEditor,
   UnderlineFeature,
+  UnorderedListFeature,
+  lexicalEditor,
   type LinkFields,
 } from '@payloadcms/richtext-lexical'
 
@@ -15,6 +19,10 @@ export const defaultLexical = lexicalEditor({
     UnderlineFeature(),
     BoldFeature(),
     ItalicFeature(),
+    HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+    FixedToolbarFeature(),
+    UnorderedListFeature(),
+    OrderedListFeature(),
     LinkFeature({
       enabledCollections: ['pages', 'posts'],
       fields: ({ defaultFields }) => {
