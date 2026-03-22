@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Cookie, ShieldCheck } from 'lucide-react'
+import Link from 'next/link'
+
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -14,7 +16,6 @@ import {
 	setGoogleAnalyticsDisable
 } from '@/utilities/cookieConsent'
 import { GA_MEASUREMENT_ID } from '@/components/GoogleAnalytics'
-import Link from 'next/link'
 
 export const CookieBanner = () => {
 	const [isOpen, setIsOpen] = useState(false)
@@ -27,21 +28,30 @@ export const CookieBanner = () => {
 
 	useEffect(() => {
 		const stored = getConsent()
+
 		if (!stored) {
 			setIsOpen(true)
 		} else {
+			setSettings(stored)
 			updateGtagConsent(stored)
 		}
 
-		// Event-Listener zum manuellen Öffnen des Banners (z. B. aus dem Footer)
 		const handleOpenBanner = () => {
+			const latestConsent = getConsent()
+
+			if (latestConsent) {
+				setSettings(latestConsent)
+			}
+
 			setIsOpen(true)
-			setShowDetails(true) // Direkt in die Einstellungen springen, wenn manuell geöffnet
+			setShowDetails(true)
 		}
 
 		window.addEventListener('show-cookie-banner', handleOpenBanner)
-		return () =>
+
+		return () => {
 			window.removeEventListener('show-cookie-banner', handleOpenBanner)
+		}
 	}, [])
 
 	const updateGtagConsent = (consent: ConsentSettings) => {
@@ -52,20 +62,39 @@ export const CookieBanner = () => {
 				ad_personalization: consent.marketing ? 'granted' : 'denied',
 				analytics_storage: consent.analytics ? 'granted' : 'denied'
 			})
+		}
 
-			// Set disable flag
-			setGoogleAnalyticsDisable(GA_MEASUREMENT_ID, !consent.analytics)
+		setGoogleAnalyticsDisable(GA_MEASUREMENT_ID, !consent.analytics)
 
-			// Manually clear cookies if analytics is disabled
-			if (!consent.analytics) {
-				clearGoogleAnalyticsCookies(GA_MEASUREMENT_ID)
-			}
+		if (!consent.analytics) {
+			clearGoogleAnalyticsCookies(GA_MEASUREMENT_ID)
 		}
 	}
 
+	const saveSettings = (newSettings: ConsentSettings) => {
+		const settingsWithTimestamp: ConsentSettings = {
+			...newSettings,
+			timestamp: Date.now()
+		}
+
+		setSettings(settingsWithTimestamp)
+		localStorage.setItem(
+			COOKIE_CONSENT_KEY,
+			JSON.stringify(settingsWithTimestamp)
+		)
+
+		updateGtagConsent(settingsWithTimestamp)
+		dispatchConsentUpdate()
+		setIsOpen(false)
+		setShowDetails(false)
+	}
+
 	const handleAcceptAll = () => {
-		const allSettings = { necessary: true, analytics: true, marketing: true }
-		saveSettings(allSettings)
+		saveSettings({
+			necessary: true,
+			analytics: true,
+			marketing: true
+		})
 	}
 
 	const handleAcceptSelected = () => {
@@ -73,27 +102,11 @@ export const CookieBanner = () => {
 	}
 
 	const handleDeclineAll = () => {
-		const declinedSettings = {
+		saveSettings({
 			necessary: true,
 			analytics: false,
 			marketing: false
-		}
-		saveSettings(declinedSettings)
-	}
-
-	const saveSettings = (newSettings: ConsentSettings) => {
-		const settingsWithTimestamp = {
-			...newSettings,
-			timestamp: Date.now()
-		}
-		setSettings(settingsWithTimestamp)
-		localStorage.setItem(
-			COOKIE_CONSENT_KEY,
-			JSON.stringify(settingsWithTimestamp)
-		)
-		updateGtagConsent(settingsWithTimestamp)
-		dispatchConsentUpdate()
-		setIsOpen(false)
+		})
 	}
 
 	return (
@@ -103,22 +116,22 @@ export const CookieBanner = () => {
 					initial={{ y: 100, opacity: 0 }}
 					animate={{ y: 0, opacity: 1 }}
 					exit={{ y: 100, opacity: 0 }}
-					className="fixed bottom-4 left-4 right-4 z-[100] md:left-auto md:right-8 md:bottom-8 md:max-w-md"
+					className="fixed inset-x-4 bottom-4 z-[100] md:left-auto md:right-8 md:bottom-8 md:max-w-md"
 				>
-					<div className="bg-card/95 backdrop-blur-md border border-border rounded-2xl shadow-2xl p-6 overflow-hidden relative">
-						<div className="flex items-start gap-4 mb-6">
-							<div className="p-3 bg-accent/10 rounded-xl text-accent ring-1 ring-accent/20">
-								<Cookie size={28} />
+					<div className="relative flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden rounded-2xl border border-border bg-card/95 p-6 shadow-2xl backdrop-blur-md">
+						<div className="mb-2 sm:mb-6 flex shrink-0 flex-col items-center gap-4 sm:flex-row sm:items-start">
+							<div className="rounded-xl bg-accent/10 p-2 text-accent ring-1 ring-accent/20 sm:p-3">
+								<Cookie className="size-5 sm:size-7" />
 							</div>
+
 							<div>
-								<h3 className="text-xl font-bold font-sans tracking-tight">
+								<h3 className="font-sans text-xl font-bold tracking-tight">
 									Cookie-Einstellungen
 								</h3>
-								<p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+								<p className="mt-1 text-sm leading-relaxed text-muted-foreground">
 									Wir verwenden Cookies, um die grundlegenden Funktionen der
-									Website sicherzustellen sowie zur Analyse der Nutzung (Google
-									Analytics). Weitere Informationen und Details finden Sie in
-									unserer{' '}
+									Website sicherzustellen sowie zur Analyse der Nutzung. Weitere
+									Informationen befinden sich in unserer{' '}
 									<Link
 										href="/datenschutz"
 										className="text-accent underline hover:no-underline"
@@ -131,13 +144,14 @@ export const CookieBanner = () => {
 						</div>
 
 						{!showDetails ? (
-							<div className="flex flex-col gap-3">
+							<div className="flex shrink-0 flex-col gap-3">
 								<Button
-									className="w-full text-base font-semibold py-6"
+									className="w-full py-6 text-base font-semibold"
 									onClick={handleAcceptAll}
 								>
 									Alle akzeptieren
 								</Button>
+
 								<div className="flex gap-3">
 									<Button
 										variant="outline"
@@ -146,6 +160,7 @@ export const CookieBanner = () => {
 									>
 										Einstellungen
 									</Button>
+
 									<Button
 										variant="secondary"
 										className="flex-1 py-5"
@@ -157,88 +172,104 @@ export const CookieBanner = () => {
 							</div>
 						) : (
 							<motion.div
-								initial={{ height: 0, opacity: 0 }}
-								animate={{ height: 'auto', opacity: 1 }}
-								className="space-y-5"
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0 }}
+								className="flex min-h-0 flex-1 flex-col"
 							>
-								<div className="space-y-3 pt-2">
-									{/* Necessary */}
-									<div className="flex items-start justify-between p-4 rounded-xl bg-secondary/30 border border-border/50">
-										<div className="flex flex-col pr-4">
-											<div className="flex items-center gap-2">
-												<ShieldCheck size={14} className="text-accent" />
-												<span className="text-sm font-bold text-foreground">
-													Notwendig
+								<div className="min-h-0 flex-1 overflow-y-auto pr-1">
+									<div className="space-y-3 pt-2">
+										<div className="flex items-start justify-between rounded-xl border border-border/50 bg-secondary/30 p-4">
+											<div className="flex flex-col pr-4">
+												<div className="flex items-center gap-2">
+													<ShieldCheck size={14} className="text-accent" />
+													<span className="text-sm font-bold text-foreground">
+														Notwendig
+													</span>
+												</div>
+												<span className="mt-1 text-xs text-muted-foreground">
+													Ermöglichen Grundfunktionen wie Sicherheit und
+													Navigation.
 												</span>
 											</div>
-											<span className="text-xs text-muted-foreground mt-1">
-												Ermöglichen Grundfunktionen wie Sicherheit und
-												Navigation.
-											</span>
-										</div>
-										<Checkbox checked disabled />
-									</div>
 
-									{/* Analytics */}
-									<div
-										className="flex items-start justify-between p-4 rounded-xl bg-secondary/30 border border-border/50 transition-colors hover:bg-secondary/50 cursor-pointer"
-										onClick={() =>
-											setSettings((s) => ({ ...s, analytics: !s.analytics }))
-										}
-									>
-										<div className="flex flex-col pr-4">
-											<span className="text-sm font-bold text-foreground">
-												Analytische Cookies
-											</span>
-											<span className="text-xs text-muted-foreground mt-1">
-												Analytische Cookies (Google Analytics) helfen uns zu
-												verstehen, wie Besucher unsere Website nutzen. Dabei
-												werden Daten anonymisiert verarbeitet und können in die
-												USA übertragen werden.
-											</span>
+											<Checkbox checked disabled />
 										</div>
-										<Checkbox
-											checked={settings.analytics}
-											onCheckedChange={(checked) =>
-												setSettings((s) => ({ ...s, analytics: !!checked }))
-											}
-											onClick={(e) => e.stopPropagation()} // Prevent double toggle
-										/>
-									</div>
 
-									{/* Marketing */}
-									<div
-										className="flex items-start justify-between p-4 rounded-xl bg-secondary/30 border border-border/50 transition-colors hover:bg-secondary/50 cursor-pointer"
-										onClick={() =>
-											setSettings((s) => ({ ...s, marketing: !s.marketing }))
-										}
-									>
-										<div className="flex flex-col pr-4">
-											<span className="text-sm font-bold text-foreground">
-												Marketing
-											</span>
-											<span className="text-xs text-muted-foreground mt-1">
-												Werden verwendet, um personalisierte Erlebnisse und
-												relevante Inhalte bereitzustellen.
-											</span>
-										</div>
-										<Checkbox
-											checked={settings.marketing}
-											onCheckedChange={(checked) =>
-												setSettings((s) => ({ ...s, marketing: !!checked }))
+										<div
+											className="flex cursor-pointer items-start justify-between rounded-xl border border-border/50 bg-secondary/30 p-4 transition-colors hover:bg-secondary/50"
+											onClick={() =>
+												setSettings((s) => ({
+													...s,
+													analytics: !s.analytics
+												}))
 											}
-											onClick={(e) => e.stopPropagation()} // Prevent double toggle
-										/>
+										>
+											<div className="flex flex-col pr-4">
+												<span className="text-sm font-bold text-foreground">
+													Analytische Cookies
+												</span>
+												<span className="mt-1 text-xs text-muted-foreground">
+													Analytische Cookies (Google Analytics) helfen uns zu
+													verstehen, wie Besucher unsere Website nutzen. Dabei
+													werden Daten anonymisiert verarbeitet und können in
+													die USA übertragen werden.
+												</span>
+											</div>
+
+											<Checkbox
+												checked={settings.analytics}
+												onCheckedChange={(checked) =>
+													setSettings((s) => ({
+														...s,
+														analytics: !!checked
+													}))
+												}
+												onClick={(e) => e.stopPropagation()}
+											/>
+										</div>
+
+										<div
+											className="flex cursor-pointer items-start justify-between rounded-xl border border-border/50 bg-secondary/30 p-4 transition-colors hover:bg-secondary/50"
+											onClick={() =>
+												setSettings((s) => ({
+													...s,
+													marketing: !s.marketing
+												}))
+											}
+										>
+											<div className="flex flex-col pr-4">
+												<span className="text-sm font-bold text-foreground">
+													Marketing
+												</span>
+												<span className="mt-1 text-xs text-muted-foreground">
+													Werden verwendet, um personalisierte Erlebnisse und
+													relevante Inhalte bereitzustellen.
+												</span>
+											</div>
+
+											<Checkbox
+												checked={settings.marketing}
+												onCheckedChange={(checked) =>
+													setSettings((s) => ({
+														...s,
+														marketing: !!checked
+													}))
+												}
+												onClick={(e) => e.stopPropagation()}
+											/>
+										</div>
 									</div>
 								</div>
 
-								<div className="flex flex-col gap-2 pt-2">
+								<div className="mt-4 flex shrink-0 flex-col gap-2 border-t border-border/50 pt-4">
 									<Button
 										className="w-full font-bold"
 										onClick={handleAcceptSelected}
 									>
 										Auswahl bestätigen
 									</Button>
+
 									<Button
 										variant="ghost"
 										size="sm"
@@ -251,16 +282,16 @@ export const CookieBanner = () => {
 							</motion.div>
 						)}
 
-						<div className="mt-6 pt-4 border-t border-border flex justify-center gap-4">
+						<div className="mt-6 flex shrink-0 justify-center gap-4 border-t border-border pt-4">
 							<Link
 								href="/datenschutz"
-								className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground hover:text-accent transition-colors"
+								className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:text-accent"
 							>
 								Datenschutz
 							</Link>
 							<Link
 								href="/impressum"
-								className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground hover:text-accent transition-colors"
+								className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:text-accent"
 							>
 								Impressum
 							</Link>
