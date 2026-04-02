@@ -10,6 +10,7 @@ import '@splidejs/splide/css'
 interface Logo {
 	src: string
 	alt: string
+	companyName: string
 	width?: number
 	height?: number
 }
@@ -59,6 +60,7 @@ export const LogoSlider: React.FC<LogoSliderProps> = ({
 						<div
 							className="relative w-full"
 							style={{ height: `${logo.height || logoHeight}px` }}
+							title={logo.companyName}
 						>
 							<Image
 								src={logo.src}

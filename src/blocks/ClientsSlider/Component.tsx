@@ -39,13 +39,14 @@ export const ClientsSliderBlock: React.FC<Props> = async ({
 			?.map((client) => {
 				const media = client.logo as any
 				const url: string | undefined = media?.url
+				const companyName: string = client.companyName
 
 				if (!url) return null
 
 				return {
 					src: url,
-					alt: client.companyName,
-					// optional: einheitliche Höhe
+					alt: companyName,
+					companyName,
 					height: 80
 				}
 			})
@@ -62,7 +63,14 @@ export const ClientsSliderBlock: React.FC<Props> = async ({
 			)}
 
 			<LogoSlider
-				logos={logos as { src: string; alt: string; height?: number }[]}
+				logos={
+					logos as {
+						src: string
+						alt: string
+						companyName: string
+						height?: number
+					}[]
+				}
 			/>
 		</section>
 	)
