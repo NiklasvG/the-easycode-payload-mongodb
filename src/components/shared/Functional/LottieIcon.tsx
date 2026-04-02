@@ -20,6 +20,9 @@ import FireworkAnimation from '@/Icons/Firework.json'
 import ConfettiAnimation from '@/Icons/Confetti.json'
 import DeveloperAnimation from '@/Icons/Developer.json'
 import SchoolAnimation from '@/Icons/School.json'
+import ServerAnimation from '@/Icons/Server.json'
+import LoadBalancerAnimation from '@/Icons/Load-Balancer.json'
+import MailAnimation from '@/Icons/Mail.json'
 
 // use LottieIconNames
 interface LottieIconProps {
@@ -81,6 +84,15 @@ const LottieIcon: React.FC<LottieIconProps> = ({ icon, triggerPlay }) => {
 			break
 		case 'school':
 			animationData = SchoolAnimation
+			break
+		case 'server':
+			animationData = ServerAnimation
+			break
+		case 'loadBalancer':
+			animationData = LoadBalancerAnimation
+			break
+		case 'mail':
+			animationData = MailAnimation
 			break
 		default:
 			animationData = ComputerAnimation

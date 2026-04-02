@@ -904,8 +904,11 @@ export interface ServicesBlock {
           | 'engagement'
           | 'firework'
           | 'git'
+          | 'loadBalancer'
+          | 'mail'
           | 'pen'
           | 'school'
+          | 'server'
         )
       | null;
     image?: (string | null) | Media;
@@ -1127,8 +1130,11 @@ export interface TextIconTimelineBlock {
               | 'engagement'
               | 'firework'
               | 'git'
+              | 'loadBalancer'
+              | 'mail'
               | 'pen'
               | 'school'
+              | 'server'
             )
           | null;
         /**

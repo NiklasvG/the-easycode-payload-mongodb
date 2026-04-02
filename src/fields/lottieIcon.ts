@@ -15,8 +15,11 @@ export type LottieIconNames =
 	| 'engagement'
 	| 'firework'
 	| 'git'
+	| 'loadBalancer'
+	| 'mail'
 	| 'pen'
 	| 'school'
+	| 'server'
 
 export const lottieIconOptions: { label: string; value: LottieIconNames }[] = [
 	{ label: 'Apple', value: 'apple' },
@@ -32,8 +35,11 @@ export const lottieIconOptions: { label: string; value: LottieIconNames }[] = [
 	{ label: 'Engagement', value: 'engagement' },
 	{ label: 'Firework', value: 'firework' },
 	{ label: 'Git', value: 'git' },
+	{ label: 'Load Balancer', value: 'loadBalancer' },
+	{ label: 'Mail', value: 'mail' },
 	{ label: 'Pen', value: 'pen' },
-	{ label: 'School', value: 'school' }
+	{ label: 'School', value: 'school' },
+	{ label: 'Server', value: 'server' }
 ]
 
 type LottieIconFieldType = (options?: {
