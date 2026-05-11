@@ -1280,6 +1280,10 @@ export interface Project {
    */
   outcomeSentence: string;
   image: string | Media;
+  /**
+   * Optionaler Hinweis, der in der Projektvorschau beim Hover über das Info-Symbol erscheint.
+   */
+  imageHint?: string | null;
   heroImage?: (string | null) | Media;
   theChallenge?: {
     root: {
@@ -1471,6 +1475,7 @@ export interface Search {
   clientSlug?: string | null;
   shortDescription?: string | null;
   projectType?: string | null;
+  imageHint?: string | null;
   image?: (string | null) | Media;
   tags?:
     | {
@@ -2341,6 +2346,7 @@ export interface ProjectsSelect<T extends boolean = true> {
   role?: T;
   outcomeSentence?: T;
   image?: T;
+  imageHint?: T;
   heroImage?: T;
   theChallenge?: T;
   theGoal?: T;
@@ -2573,6 +2579,7 @@ export interface SearchSelect<T extends boolean = true> {
   clientSlug?: T;
   shortDescription?: T;
   projectType?: T;
+  imageHint?: T;
   image?: T;
   tags?:
     | T

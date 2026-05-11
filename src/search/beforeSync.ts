@@ -45,6 +45,7 @@ export const beforeSyncWithSearch: BeforeSync = async ({
 		clientSlug?: string | null
 		shortDescription?: string | null
 		projectType?: string | null
+		imageHint?: string | null
 		image?: string | null
 		tags?: { tag?: string | null }[]
 	} = {
@@ -98,11 +99,12 @@ export const beforeSyncWithSearch: BeforeSync = async ({
 
 	// ✅ PROJECTS: wie bei dir
 	if (collection === 'projects') {
-		const { client, shortDescription, projectType, image, tags } =
+		const { client, shortDescription, projectType, imageHint, image, tags } =
 			originalDoc as any
 
 		modifiedDoc.shortDescription = shortDescription ?? null
 		modifiedDoc.projectType = projectType ?? null
+		modifiedDoc.imageHint = imageHint ?? null
 		modifiedDoc.image = image?.id || (typeof image === 'string' ? image : null)
 
 		modifiedDoc.tags = Array.isArray(tags)
@@ -134,6 +136,7 @@ export const beforeSyncWithSearch: BeforeSync = async ({
 		modifiedDoc.clientSlug = null
 		modifiedDoc.shortDescription = null
 		modifiedDoc.projectType = null
+		modifiedDoc.imageHint = null
 		modifiedDoc.image = null
 		modifiedDoc.tags = []
 	}

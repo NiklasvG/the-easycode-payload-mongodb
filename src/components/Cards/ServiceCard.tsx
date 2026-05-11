@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 
 // Libraries
 import dynamic from 'next/dynamic'
-import { ArrowUpRight, BadgeCheck } from 'lucide-react'
+import { ArrowUpRight, BadgeCheck, Info } from 'lucide-react'
 
 // Components
 import { Media as MediaComponent } from '@/components/Media'
@@ -44,6 +44,7 @@ interface ServiceCardProps {
 	}
 	icon?: ServicesBlock['services'][0]['icon'] | undefined
 	image?: string | Media | null | undefined
+	imageHint?: string | null | undefined
 	headline: string
 	abstract: string
 	tags: string[]
@@ -58,6 +59,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 	link,
 	icon,
 	image,
+	imageHint,
 	headline,
 	abstract,
 	items,
@@ -92,6 +94,21 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 			)}
 			{image && (
 				<div className="image-teaser__image">
+					{imageHint && (
+						<div className="image-teaser__hint group/hint">
+							<button
+								type="button"
+								className="image-teaser__hint-trigger"
+								aria-label="Hinweis zum Vorschaubild anzeigen"
+							>
+								<span>Info</span>
+								<Info className="size-4" aria-hidden="true" />
+							</button>
+							<div className="image-teaser__hint-text" role="tooltip">
+								{imageHint}
+							</div>
+						</div>
+					)}
 					<MediaComponent
 						className=""
 						imgClassName="object-cover w-full h-full"

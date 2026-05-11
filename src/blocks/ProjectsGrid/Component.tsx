@@ -83,6 +83,7 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 				label: project.title
 			},
 			image: project.image ?? null,
+			imageHint: project.imageHint ?? null,
 			headline: project.title,
 			abstract: project.shortDescription,
 			tags,

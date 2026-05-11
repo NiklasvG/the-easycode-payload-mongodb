@@ -49,6 +49,7 @@ type SearchDoc = {
 	clientSlug?: string | null
 	shortDescription?: string | null
 	projectType?: string | null
+	imageHint?: string | null
 	image?: any
 	tags?: { tag?: string | null }[] | null
 }
@@ -137,6 +138,7 @@ export default async function Page({
 			clientSlug: true,
 			shortDescription: true,
 			projectType: true,
+			imageHint: true,
 			image: true,
 			tags: true
 		},
@@ -165,6 +167,7 @@ export default async function Page({
 					label: d.title ?? d.meta?.title ?? d.slug ?? 'Projekt'
 				},
 				image: d.image ?? d.meta?.image ?? null,
+				imageHint: d.imageHint ?? null,
 				headline: d.title ?? d.meta?.title ?? '',
 				abstract: d.shortDescription ?? d.meta?.description ?? '',
 				tags,

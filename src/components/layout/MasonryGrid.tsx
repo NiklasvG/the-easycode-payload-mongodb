@@ -30,6 +30,7 @@ type MasonryCard = {
 	link: LinkProp
 	icon?: ServicesBlock['services'][0]['icon'] | undefined
 	image?: string | Media | null
+	imageHint?: string | null
 	headline: string
 	abstract: string
 	tags: string[]
@@ -49,6 +50,7 @@ export default function MasonryGrid({ cards }: MasonryGridProps) {
 						link={card.link}
 						icon={card.icon}
 						image={card.image}
+						imageHint={card.imageHint}
 						headline={card.headline}
 						abstract={card.abstract}
 						tags={card.tags}

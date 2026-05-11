@@ -237,6 +237,15 @@ export const Projects: CollectionConfig = {
 							required: true
 						},
 						{
+							name: 'imageHint',
+							label: 'Hinweis zum Listenbild (Card)',
+							type: 'textarea',
+							admin: {
+								description:
+									'Optionaler Hinweis, der in der Projektvorschau beim Hover über das Info-Symbol erscheint.'
+							}
+						},
+						{
 							name: 'heroImage',
 							label: 'Hero Bild (Detailseite)',
 							type: 'upload',
