@@ -48,6 +48,16 @@ export const ProjectsGridBlock: Block = {
 			defaultValue: 'Der Erfolg deiner Projekte treibt uns an.'
 		},
 		{
+			name: 'enableProjectTypeFilter',
+			type: 'checkbox',
+			label: 'Projekt-Typ Filter im Frontend anzeigen',
+			defaultValue: false,
+			admin: {
+				description:
+					'Wenn aktiviert, erscheinen oberhalb des Grids Filter-Buttons für Projekt-Typen, die in den angezeigten Projekten vorkommen.'
+			}
+		},
+		{
 			name: 'projectTypes',
 			label: 'Projekt-Typen filtern',
 			type: 'select',

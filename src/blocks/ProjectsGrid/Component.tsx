@@ -51,6 +51,7 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 	projectsLimit,
 	backgroundVariant = 'primary',
 	projectTypes,
+	enableProjectTypeFilter,
 	className
 }) => {
 	const payload = await getPayload({ config: configPromise })
@@ -93,6 +94,7 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 		]
 
 		return {
+			projectType: project.projectType,
 			enableTeaserLink: true,
 			link: {
 				type: 'custom' as const,
@@ -108,6 +110,10 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 			icon: undefined
 		}
 	})
+
+	const projectTypeFilterOptions = Object.entries(projectTypeLabelMap)
+		.filter(([value]) => cards.some((card) => card.projectType === value))
+		.map(([value, label]) => ({ value, label }))
 
 	const bgClass =
 		backgroundVariant === 'primary'
@@ -134,7 +140,11 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 
 				{subhead && <p className="subhead big">{subhead}</p>}
 
-				<MasonryGrid cards={cards} />
+				<MasonryGrid
+					cards={cards}
+					enableProjectTypeFilter={enableProjectTypeFilter ?? false}
+					projectTypeFilterOptions={projectTypeFilterOptions}
+				/>
 
 				{link?.label !== 'no-link' && (
 					<CMSLink {...link} label={null} className="mx-auto my-5">

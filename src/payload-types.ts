@@ -943,6 +943,10 @@ export interface ProjectsGridBlock {
   headline?: string | null;
   subhead?: string | null;
   /**
+   * Wenn aktiviert, erscheinen oberhalb des Grids Filter-Buttons für Projekt-Typen, die in den angezeigten Projekten vorkommen.
+   */
+  enableProjectTypeFilter?: boolean | null;
+  /**
    * Wenn gesetzt, werden nur Projekte mit diesen Typen angezeigt.
    */
   projectTypes?: ('brand-webseite' | 'individualsoftware' | 'e-commerce' | 'app-entwicklung' | 'hosting')[] | null;
@@ -1943,6 +1947,7 @@ export interface ProjectsGridBlockSelect<T extends boolean = true> {
   overhead?: T;
   headline?: T;
   subhead?: T;
+  enableProjectTypeFilter?: T;
   projectTypes?: T;
   link?:
     | T
