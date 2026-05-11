@@ -25,6 +25,23 @@ function getProjectTypeLabel(value?: string | null): string | null {
 	return projectTypeLabelMap[value] ?? null
 }
 
+function formatProjectDateRange(
+	startDate?: string | null,
+	endDate?: string | null
+): string | null {
+	if (!startDate) return null
+
+	const dateFormatter = new Intl.DateTimeFormat('de-DE', {
+		month: 'short',
+		year: 'numeric'
+	})
+
+	const start = dateFormatter.format(new Date(startDate))
+	const end = endDate ? dateFormatter.format(new Date(endDate)) : 'laufend'
+
+	return start === end ? start : `${start} - ${end}`
+}
+
 type Args = {
 	searchParams: Promise<{
 		q: string
@@ -50,6 +67,8 @@ type SearchDoc = {
 	shortDescription?: string | null
 	projectType?: string | null
 	imageHint?: string | null
+	startDate?: string | null
+	endDate?: string | null
 	image?: any
 	tags?: { tag?: string | null }[] | null
 }
@@ -139,6 +158,8 @@ export default async function Page({
 			shortDescription: true,
 			projectType: true,
 			imageHint: true,
+			startDate: true,
+			endDate: true,
 			image: true,
 			tags: true
 		},
@@ -168,6 +189,7 @@ export default async function Page({
 				},
 				image: d.image ?? d.meta?.image ?? null,
 				imageHint: d.imageHint ?? null,
+				meta: formatProjectDateRange(d.startDate, d.endDate),
 				headline: d.title ?? d.meta?.title ?? '',
 				abstract: d.shortDescription ?? d.meta?.description ?? '',
 				tags,

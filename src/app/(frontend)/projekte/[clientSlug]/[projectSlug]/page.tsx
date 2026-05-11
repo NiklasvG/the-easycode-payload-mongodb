@@ -15,13 +15,31 @@ import {
 	Cpu,
 	Code,
 	ExternalLink,
-	Github
+	Github,
+	CalendarDays
 } from 'lucide-react'
 import RichText from '@/components/RichText'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
 type Project = RequiredDataFromCollectionSlug<'projects'>
 type Client = RequiredDataFromCollectionSlug<'clients'>
+
+function formatProjectDateRange(
+	startDate?: string | null,
+	endDate?: string | null
+): string | null {
+	if (!startDate) return null
+
+	const dateFormatter = new Intl.DateTimeFormat('de-DE', {
+		month: 'long',
+		year: 'numeric'
+	})
+
+	const start = dateFormatter.format(new Date(startDate))
+	const end = endDate ? dateFormatter.format(new Date(endDate)) : 'laufend'
+
+	return start === end ? start : `${start} - ${end}`
+}
 
 export async function generateStaticParams() {
 	const payload = await getPayload({ config: configPromise })
@@ -115,6 +133,10 @@ export default async function ProjectDetailPage({
 
 	const technologies =
 		project.technologies?.map((t) => t.name).filter(Boolean) ?? []
+	const projectDateRange = formatProjectDateRange(
+		project.startDate,
+		project.endDate
+	)
 
 	return (
 		<article className="min-h-screen bg-background text-foreground animate-in fade-in duration-500 selection:bg-accent selection:text-white">
@@ -135,7 +157,7 @@ export default async function ProjectDetailPage({
 
 					<div className="flex flex-col lg:flex-row gap-12 lg:items-end mb-12">
 						<div className="flex-1">
-							<div className="flex items-center gap-3 mb-6">
+							<div className="flex flex-wrap items-center gap-3 mb-6">
 								<span className="text-accent font-bold tracking-wider uppercase text-sm border border-accent/20 px-3 py-1 rounded-full bg-accent/5">
 									{clientName}
 								</span>
@@ -151,6 +173,14 @@ export default async function ProjectDetailPage({
 								<span className="text-gray-300 text-sm uppercase tracking-wider">
 									{project.industry}
 								</span>
+								{projectDateRange && (
+									<>
+										<span className="w-1 h-1 bg-gray-600 rounded-full"></span>
+										<span className="text-gray-300 text-sm uppercase tracking-wider">
+											{projectDateRange}
+										</span>
+									</>
+								)}
 							</div>
 
 							<h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold leading-tight mb-6">
@@ -171,6 +201,17 @@ export default async function ProjectDetailPage({
 								</div>
 								<div className="text-lg font-medium">{project.role}</div>
 							</div>
+							{projectDateRange && (
+								<div className="mb-4">
+									<div className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-1">
+										Zeitraum
+									</div>
+									<div className="flex items-center gap-2 text-lg font-medium">
+										<CalendarDays className="size-5 text-accent" />
+										{projectDateRange}
+									</div>
+								</div>
+							)}
 							{technologies.length > 0 && (
 								<div>
 									<div className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2">

@@ -62,6 +62,8 @@ export const searchFields: Field[] = [
 	{ name: 'shortDescription', type: 'text', admin: { readOnly: true } },
 	{ name: 'projectType', type: 'text', admin: { readOnly: true } },
 	{ name: 'imageHint', type: 'text', admin: { readOnly: true } },
+	{ name: 'startDate', type: 'date', admin: { readOnly: true } },
+	{ name: 'endDate', type: 'date', admin: { readOnly: true } },
 	{
 		name: 'image',
 		type: 'upload',

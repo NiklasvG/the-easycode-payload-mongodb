@@ -1476,6 +1476,8 @@ export interface Search {
   shortDescription?: string | null;
   projectType?: string | null;
   imageHint?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
   image?: (string | null) | Media;
   tags?:
     | {
@@ -2580,6 +2582,8 @@ export interface SearchSelect<T extends boolean = true> {
   shortDescription?: T;
   projectType?: T;
   imageHint?: T;
+  startDate?: T;
+  endDate?: T;
   image?: T;
   tags?:
     | T

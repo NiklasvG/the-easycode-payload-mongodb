@@ -45,6 +45,7 @@ interface ServiceCardProps {
 	icon?: ServicesBlock['services'][0]['icon'] | undefined
 	image?: string | Media | null | undefined
 	imageHint?: string | null | undefined
+	meta?: string | null | undefined
 	headline: string
 	abstract: string
 	tags: string[]
@@ -60,6 +61,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 	icon,
 	image,
 	imageHint,
+	meta,
 	headline,
 	abstract,
 	items,
@@ -116,6 +118,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 						resource={image}
 					/>
 				</div>
+			)}
+
+			{meta && (
+				<p className="mb-2 text-xs font-bold uppercase tracking-widest text-gray-500">
+					{meta}
+				</p>
 			)}
 
 			<div className="flex gap-4 sm:gap-4 items-center">

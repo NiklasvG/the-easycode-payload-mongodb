@@ -26,6 +26,23 @@ function getProjectTypeLabel(value?: string | null): string | null {
 	return projectTypeLabelMap[value] ?? null
 }
 
+function formatProjectDateRange(
+	startDate?: string | null,
+	endDate?: string | null
+): string | null {
+	if (!startDate) return null
+
+	const dateFormatter = new Intl.DateTimeFormat('de-DE', {
+		month: 'short',
+		year: 'numeric'
+	})
+
+	const start = dateFormatter.format(new Date(startDate))
+	const end = endDate ? dateFormatter.format(new Date(endDate)) : 'laufend'
+
+	return start === end ? start : `${start} - ${end}`
+}
+
 export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 	overhead,
 	headline,
@@ -84,6 +101,7 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 			},
 			image: project.image ?? null,
 			imageHint: project.imageHint ?? null,
+			meta: formatProjectDateRange(project.startDate, project.endDate),
 			headline: project.title,
 			abstract: project.shortDescription,
 			tags,

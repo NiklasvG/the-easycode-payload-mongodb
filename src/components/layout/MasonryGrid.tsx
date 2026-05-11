@@ -31,6 +31,7 @@ type MasonryCard = {
 	icon?: ServicesBlock['services'][0]['icon'] | undefined
 	image?: string | Media | null
 	imageHint?: string | null
+	meta?: string | null
 	headline: string
 	abstract: string
 	tags: string[]
@@ -51,6 +52,7 @@ export default function MasonryGrid({ cards }: MasonryGridProps) {
 						icon={card.icon}
 						image={card.image}
 						imageHint={card.imageHint}
+						meta={card.meta}
 						headline={card.headline}
 						abstract={card.abstract}
 						tags={card.tags}
