@@ -28,7 +28,7 @@ function formatProjectDateRange(startDate?: string | null, endDate?: string | nu
   if (!startDate) return null
 
   const dateFormatter = new Intl.DateTimeFormat('de-DE', {
-    month: 'long',
+    month: 'short',
     year: 'numeric',
   })
 
@@ -160,18 +160,10 @@ export default async function ProjectDetailPage({ params: paramsPromise }: Args)
                   </>
                 )}
                 <span className="w-1 h-1 bg-gray-600 rounded-full"></span>
-                <span className="text-gray-300 text-sm uppercase tracking-wider">
-                  {project.industry}
-                </span>
-                {projectDateRange && (
-                  <>
-                    <span className="w-1 h-1 bg-gray-600 rounded-full"></span>
-                    <span className="text-gray-300 text-sm uppercase tracking-wider">
-                      {projectDateRange}
-                    </span>
-                  </>
-                )}
-              </div>
+								<span className="text-gray-300 text-sm uppercase tracking-wider">
+									{project.industry}
+								</span>
+							</div>
 
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold leading-tight mb-6">
                 {project.title}
