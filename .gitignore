@@ -3,11 +3,16 @@ dist / media
 node_modules
 .DS_Store
 .env
+.env.*
+!.env.example
 .next
 .vercel
 
 # Payload default media upload directory
 public/media/
+media/
+backups/
+migration-data/
 
 public/robots.txt
 public/sitemap*.xml
@@ -19,6 +24,3 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-
-# Sentry Config File
-.env.sentry-build-plugin

@@ -6,8 +6,6 @@ import { searchPlugin } from '@payloadcms/plugin-search'
 import { Plugin } from 'payload'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
-import { sentryPlugin } from '@payloadcms/plugin-sentry'
-import * as Sentry from '@sentry/nextjs'
 import {
 	FixedToolbarFeature,
 	HeadingFeature,
@@ -130,6 +128,5 @@ export const plugins: Plugin[] = [
 				return [...defaultFields, ...searchFields]
 			}
 		}
-	}),
-	sentryPlugin({ Sentry })
+	})
 ]

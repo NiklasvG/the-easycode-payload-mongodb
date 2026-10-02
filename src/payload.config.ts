@@ -1,4 +1,3 @@
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 
@@ -89,18 +88,7 @@ export default buildConfig({
 	collections: [Pages, Posts, Media, Categories, Users, Clients, Projects],
 	cors: [getServerSideURL()].filter(Boolean),
 	globals: [Header, Footer],
-	plugins: [
-		...plugins,
-		vercelBlobStorage({
-			enabled: true, // Optional, defaults to true
-			// Specify which collections should use Vercel Blob
-			collections: {
-				media: true
-			},
-			// Token provided by Vercel once Blob storage is added to your Vercel project
-			token: process.env.BLOB_READ_WRITE_TOKEN
-		})
-	],
+	plugins: [...plugins],
 	email: nodemailerAdapter({
 		defaultFromAddress: 'no-reply@the-easycode.eu',
 		defaultFromName: 'EasyCode',

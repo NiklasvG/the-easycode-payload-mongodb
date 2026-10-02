@@ -21,38 +21,6 @@ type Args = {
 	}>
 }
 
-export async function generateStaticParams() {
-	const payload = await getPayload({ config: configPromise })
-	const pages = await payload.find({
-		collection: 'pages',
-		draft: false,
-		limit: 1000,
-		overrideAccess: false,
-		pagination: false,
-		select: {
-			slug: true,
-			breadcrumbs: true // Wir brauchen die Breadcrumbs für den vollen Pfad
-		}
-	})
-
-	const params = pages.docs
-		?.filter((doc) => {
-			return doc.slug !== 'home'
-		})
-		.map(({ breadcrumbs }) => {
-			// Wir nehmen die URL vom letzten Breadcrumb, da dieser den vollen Pfad enthält
-			const url = breadcrumbs?.[breadcrumbs.length - 1]?.url
-			if (!url) return null
-
-			// Entferne führenden Slash und splitte in Segmente
-			const slug = url.replace(/^\/|\/$/g, '').split('/')
-
-			return { slug }
-		})
-		.filter(Boolean)
-
-	return params || []
-}
 
 export default async function Page({ params: paramsPromise }: Args) {
 	const { isEnabled: draft } = await draftMode()

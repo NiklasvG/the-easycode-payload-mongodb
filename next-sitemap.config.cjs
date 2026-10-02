@@ -12,7 +12,7 @@ module.exports = {
     policies: [
       {
         userAgent: '*',
-        disallow: '/admin/*',
+        disallow: process.env.APP_ENV === 'staging' ? '/' : '/admin/*',
       },
     ],
     additionalSitemaps: [`${SITE_URL}/pages-sitemap.xml`, `${SITE_URL}/posts-sitemap.xml`],

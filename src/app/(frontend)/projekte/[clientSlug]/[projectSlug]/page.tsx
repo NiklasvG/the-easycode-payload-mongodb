@@ -38,39 +38,6 @@ function formatProjectDateRange(startDate?: string | null, endDate?: string | nu
   return start === end ? start : `${start} - ${end}`
 }
 
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-
-  const { docs } = await payload.find({
-    collection: 'projects',
-    draft: false,
-    limit: 1000,
-    pagination: false,
-    depth: 1,
-    select: {
-      slug: true,
-      client: true,
-    },
-  })
-
-  const params =
-    docs?.flatMap((project) => {
-      const client = project.client as Client | string | null | undefined
-      if (!client) return []
-
-      const clientSlug = typeof client === 'string' ? client : client.slug
-      if (!clientSlug || !project.slug) return []
-
-      return [
-        {
-          clientSlug,
-          projectSlug: project.slug,
-        },
-      ]
-    }) ?? []
-
-  return params
-}
 
 type Params = {
   clientSlug: string

@@ -18,6 +18,9 @@ import { AIChat } from '@/components/Chat/AIChat'
 import { GoogleAnalytics } from '@/components/GoogleAnalytics'
 import { CookieBanner } from '@/components/CookieBanner'
 
+// Read CMS content at request time; Docker builds need no database connection.
+export const dynamic = 'force-dynamic'
+
 const geistSans = Gabarito({
 	variable: '--font-geist-sans',
 	subsets: ['latin']

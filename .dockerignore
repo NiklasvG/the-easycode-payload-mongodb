@@ -1,0 +1,14 @@
+node_modules
+.next
+.git
+.env*
+!.env.example
+test.env
+media
+public/media
+backups
+migration-data
+test-results
+playwright-report
+blob-report
+*.tsbuildinfo
