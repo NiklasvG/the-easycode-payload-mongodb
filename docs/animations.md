@@ -1,7 +1,9 @@
-# Animationen
+# Animationen und reduzierte Bewegung
 
-TextAnimationHero verwendet für Scroll-Offset und Viewport-Fade die vorhandene Motion-Bibliothek. AOS und react-just-parallax haben keine weiteren Verwendungen und werden inklusive @types/aos entfernt. Bei prefers-reduced-motion entfallen Parallax, Fade und der automatische Phrasenwechsel; AnimatedText zeigt statischen Text.
+Motion ersetzt AOS und react-just-parallax; die nicht mehr benötigten Pakete sind entfernt. MotionConfig reducedMotion=user berücksichtigt die Systemeinstellung für die gesamte Anwendung. Video-Autoplay, Lottie, Hero und Chat respektieren reduzierte Bewegung; Videos bieten dann Bedienelemente statt erzwungener Bewegung.
 
-LottieSvg ersetzt den vollständigen Renderer. Die installierte Paketimplementierung bestätigt: SVG-Renderer unterstützt weiterhin Expressions. Viele vorhandene JSONs enthalten Expressions; LottieLight wäre daher ungeeignet. Play-Zustand wird über Refs geführt, ohne unnötige Renderzyklen; reduzierte Bewegung unterdrückt neue Wiedergabe und pausiert laufende Animationen.
+Lottie-Renderer und das jeweils gewählte JSON werden erst nahe dem sichtbaren Bereich geladen (200 px Vorlauf). Stabile Platzhalter erhalten die Kartengröße. Der expressionsfähige SVG-Renderer bleibt nötig; ein reiner Light-Renderer ersetzt ihn nicht vollständig.
 
-Noch zu prüfen: alle 18 Animationen visuell, Scroll-Offset auf realen CMS-Seiten, Tastaturbedienung und kontrollierter Bundlevergleich. Dependency-Entfernung allein belegt keine konkrete übertragene Byte-Einsparung. Für Offscreen-Animationen ist bedarfsgesteuertes Laden der JSONs eine weitere Optimierung.
+Browserprüfungen rendern alle 18 vorhandenen Icons auf Mobilgerät und Desktop, prüfen SVG-Pfade, verzögertes Laden eines entfernten Icons und unveränderte Frames bei reduzierter Bewegung. Alle Fälle bestehen. Das reduziert die anfänglich angeforderten Animationen; eine genaue Vorher-/Nachher-Bundleeinsparung mit identischem alten Build ist nicht belegt.
+
+Turbopack-Entwicklung wurde zusätzlich mit Lottie und CSS-Hot-Reload geprüft. Bekannte Next-Abbruchmeldungen bei Navigation werden von fachlichen Fehlern unterschieden; produktives Monitoring braucht weiterhin die tatsächliche Serveranbindung.

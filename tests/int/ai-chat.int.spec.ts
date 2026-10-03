@@ -50,11 +50,12 @@ describe('controlled Gemini contract', () => {
           text: 'Hello',
           candidates: [{ content: { parts: [{ thoughtSignature: 'signature' }] } }],
         }
+        yield { text: ' world' }
       })(),
     )
     const response = await POST(request({ message: 'hello' }))
     expect(response.status).toBe(200)
-    expect(await response.text()).toBe('Hello\n__THOUGHT_SIG__:signature')
+    expect(await response.text()).toBe('Hello world\n__THOUGHT_SIG__:signature')
     expect(mocks.find).toHaveBeenCalledWith(
       expect.objectContaining({ overrideAccess: false, draft: false }),
     )

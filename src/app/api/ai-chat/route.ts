@@ -162,6 +162,7 @@ export async function POST(req: Request) {
     const geminiStream = await chat.sendMessageStream({ message })
     const iterator = geminiStream[Symbol.asyncIterator]()
     let cancelled = false
+    let thoughtSignature = ''
     const stream = new ReadableStream({
       async pull(controller) {
         const encoder = new TextEncoder()
@@ -169,7 +170,11 @@ export async function POST(req: Request) {
           if (signal.aborted) { controller.close(); return }
           const { value: chunk, done } = await iterator.next()
           if (cancelled) return
-          if (done) { controller.close(); return }
+          if (done) {
+            if (thoughtSignature) controller.enqueue(encoder.encode(`\n__THOUGHT_SIG__:${thoughtSignature}`))
+            controller.close()
+            return
+          }
             const text = chunk.text ?? ''
             if (text) {
               controller.enqueue(encoder.encode(text))
@@ -180,13 +185,7 @@ export async function POST(req: Request) {
               (p) => p.thoughtSignature,
             )
             if (thoughtPart) {
-              // Wir senden die Signature als speziellen Kommentar am Ende oder Metadaten
-              // Da der Client einfach nur Text erwartet, hängen wir sie diskret an oder nutzen einen Delimiter
-              // Da wir aber "Circulation" brauchen, muss der Client sie speichern.
-              // Plan: Benutze einen Delimiter, den der Client erkennt.
-              controller.enqueue(
-                encoder.encode(`\n__THOUGHT_SIG__:${thoughtPart.thoughtSignature}`),
-              )
+              thoughtSignature = thoughtPart.thoughtSignature?.slice(0, 16384) || ''
             }
         } catch (err) {
           if (cancelled || signal.aborted) { if (!cancelled) controller.close(); return }

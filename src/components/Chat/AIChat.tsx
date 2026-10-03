@@ -227,7 +227,7 @@ export const AIChat: React.FC = () => {
 	return (
 		<div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
 			{isOpen && (
-				<div className="mb-4 w-[90vw] max-w-sm md:w-96 h-[500px] bg-black border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in slide-in-from-bottom-10 fade-in duration-300">
+				<div id="easycode-ai-chat" role="region" aria-label="EasyCode AI Chat" className="mb-4 w-[90vw] max-w-sm md:w-96 h-[500px] bg-black border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in slide-in-from-bottom-10 fade-in duration-300 motion-reduce:animate-none">
 					{/* Header */}
 					<div className="bg-linear-to-r from-accent to-accent-dark p-4 flex justify-between items-center">
 						<div className="flex items-center gap-2 text-white">
@@ -237,6 +237,7 @@ export const AIChat: React.FC = () => {
 							</span>
 						</div>
 						<button
+							aria-label="Chatfenster schließen"
 							onClick={() => { requestAbort.current?.abort(); setIsOpen(false) }}
 							className="text-white/80 hover:text-white transition-colors"
 						>
@@ -395,6 +396,9 @@ export const AIChat: React.FC = () => {
 			{/* Toggle Button */}
 			<button
 				onClick={handleToggleOpen}
+				aria-label={isOpen ? 'KI-Chat schließen' : 'KI-Chat öffnen'}
+				aria-expanded={isOpen}
+				aria-controls="easycode-ai-chat"
 				className="group relative flex items-center justify-center w-14 h-14 rounded-full bg-accent hover:bg-accent-dark text-white shadow-lg shadow-accent/20 transition-all duration-300 hover:scale-110 active:scale-95"
 			>
 				{isOpen ? (
@@ -405,7 +409,7 @@ export const AIChat: React.FC = () => {
 
 				{/* Pulse effect nur, wenn der Chat noch nie geöffnet wurde */}
 				{!isOpen && !hasOpenedOnce && (
-					<span className="absolute -z-10 w-full h-full rounded-full bg-accent opacity-40 animate-ping" />
+					<span className="absolute -z-10 w-full h-full rounded-full bg-accent opacity-40 animate-ping motion-reduce:animate-none" />
 				)}
 			</button>
 		</div>

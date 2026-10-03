@@ -1,3 +1,6 @@
+'use client'
+
+import { MotionConfig } from 'framer-motion'
 import React from 'react'
 
 import { HeaderThemeProvider } from './HeaderTheme'
@@ -8,7 +11,7 @@ export const Providers: React.FC<{
 }> = ({ children }) => {
   return (
     <ThemeProvider>
-      <HeaderThemeProvider>{children}</HeaderThemeProvider>
+      <MotionConfig reducedMotion="user"><HeaderThemeProvider>{children}</HeaderThemeProvider></MotionConfig>
     </ThemeProvider>
   )
 }
