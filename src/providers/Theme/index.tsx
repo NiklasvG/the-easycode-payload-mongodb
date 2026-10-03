@@ -1,57 +1,62 @@
 'use client'
-
-import React, { createContext, useCallback, use, useEffect, useState } from 'react'
-
+import React, { createContext, use, useCallback, useSyncExternalStore } from 'react'
 import type { Theme, ThemeContextType } from './types'
-
-import canUseDOM from '@/utilities/canUseDOM'
 import { defaultTheme, getImplicitPreference, themeLocalStorageKey } from './shared'
 import { themeIsValid } from './types'
 
-const initialContext: ThemeContextType = {
-  setTheme: () => null,
-  theme: undefined,
+export const getThemePreference = (): Theme | 'auto' => {
+  try {
+    const value = window.localStorage.getItem(themeLocalStorageKey)
+    return themeIsValid(value) ? value : 'auto'
+  } catch {
+    return 'auto'
+  }
 }
-
-const ThemeContext = createContext(initialContext)
-
-export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [theme, setThemeState] = useState<Theme | undefined>(
-    canUseDOM ? (document.documentElement.getAttribute('data-theme') as Theme) : undefined,
+const applyPreference = () => {
+  const preference = getThemePreference()
+  document.documentElement.setAttribute(
+    'data-theme',
+    preference === 'auto' ? getImplicitPreference() || defaultTheme : preference,
   )
-
-  const setTheme = useCallback((themeToSet: Theme | null) => {
-    if (themeToSet === null) {
-      window.localStorage.removeItem(themeLocalStorageKey)
-      const implicitPreference = getImplicitPreference()
-      document.documentElement.setAttribute('data-theme', implicitPreference || '')
-      if (implicitPreference) setThemeState(implicitPreference)
-    } else {
-      setThemeState(themeToSet)
-      window.localStorage.setItem(themeLocalStorageKey, themeToSet)
-      document.documentElement.setAttribute('data-theme', themeToSet)
+}
+export const subscribeTheme = (notify: () => void) => {
+  const observer = new MutationObserver(notify)
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+  const refresh = () => {
+    applyPreference()
+    notify()
+  }
+  const media = window.matchMedia('(prefers-color-scheme: dark)')
+  window.addEventListener('storage', refresh)
+  window.addEventListener('theme-preference-changed', refresh)
+  media.addEventListener('change', refresh)
+  return () => {
+    observer.disconnect()
+    window.removeEventListener('storage', refresh)
+    window.removeEventListener('theme-preference-changed', refresh)
+    media.removeEventListener('change', refresh)
+  }
+}
+const themeSnapshot = () => {
+  const value = document.documentElement.getAttribute('data-theme')
+  return themeIsValid(value) ? value : defaultTheme
+}
+const ThemeContext = createContext<ThemeContextType>({ setTheme: () => null, theme: undefined })
+export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+  const theme = useSyncExternalStore(subscribeTheme, themeSnapshot, () => undefined)
+  const setTheme = useCallback((value: Theme | null) => {
+    try {
+      if (value === null) window.localStorage.removeItem(themeLocalStorageKey)
+      else window.localStorage.setItem(themeLocalStorageKey, value)
+    } catch {
+      /* Theme still works for this page when storage is unavailable. */
     }
+    document.documentElement.setAttribute(
+      'data-theme',
+      value || getImplicitPreference() || defaultTheme,
+    )
+    window.dispatchEvent(new Event('theme-preference-changed'))
   }, [])
-
-  useEffect(() => {
-    let themeToSet: Theme = defaultTheme
-    const preference = window.localStorage.getItem(themeLocalStorageKey)
-
-    if (themeIsValid(preference)) {
-      themeToSet = preference
-    } else {
-      const implicitPreference = getImplicitPreference()
-
-      if (implicitPreference) {
-        themeToSet = implicitPreference
-      }
-    }
-
-    document.documentElement.setAttribute('data-theme', themeToSet)
-    setThemeState(themeToSet)
-  }, [])
-
   return <ThemeContext value={{ setTheme, theme }}>{children}</ThemeContext>
 }
-
 export const useTheme = (): ThemeContextType => use(ThemeContext)

@@ -13,7 +13,7 @@ import React from 'react'
 import { Controller } from 'react-hook-form'
 
 import { Error } from '../Error'
-import { Width } from '../Width'
+
 import { countryOptions } from './options'
 
 export const Country: React.FC<
@@ -21,7 +21,7 @@ export const Country: React.FC<
 		control: Control
 		errors: Partial<FieldErrorsImpl>
 	}
-> = ({ name, control, errors, label, required, width }) => {
+> = ({ name, control, errors, label, required }) => {
 	return (
 		<div>
 			<Label className="" htmlFor={name}>
@@ -66,3 +66,4 @@ export const Country: React.FC<
 		</div>
 	)
 }
+

@@ -10,13 +10,13 @@ import { Label } from '@/components/ui/label'
 import React from 'react'
 
 import { Error } from '../Error'
-import { Width } from '../Width'
+
 export const Number: React.FC<
 	TextField & {
 		errors: Partial<FieldErrorsImpl>
 		register: UseFormRegister<FieldValues>
 	}
-> = ({ name, defaultValue, errors, label, register, required, width }) => {
+> = ({ name, defaultValue, errors, label, register, required }) => {
 	return (
 		<div>
 			<Label htmlFor={name}>
@@ -38,3 +38,4 @@ export const Number: React.FC<
 		</div>
 	)
 }
+

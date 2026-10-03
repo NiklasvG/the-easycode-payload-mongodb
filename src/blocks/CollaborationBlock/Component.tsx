@@ -24,8 +24,6 @@ export const CollaborationBlockComponent: React.FC<CollaborationBlock> = (
 		title,
 		items,
 		sideDescription,
-		enableLink,
-		link: linkField,
 		backgroundVariant,
 		id
 	} = props
@@ -160,3 +158,4 @@ export const CollaborationBlockComponent: React.FC<CollaborationBlock> = (
 }
 
 export default CollaborationBlockComponent
+

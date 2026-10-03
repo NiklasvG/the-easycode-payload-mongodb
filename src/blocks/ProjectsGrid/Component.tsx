@@ -79,7 +79,7 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 
 		// 🔽 Kategorie-Label ermitteln
 		const categoryLabel = getProjectTypeLabel(
-			(project as any).projectType as string | null
+			project.projectType
 		)
 
 		// 🔽 Kategorie als erster Tag, danach alle regulären Tags
@@ -155,4 +155,5 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 		</section>
 	)
 }
+
 

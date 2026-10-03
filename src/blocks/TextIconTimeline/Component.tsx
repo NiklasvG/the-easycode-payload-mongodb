@@ -46,3 +46,4 @@ export const TextIconTimelineBlockComponent: React.FC<Props> = ({
 		</section>
 	)
 }
+

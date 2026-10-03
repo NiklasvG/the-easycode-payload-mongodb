@@ -13,7 +13,7 @@ import React from 'react'
 import { Controller } from 'react-hook-form'
 
 import { Error } from '../Error'
-import { Width } from '../Width'
+
 
 export const Select: React.FC<
 	SelectField & {
@@ -27,7 +27,6 @@ export const Select: React.FC<
 	label,
 	options,
 	required,
-	width,
 	defaultValue
 }) => {
 	return (
@@ -73,3 +72,4 @@ export const Select: React.FC<
 		</div>
 	)
 }
+

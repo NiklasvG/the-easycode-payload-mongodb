@@ -22,75 +22,76 @@ import { ContactIntroBlockComponent } from '@/blocks/ContactIntro/Component'
 import { ContactLinksBlockComponent } from '@/blocks/ContactLinks/Component'
 
 export const blockComponents = {
-	archive: ArchiveBlock,
-	content: ContentBlock,
-	cta: CallToActionBlock,
-	formBlock: FormBlock,
-	mediaBlock: MediaBlock,
-	clientsSlider: ClientsSliderBlock,
-	clientQuotes: ClientQuotesBlockComponent,
-	services: ServicesBlockComponent,
-	projectsGrid: ProjectsGridBlockComponent,
-	infoTwoColumn: InfoTwoColumnBlockComponent,
-	projectCta: ProjectCtaBlockComponent,
-	faq: FAQBlockComponent,
-	collaboration: CollaborationBlockComponent,
-	textIconTimeline: TextIconTimelineBlockComponent,
-	splitLayout: SplitLayoutBlockComponent,
-	contactIntro: ContactIntroBlockComponent,
-	contactLinks: ContactLinksBlockComponent
+  archive: ArchiveBlock,
+  content: ContentBlock,
+  cta: CallToActionBlock,
+  formBlock: FormBlock,
+  mediaBlock: MediaBlock,
+  clientsSlider: ClientsSliderBlock,
+  clientQuotes: ClientQuotesBlockComponent,
+  services: ServicesBlockComponent,
+  projectsGrid: ProjectsGridBlockComponent,
+  infoTwoColumn: InfoTwoColumnBlockComponent,
+  projectCta: ProjectCtaBlockComponent,
+  faq: FAQBlockComponent,
+  collaboration: CollaborationBlockComponent,
+  textIconTimeline: TextIconTimelineBlockComponent,
+  splitLayout: SplitLayoutBlockComponent,
+  contactIntro: ContactIntroBlockComponent,
+  contactLinks: ContactLinksBlockComponent,
 }
 
 export const RenderBlocks: React.FC<{
-	blocks: Page['layout'][0][]
+  blocks: Page['layout'][0][]
 }> = (props) => {
-	const { blocks } = props
+  const { blocks } = props
 
-	const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
+  const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
 
-	if (!hasBlocks) return null
+  if (!hasBlocks) return null
 
-	// if the current block has same backgroundVariant like previous block, we reduce the padding
-	let previousBackground: string | null = null
-	return (
-		<Fragment>
-			{blocks.map((block, index) => {
-				const { blockType } = block
-				const backgroundVariant =
-					'backgroundVariant' in block ? block.backgroundVariant : null
+  // if the current block has same backgroundVariant like previous block, we reduce the padding
 
-				if (blockType && blockType in blockComponents) {
-					const Block = blockComponents[blockType]
+  return (
+    <Fragment>
+      {blocks.map((block, index) => {
+        const { blockType } = block
+        const backgroundVariant = 'backgroundVariant' in block ? block.backgroundVariant : null
 
-					// Prüfen, ob gleiche Hintergrundfarbe wie vorher
-					const sameBackground =
-						previousBackground &&
-						backgroundVariant &&
-						previousBackground === backgroundVariant
+        if (blockType && blockType in blockComponents) {
+          const Block = blockComponents[blockType]
 
-					// Falls der erste Block primary ist, ebenfalls enger zusammenrücken
-					const firstPrimary = index === 0 && backgroundVariant === 'primary'
+          // Prüfen, ob gleiche Hintergrundfarbe wie vorher
+          const previousBlock = blocks[index - 1]
+          const previousBackground =
+            previousBlock && 'backgroundVariant' in previousBlock
+              ? previousBlock.backgroundVariant
+              : null
+          const sameBackground =
+            previousBackground && backgroundVariant && previousBackground === backgroundVariant
 
-					// Dynamische Margin (kannst du beliebig anpassen)
-					const outerClassName =
-						sameBackground || firstPrimary
-							? '-mt-12 lg:-mt-16' // → enger zusammen
-							: 'mt-0' // → normaler Abstand
+          // Falls der erste Block primary ist, ebenfalls enger zusammenrücken
+          const firstPrimary = index === 0 && backgroundVariant === 'primary'
 
-					// für nächsten Durchlauf speichern
-					previousBackground = backgroundVariant ?? null
+          // Dynamische Margin (kannst du beliebig anpassen)
+          const outerClassName =
+            sameBackground || firstPrimary
+              ? '-mt-12 lg:-mt-16' // → enger zusammen
+              : 'mt-0' // → normaler Abstand
 
-					if (Block) {
-						return (
-							<div key={index} className={outerClassName}>
-								{/* @ts-expect-error there may be some mismatch between the expected types here */}
-								<Block {...block} disableInnerContainer />
-							</div>
-						)
-					}
-				}
-				return null
-			})}
-		</Fragment>
-	)
+          // für nächsten Durchlauf speichern
+
+          if (Block) {
+            return (
+              <div key={index} className={outerClassName}>
+                {/* @ts-expect-error there may be some mismatch between the expected types here */}
+                <Block {...block} disableInnerContainer />
+              </div>
+            )
+          }
+        }
+        return null
+      })}
+    </Fragment>
+  )
 }

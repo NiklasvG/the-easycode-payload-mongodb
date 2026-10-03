@@ -7,11 +7,11 @@ const eslintConfig = [
   {
     files: ['**/*.{js,jsx,mjs,ts,tsx,mts,cts}'],
     rules: {
-      // Keep compiler migration diagnostics visible while maintaining the existing hooks checks.
-      'react-hooks/set-state-in-effect': 'warn',
-      'react-hooks/immutability': 'warn',
-      'react-hooks/refs': 'warn',
-      'react-hooks/static-components': 'warn',
+      // Compiler correctness rules are enforced after removing render mutations and effect state copies.
+      'react-hooks/set-state-in-effect': 'error',
+      'react-hooks/immutability': 'error',
+      'react-hooks/refs': 'error',
+      'react-hooks/static-components': 'error',
       '@typescript-eslint/ban-ts-comment': 'warn',
       '@typescript-eslint/no-empty-object-type': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
@@ -35,3 +35,4 @@ const eslintConfig = [
 ]
 
 export default eslintConfig
+

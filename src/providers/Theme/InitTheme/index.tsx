@@ -1,7 +1,7 @@
 import Script from 'next/script'
 import React from 'react'
 
-import { defaultTheme, themeLocalStorageKey } from '../ThemeSelector/types'
+import { defaultTheme, themeLocalStorageKey } from '../shared'
 
 export const InitTheme: React.FC = () => {
   return (
@@ -27,7 +27,7 @@ export const InitTheme: React.FC = () => {
     }
 
     var themeToSet = '${defaultTheme}'
-    var preference = window.localStorage.getItem('${themeLocalStorageKey}')
+    var preference = null; try { preference = window.localStorage.getItem('${themeLocalStorageKey}') } catch (e) {}
 
     if (themeIsValid(preference)) {
       themeToSet = preference
@@ -48,3 +48,4 @@ export const InitTheme: React.FC = () => {
     />
   )
 }
+
