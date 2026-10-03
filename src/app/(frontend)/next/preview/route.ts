@@ -18,7 +18,7 @@ export async function GET(req: NextRequest): Promise<Response> {
 	const slug = searchParams.get('slug')
 	const previewSecret = searchParams.get('previewSecret')
 
-	if (previewSecret !== process.env.PREVIEW_SECRET) {
+	if (!process.env.PREVIEW_SECRET || previewSecret !== process.env.PREVIEW_SECRET) {
 		return new Response('You are not allowed to preview this page', {
 			status: 403
 		})
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest): Promise<Response> {
 		return new Response('Insufficient search params', { status: 404 })
 	}
 
-	if (!path.startsWith('/')) {
+	if (!path.startsWith('/') || path.startsWith('//') || path.includes('\\')) {
 		return new Response(
 			'This endpoint can only be used for relative previews',
 			{ status: 500 }
@@ -54,7 +54,7 @@ export async function GET(req: NextRequest): Promise<Response> {
 
 	const draft = await draftMode()
 
-	if (!user) {
+	if (!user?.user) {
 		draft.disable()
 		return new Response('You are not allowed to preview this page', {
 			status: 403
