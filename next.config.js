@@ -8,6 +8,7 @@ const NEXT_PUBLIC_SERVER_URL =
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	output: 'standalone',
+	outputFileTracingExcludes: { '/*': ['./test-results/**/*', './playwright-report/**/*', './tests/**/*', './experiments/**/*', './docs/**/*', './.quality-*'] },
 	cacheComponents: true,
 	partialPrefetching: true,
 	experimental: { exposeTestingApiInProductionBuild: process.env.NEXT_INSTANT_TEST === 'true' },

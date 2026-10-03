@@ -64,14 +64,20 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
             )}
           </div>
           <div className="grid place-items-center w-full h-full relative py-16 lg:pt-0">
-            <Media
-              className=""
-              pictureClassName="block w-full sm:w-fit"
-              imgClassName="w-full h-auto sm:h-96 sm:w-auto"
-              size="(max-width: 639px) calc(100vw - 32px), 384px"
-              priority
-              resource={media}
-            />
+            {media && (
+              <div
+                className="relative w-full max-w-full sm:h-96 sm:w-auto"
+                style={{ aspectRatio: typeof media === 'object' && media.width && media.height ? `${media.width} / ${media.height}` : '8 / 5' }}
+              >
+                <Media
+                  fill
+                  imgClassName="object-contain"
+                  size="(max-width: 639px) calc(100vw - 32px), (max-width: 1023px) 100vw, 50vw"
+                  priority
+                  resource={media}
+                />
+              </div>
+            )}
 
             {icons && (
               <motion.div

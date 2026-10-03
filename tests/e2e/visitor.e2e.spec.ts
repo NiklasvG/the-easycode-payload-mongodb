@@ -17,6 +17,28 @@ test.describe('isolated visitor flows', () => {
     await page.goto('/altes-projekt')
     await expect(page).toHaveURL(/\/projekte\/testkunde\/testprojekt$/)
   })
+  test('mobile hero reserves its image area before the image arrives', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    let releaseImages!: () => void
+    const delayedImages = new Promise<void>((resolve) => { releaseImages = resolve })
+    await page.route('**/_next/image?**', async (route) => { await delayedImages; await route.continue() })
+    try {
+      await page.goto('/', { waitUntil: 'domcontentloaded' })
+      const heroImage = page.locator('article section picture img').first()
+      await expect(heroImage).toBeAttached()
+      await page.evaluate(() => document.fonts.ready)
+      const heading = page.getByRole('heading', { level: 2 }).first()
+      await expect(heading).toBeVisible()
+      expect(await heroImage.evaluate((image: HTMLImageElement) => image.complete)).toBe(false)
+      const before = await heading.boundingBox()
+      releaseImages()
+      await heroImage.evaluate((image: HTMLImageElement) => image.decode())
+      const after = await heading.boundingBox()
+      expect(before).toBeTruthy()
+      expect(after).toBeTruthy()
+      expect(Math.abs(after!.y - before!.y)).toBeLessThan(1)
+    } finally { releaseImages(); await page.unrouteAll({ behavior: 'wait' }) }
+  })
   test('mobile navigation opens, navigates and unlocks scrolling', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto('/')

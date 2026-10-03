@@ -33,8 +33,11 @@ test('Lottie icons load in sight and remain still with reduced motion', async ({
     expect(await last.innerHTML()).toBe(initial)
     await page.screenshot({ path: testInfo.outputPath('lottie-reduced-motion.png') })
     await page.setViewportSize({ width: 390, height: 844 })
-    await icons.first().scrollIntoViewIfNeeded()
-    await expect(icons.first().locator('svg')).toBeVisible()
+    for (let index = 0; index < lottieIconOptions.length; index++) {
+      await icons.nth(index).scrollIntoViewIfNeeded()
+      await expect(icons.nth(index).locator('svg')).toBeVisible()
+      await expect(icons.nth(index).locator('svg path').first()).toBeAttached()
+    }
     expect(errors).toEqual([])
   } finally { await request.delete(`/api/pages/${doc.id}`, { headers }) }
 })
