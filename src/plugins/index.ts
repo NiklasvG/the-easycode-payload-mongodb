@@ -39,7 +39,7 @@ export const plugins: Plugin[] = [
 							...field,
 							admin: {
 								description:
-									'You will need to rebuild the website when changing this field.'
+									'Änderungen werden beim nächsten Seitenaufruf berücksichtigt.'
 							}
 						}
 					}
@@ -47,7 +47,8 @@ export const plugins: Plugin[] = [
 				})
 			},
 			hooks: {
-				afterChange: [revalidateRedirects]
+				afterChange: [revalidateRedirects],
+                afterDelete: [revalidateRedirects]
 			}
 		}
 	}),
@@ -130,3 +131,4 @@ export const plugins: Plugin[] = [
 		}
 	})
 ]
+

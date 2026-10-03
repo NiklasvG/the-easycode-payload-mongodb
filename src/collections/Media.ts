@@ -1,3 +1,4 @@
+import { revalidateRelatedContent } from '@/hooks/revalidateRelatedContent'
 import type { CollectionConfig } from 'payload'
 
 import {
@@ -19,6 +20,7 @@ export const Media: CollectionConfig = {
     read: anyone,
     update: authenticated,
   },
+  hooks: { afterChange: [revalidateRelatedContent], afterDelete: [revalidateRelatedContent] },
   fields: [
     {
       name: 'alt',
