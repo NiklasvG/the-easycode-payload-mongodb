@@ -16,7 +16,7 @@ const props = {
 }
 
 const setConsent = (analytics: boolean) => {
-  localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify({ necessary: true, analytics, marketing: false }))
+  localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify({ necessary: true, analytics }))
   dispatchConsentUpdate()
 }
 

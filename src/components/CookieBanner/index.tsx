@@ -19,8 +19,7 @@ export const CookieBanner = () => {
 	const [showDetails, setShowDetails] = useState(false)
 	const [settings, setSettings] = useState<ConsentSettings>({
 		necessary: true,
-		analytics: false,
-		marketing: false
+		analytics: false
 	})
 
 	useEffect(() => {
@@ -70,8 +69,7 @@ export const CookieBanner = () => {
 	const handleAcceptAll = () => {
 		saveSettings({
 			necessary: true,
-			analytics: true,
-			marketing: true
+			analytics: true
 		})
 	}
 
@@ -82,8 +80,7 @@ export const CookieBanner = () => {
 	const handleDeclineAll = () => {
 		saveSettings({
 			necessary: true,
-			analytics: false,
-			marketing: false
+			analytics: false
 		})
 	}
 
@@ -208,36 +205,6 @@ export const CookieBanner = () => {
 											/>
 										</div>
 
-										<div
-											className="flex cursor-pointer items-start justify-between rounded-xl border border-border/50 bg-secondary/30 p-4 transition-colors hover:bg-secondary/50"
-											onClick={() =>
-												setSettings((s) => ({
-													...s,
-													marketing: !s.marketing
-												}))
-											}
-										>
-											<div className="flex flex-col pr-4">
-												<span className="text-sm font-bold text-foreground">
-													Marketing
-												</span>
-												<span className="mt-1 text-xs text-muted-foreground">
-													Werden verwendet, um personalisierte Erlebnisse und
-													relevante Inhalte bereitzustellen.
-												</span>
-											</div>
-
-											<Checkbox
-												checked={settings.marketing}
-												onCheckedChange={(checked) =>
-													setSettings((s) => ({
-														...s,
-														marketing: !!checked
-													}))
-												}
-												onClick={(e) => e.stopPropagation()}
-											/>
-										</div>
 									</div>
 								</div>
 

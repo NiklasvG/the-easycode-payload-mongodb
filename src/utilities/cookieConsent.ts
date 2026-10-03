@@ -5,7 +5,6 @@ export const COOKIE_CONSENT_KEY = 'cookie-consent-settings'
 export type ConsentSettings = {
 	necessary: boolean
 	analytics: boolean
-	marketing: boolean
 	timestamp?: number
 }
 
@@ -14,7 +13,14 @@ export const getConsent = (): ConsentSettings | null => {
 	try {
 		const stored = localStorage.getItem(COOKIE_CONSENT_KEY)
 		if (!stored) return null
-		return JSON.parse(stored) as ConsentSettings
+		const parsed = JSON.parse(stored) as ConsentSettings | null
+		if (!parsed || typeof parsed.analytics !== 'boolean') return null
+		// Keep existing analytics choices while ignoring obsolete consent categories.
+		return {
+			necessary: true,
+			analytics: parsed.analytics,
+			timestamp: parsed.timestamp
+		}
 	} catch {
 		return null
 	}
