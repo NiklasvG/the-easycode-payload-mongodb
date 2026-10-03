@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
+import { limitAuthentication } from '@/hooks/limitAuthentication'
 import { authenticated } from '../../access/authenticated'
 
 export const Users: CollectionConfig = {
@@ -28,5 +29,6 @@ export const Users: CollectionConfig = {
       type: 'text',
     },
   ],
+  hooks: { beforeOperation: [limitAuthentication] },
   timestamps: true,
 }
