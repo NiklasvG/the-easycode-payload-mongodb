@@ -39,6 +39,7 @@ import {
 
 export const Pages: CollectionConfig<'pages'> = {
 	slug: 'pages',
+  disableBulkDelete: true,
 	access: {
 		create: authenticated,
 		delete: authenticated,
@@ -169,3 +170,5 @@ export const Pages: CollectionConfig<'pages'> = {
 		maxPerDoc: 50
 	}
 }
+
+

@@ -63,6 +63,7 @@ export default buildConfig({
 		},
 		user: Users.slug,
 		livePreview: {
+            openByDefault: true,
 			breakpoints: [
 				{
 					label: 'Mobile',
@@ -131,3 +132,4 @@ export default buildConfig({
 		tasks: []
 	}
 })
+

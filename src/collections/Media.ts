@@ -14,6 +14,7 @@ import { authenticated } from '../access/authenticated'
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  disableBulkDelete: true,
   folders: true,
   access: {
     create: authenticated,
@@ -81,4 +82,6 @@ export const Media: CollectionConfig = {
     ],
   },
 }
+
+
 

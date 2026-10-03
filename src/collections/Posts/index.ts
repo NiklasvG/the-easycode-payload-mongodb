@@ -29,6 +29,7 @@ import { slugField } from 'payload'
 
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
+  disableBulkDelete: true,
   access: {
     create: authenticated,
     delete: authenticated,
@@ -231,3 +232,5 @@ export const Posts: CollectionConfig<'posts'> = {
     maxPerDoc: 50,
   },
 }
+
+

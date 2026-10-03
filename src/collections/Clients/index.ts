@@ -5,6 +5,7 @@ import { slugField } from 'payload'
 
 export const Clients: CollectionConfig<'clients'> = {
   slug: 'clients',
+  disableBulkDelete: true,
   admin: {
     useAsTitle: 'companyName',
     defaultColumns: ['companyName', 'slug', 'logo', 'updatedAt'],
@@ -79,4 +80,6 @@ export const Clients: CollectionConfig<'clients'> = {
     contacts: true,
   },
 }
+
+
 

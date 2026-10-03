@@ -11,6 +11,7 @@ import { populatePublishedAt } from '@/hooks/populatePublishedAt'
 
 export const Projects: CollectionConfig = {
 	slug: 'projects',
+  disableBulkDelete: true,
 	// 1. Versions aktivieren (Drafts)
 	versions: {
 		drafts: {
@@ -398,3 +399,5 @@ export const Projects: CollectionConfig = {
 		}
 	]
 }
+
+
