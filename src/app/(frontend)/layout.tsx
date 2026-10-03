@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 import { cn } from '@/utilities/ui'
-import { Gabarito, Geist_Mono } from 'next/font/google'
+import localFont from 'next/font/local'
 import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
@@ -21,14 +21,18 @@ import { CookieBanner } from '@/components/CookieBanner'
 // Read CMS content at request time; Docker builds need no database connection.
 export const dynamic = 'force-dynamic'
 
-const geistSans = Gabarito({
+const geistSans = localFont({
+	src: '../../fonts/Gabarito-variable.woff2',
+	weight: '400 900',
+	display: 'swap',
 	variable: '--font-geist-sans',
-	subsets: ['latin']
 })
 
-const geistMono = Geist_Mono({
+const geistMono = localFont({
+	src: '../../fonts/GeistMono-variable.woff2',
+	weight: '100 900',
+	display: 'swap',
 	variable: '--font-geist-mono',
-	subsets: ['latin']
 })
 
 export default async function RootLayout({
@@ -41,7 +45,7 @@ export default async function RootLayout({
 	return (
 		<html
 			className={cn(geistSans.variable, geistMono.variable)}
-			lang="en"
+			lang="de"
 			suppressHydrationWarning
 		>
 			<head>
