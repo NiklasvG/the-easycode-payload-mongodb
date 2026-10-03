@@ -2,14 +2,8 @@
 'use client'
 
 import React, { useRef, useState } from 'react'
-import {
-	Splide,
-	SplideSlide,
-	Splide as SplideClass,
-	type Options
-} from '@splidejs/react-splide'
+import { Splide, Splide as SplideClass, type Options } from '@splidejs/react-splide'
 import '@splidejs/splide/css'
-import '@splidejs/splide/css/core'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { TextIconTimelineBlock } from '@/payload-types'
 import LottieIcon from '@/components/shared/Functional/LottieIcon'
@@ -17,6 +11,7 @@ import LottieIcon from '@/components/shared/Functional/LottieIcon'
 export type TimelineItem = NonNullable<TextIconTimelineBlock['items']>[number]
 
 const splideOptions: Options = {
+	label: 'Slider mit Text-Icon-Elementen',
 	type: 'slide',
 	fixedWidth: '82%', // Card ist etwas schmaler als der Viewport
 	gap: '1rem',
@@ -55,6 +50,7 @@ export const TextIconTimelineSlider: React.FC<Props> = ({ items }) => {
 			</div>
 			<div className="block md:hidden">
 				<Splide
+					hasTrack={false}
 					options={splideOptions}
 					className="splide"
 					onMounted={(slider) => setActive(slider.index)}
@@ -65,15 +61,19 @@ export const TextIconTimelineSlider: React.FC<Props> = ({ items }) => {
 					aria-label="Slider mit Text-Icon-Elementen"
 					role="region"
 				>
-					{items.map((item, idx) => {
-						if (!item) return null
+					<div className="splide__track">
+						<div className="splide__list">
+							{items.map((item, idx) => {
+								if (!item) return null
 
-						return (
-							<SplideSlide key={item.id || idx}>
-								<TimelineItemComponent item={item} />
-							</SplideSlide>
-						)
-					})}
+								return (
+									<div className="splide__slide" key={item.id || idx}>
+										<TimelineItemComponent item={item} />
+									</div>
+								)
+							})}
+						</div>
+					</div>
 				</Splide>
 
 				<div className="flex items-center justify-center gap-2 text-icon__navigation mt-4">
@@ -89,11 +89,9 @@ export const TextIconTimelineSlider: React.FC<Props> = ({ items }) => {
 
 					<ul className="splide__pagination text-icon__pagination">
 						{items.map((_, i) => (
-							<li key={i} role="presentation">
+							<li key={i}>
 								<button
-									className={`splide__pagination__page ${
-										i === active ? 'is-active' : ''
-									}`}
+									className={`splide__pagination__page ${i === active ? 'is-active' : ''}`}
 									onClick={() => splideRef.current?.splide?.go(i)}
 									aria-label={`Gehe zu Element ${i + 1}`}
 								/>

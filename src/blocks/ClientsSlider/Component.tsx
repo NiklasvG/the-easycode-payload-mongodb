@@ -48,6 +48,8 @@ export const ClientsSliderBlock: React.FC<Props> = async ({
 					src: url,
 					alt: companyName,
 					companyName,
+					imageWidth: media?.width ?? undefined,
+					imageHeight: media?.height ?? undefined,
 					height: 80
 				}
 			})
@@ -69,6 +71,8 @@ export const ClientsSliderBlock: React.FC<Props> = async ({
 						src: string
 						alt: string
 						companyName: string
+						imageWidth?: number
+						imageHeight?: number
 						height?: number
 					}[]
 				}

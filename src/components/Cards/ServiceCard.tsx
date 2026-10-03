@@ -114,14 +114,14 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 					<MediaComponent
 						className=""
 						imgClassName="object-cover w-full h-full"
-						size="(max-width: 767px) calc(100vw - 32px), (max-width: 1279px) 50vw, 33vw"
+						size="(max-width: 639px) calc(100vw - 64px), (max-width: 767px) 256px, (max-width: 1023px) 288px, (max-width: 1279px) 408px, (max-width: 1535px) 536px, (max-width: 1919px) calc(648px - 4.45vw), calc(36.25vw - 8px)"
 						resource={image}
 					/>
 				</div>
 			)}
 
 			{meta && (
-				<p className="mb-2 text-xs font-bold uppercase tracking-widest text-gray-500">
+				<p className="mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
 					{meta}
 				</p>
 			)}

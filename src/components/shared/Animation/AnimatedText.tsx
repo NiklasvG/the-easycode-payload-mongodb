@@ -1,7 +1,8 @@
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/utilities/usePrefersReducedMotion'
 
 export function AnimatedText({ text, className }: { text: string; className?: string }) {
-  const reducedMotion = useReducedMotion()
+  const reducedMotion = usePrefersReducedMotion()
   if (reducedMotion) return <span className={className}>{text}</span>
   return (
     <div className={`inline-block h-[1.2em] overflow-hidden lg:translate-y-2 ${className || ''}`}>

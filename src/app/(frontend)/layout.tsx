@@ -13,7 +13,7 @@ import { draftMode } from 'next/headers'
 
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
-import { AIChat } from '@/components/Chat/AIChat'
+import { ChatLauncher } from '@/components/Chat/ChatLauncher'
 import { UmamiAnalytics } from '@/components/UmamiAnalytics'
 import { CookieBanner } from '@/components/CookieBanner'
 
@@ -52,9 +52,9 @@ export default async function RootLayout({
 				<Providers>
 					<PreviewBar />
 					<Header />
-					{children}
+					<main id="main-content">{children}</main>
 					<Footer />
-					<AIChat />
+					<ChatLauncher />
 					<UmamiAnalytics
 						scriptUrl={process.env.UMAMI_SCRIPT_URL}
 						websiteId={process.env.UMAMI_WEBSITE_ID}

@@ -2,7 +2,8 @@
 import React, { useEffect, useState, useRef } from 'react'
 
 // Libraries
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/utilities/usePrefersReducedMotion'
 
 // Components
 import LucideIcon from '@/components/shared/Functional/LucideIcon'
@@ -21,9 +22,12 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
   icons,
   media,
 }) => {
+  const imageAspectRatio =
+    typeof media === 'object' && media?.width && media.height ? media.width / media.height : 8 / 5
+  const desktopImageWidth = Math.ceil(384 * imageAspectRatio)
   const [index, setIndex] = useState(0)
   const heroRef = useRef<HTMLElement>(null)
-  const reducedMotion = useReducedMotion()
+  const reducedMotion = usePrefersReducedMotion()
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const iconOffset = useTransform(scrollYProgress, [0, 1], [0, 60])
 
@@ -67,12 +71,17 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
             {media && (
               <div
                 className="relative w-full max-w-full sm:h-96 sm:w-auto"
-                style={{ aspectRatio: typeof media === 'object' && media.width && media.height ? `${media.width} / ${media.height}` : '8 / 5' }}
+                style={{
+                  aspectRatio:
+                    typeof media === 'object' && media.width && media.height
+                      ? `${media.width} / ${media.height}`
+                      : '8 / 5',
+                }}
               >
                 <Media
                   fill
                   imgClassName="object-contain"
-                  size="(max-width: 639px) calc(100vw - 32px), (max-width: 1023px) 100vw, 50vw"
+                  size={`(max-width: 639px) calc(100vw - 32px), (max-width: 1023px) min(${desktopImageWidth}px, calc(100vw - 48px)), min(${desktopImageWidth}px, calc(50vw - 32px))`}
                   priority
                   resource={media}
                 />

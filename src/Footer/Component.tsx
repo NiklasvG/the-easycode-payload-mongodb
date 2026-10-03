@@ -93,7 +93,7 @@ export async function Footer() {
 							<h3 className="text-sm font-bold uppercase tracking-widest text-foreground">
 								{section.label}
 							</h3>
-							<nav className="flex flex-col gap-3">
+							<nav className="flex flex-col gap-3" aria-label={`${section.label} – Fußbereich`}>
 								{section.navItems?.map(({ link }, i) => (
 									<CMSLink
 										key={i}

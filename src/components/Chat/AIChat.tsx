@@ -18,9 +18,9 @@ interface ChatMessage {
 const STORAGE_KEY = 'easycode-ai-chat-opened'
 const DISCLAIMER_KEY = 'easycode-ai-chat-disclaimer-confirmed'
 
-export const AIChat: React.FC = () => {
-	const [isOpen, setIsOpen] = useState(false)
-	const [hasOpenedOnce, setHasOpenedOnce] = useState(false)
+export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = false }) => {
+	const [isOpen, setIsOpen] = useState(initiallyOpen)
+	const [hasOpenedOnce, setHasOpenedOnce] = useState(initiallyOpen)
 	const [hasConfirmedDisclaimer, setHasConfirmedDisclaimer] = useState(false)
 	const [messages, setMessages] = useState<ChatMessage[]>([
 		{
@@ -39,6 +39,9 @@ export const AIChat: React.FC = () => {
 	// Beim Mount aus sessionStorage/localStorage lesen
 	useEffect(() => {
 		if (typeof window === 'undefined') return
+		if (initiallyOpen) {
+			try { window.sessionStorage.setItem(STORAGE_KEY, 'true') } catch { /* Keep the in-memory choice. */ }
+		}
 		let storedOpened: string | null = null
 		let storedDisclaimer: string | null = null
 		try {
@@ -52,7 +55,7 @@ export const AIChat: React.FC = () => {
 		if (storedDisclaimer === 'true') {
 			setHasConfirmedDisclaimer(true)
 		}
-	}, [])
+	}, [initiallyOpen])
 
 	const scrollToBottom = () => {
 		messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -380,6 +383,7 @@ export const AIChat: React.FC = () => {
 								)}
 								<button
 									type="submit"
+									aria-label="Nachricht senden"
 									disabled={
 										isLoading || !inputValue.trim() || !hasConfirmedDisclaimer
 									}

@@ -113,7 +113,7 @@ export default function MasonryGrid({
       )}
 
       <motion.div className="columns-1 sm:columns-2 gap-4" layout>
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence mode="popLayout" initial={false}>
           {filteredCards.map((card) => (
             <motion.div
               key={card.link.url ?? card.headline}

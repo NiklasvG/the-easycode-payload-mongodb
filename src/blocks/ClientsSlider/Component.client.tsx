@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Image from 'next/image'
-import { Splide, SplideSlide, Options } from '@splidejs/react-splide'
+import { Splide, Options } from '@splidejs/react-splide'
 import { AutoScroll } from '@splidejs/splide-extension-auto-scroll'
 
 import '@splidejs/splide/css'
@@ -13,6 +13,8 @@ interface Logo {
 	companyName: string
 	width?: number
 	height?: number
+	imageWidth?: number
+	imageHeight?: number
 }
 
 interface LogoSliderProps {
@@ -22,10 +24,12 @@ interface LogoSliderProps {
 }
 
 const defaultOptions: Options = {
+	label: 'Kundenlogos',
 	type: 'loop', // Endlosschleife
 	perPage: 5, // Anzahl Logos pro Ansicht
 	gap: '1rem', // Abstand tussen Logos
 	arrows: false,
+	reducedMotion: { speed: 0, rewindSpeed: 0, autoScroll: false },
 	pagination: false,
 	drag: 'free', // Freies Draggen
 	snap: true, // Snap-Funktion nach Slide
@@ -33,7 +37,7 @@ const defaultOptions: Options = {
 		// kontinuierliches Scrollen
 		speed: 0.8, // Geschwindigkeit (je höher, desto schneller)
 		pauseOnHover: true,
-		pauseOnFocus: false,
+		pauseOnFocus: true,
 		rewind: false // kein Zurücksetzen nötig
 	},
 	breakpoints: {
@@ -43,36 +47,38 @@ const defaultOptions: Options = {
 	}
 }
 
-export const LogoSlider: React.FC<LogoSliderProps> = ({
-	logos,
-	options,
-	logoHeight = 60
-}) => (
+export const LogoSlider: React.FC<LogoSliderProps> = ({ logos, options, logoHeight = 60 }) => (
 	<div className="splide-slider">
 		<Splide
+			hasTrack={false}
 			options={{ ...defaultOptions, ...options }}
 			extensions={{ AutoScroll }}
 			aria-label="Logo Slider"
 		>
-			{logos.map((logo, idx) => (
-				<SplideSlide key={idx}>
-					<div className="flex items-center justify-center p-4">
-						<div
-							className="relative w-full"
-							style={{ height: `${logo.height || logoHeight}px` }}
-							title={logo.companyName}
-						>
-							<Image
-								src={logo.src}
-								alt={logo.alt}
-								fill
-								style={{ objectFit: 'contain' }}
-								sizes="(max-width: 1024px) 25vw, (max-width: 768px) 33vw, (max-width: 640px) 50vw, 20vw"
-							/>
+			<div className="splide__track">
+				<div className="splide__list">
+					{logos.map((logo, idx) => (
+						<div className="splide__slide" key={idx}>
+							<div className="flex items-center justify-center p-4">
+								<div
+									className="relative w-full flex items-center justify-center"
+									style={{ height: `${logo.height || logoHeight}px` }}
+									title={logo.companyName}
+								>
+									<Image
+										src={logo.src}
+										alt={logo.alt}
+										width={logo.imageWidth || 80}
+										height={logo.imageHeight || 80}
+										className="max-w-full max-h-full w-auto h-auto object-contain"
+										sizes={`${Math.ceil((logo.height || logoHeight) * ((logo.imageWidth || 80) / (logo.imageHeight || 80)))}px`}
+									/>
+								</div>
+							</div>
 						</div>
-					</div>
-				</SplideSlide>
-			))}
+					))}
+				</div>
+			</div>
 		</Splide>
 	</div>
 )

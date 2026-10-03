@@ -59,11 +59,11 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 				height={!fill ? height : undefined}
 				placeholder="empty"
 				
-				preload={priority}
+				fetchPriority={priority ? 'high' : undefined}
 				quality={quality}
                 onLoad={onLoad}
                 onClick={onClick}
-				loading={priority ? undefined : loading}
+				loading={priority ? 'eager' : loading}
 				sizes={sizes}
 				src={src}
 				width={!fill ? width : undefined}

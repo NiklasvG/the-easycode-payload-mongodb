@@ -17,10 +17,14 @@ const nextConfig = {
 			{ key: 'X-Content-Type-Options', value: 'nosniff' },
 			{ key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
 			{ key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+			{ key: 'Cross-Origin-Opener-Policy', value: 'same-origin-allow-popups' },
+			{ key: 'Content-Security-Policy', value: "object-src 'none'; base-uri 'self'; frame-ancestors 'self'" },
+			...(NEXT_PUBLIC_SERVER_URL.startsWith('https://') ? [{ key: 'Strict-Transport-Security', value: 'max-age=31536000' }] : []),
 			...(process.env.APP_ENV === 'staging' ? [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] : []),
 		] }]
 	},
 	images: {
+		imageSizes: [32, 48, 64, 96, 100, 128, 170, 212, 256, 320, 384, 480, 512, 560],
 		qualities: [75, 85, 100],
 		localPatterns: [
 			{ pathname: '/api/media/file/**' },

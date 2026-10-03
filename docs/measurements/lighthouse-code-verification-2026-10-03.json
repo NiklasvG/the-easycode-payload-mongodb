@@ -1,0 +1,26 @@
+{
+  "environment": "local production build, real local content snapshot, Chromium, reduced motion",
+  "lighthouseScoreMeasured": false,
+  "checks": [
+    {
+      "width": 1440,
+      "deferredBefore": true,
+      "deferredAfter": true,
+      "reducedMotionStopped": true,
+      "consentAudit": [],
+      "contentAudit": [],
+      "chatAudit": [],
+      "errors": []
+    },
+    {
+      "width": 390,
+      "deferredBefore": true,
+      "deferredAfter": true,
+      "reducedMotionStopped": true,
+      "consentAudit": [],
+      "contentAudit": [],
+      "chatAudit": [],
+      "errors": []
+    }
+  ]
+}

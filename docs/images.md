@@ -1,6 +1,6 @@
 # Bildauslieferung
 
-`ImageMedia` liefert standardmäßig Qualität 75; 85 und 100 sind gezielte Overrides. `sizes` verwendet gültige CSS-Längen statt Width-Deskriptoren. Hero und Karten haben eigene Größen; Karten laden verzögert, Hero bleibt bevorzugt. Nexts veraltetes priority-Prop wird intern auf preload abgebildet. Explizit leere Alt-Texte bleiben erhalten, statt vom CMS-Text überschrieben zu werden.
+`ImageMedia` liefert standardmäßig Qualität 75; 85 und 100 sind gezielte Overrides. `sizes` verwendet gültige CSS-Längen statt Width-Deskriptoren. Hero und Karten haben eigene Größen; Karten laden verzögert, Hero bleibt bevorzugt. Das interne `priority`-Prop verwendet `loading="eager"` und `fetchPriority="high"`, entsprechend der Empfehlung der installierten Next.js-Version. Explizit leere Alt-Texte bleiben erhalten, statt vom CMS-Text überschrieben zu werden.
 
 Fill-Bilder erhalten einen positionierten Picture-Container; der Media-Wrapper füllt den bereits dimensionierten Parent. Abmessungen müssen weiterhin am umgebenden Layout definiert werden. Der ungenutzte große Blur-Placeholder entfällt.
 
