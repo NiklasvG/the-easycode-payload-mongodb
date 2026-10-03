@@ -60,14 +60,14 @@ export const QuoteSlider: React.FC<Props> = ({ quotes }) => {
 									<QuoteIcon className="quote__icon" />
 									<div className="avatar">
 										{q.image ? (
-											<div className="quote__image">
+											<div className="quote__image relative">
 												<Image
 													src={q.image.url!}
 													alt={q.image.alt || q.company || 'EasyCode Kunde'}
-													priority={idx === 0}
 													fill
 													className="w-full h-full object-cover"
-													sizes="(max-width: 1024px) 100vw, 1200px"
+													quality={85}
+													sizes="(min-width: 1920px) 9.375vw, (min-width: 1440px) 11.806vw, max(7.5rem, calc(4.46vw + 6.6rem))"
 												/>
 											</div>
 										) : (
