@@ -38,6 +38,16 @@ test.describe('CMS → public HTTP invalidation', () => {
       await page.goto(`/admin/collections/pages/${doc.id}`)
       await expect(page.locator('iframe').first()).toBeVisible()
       await expect(page.frameLocator('iframe').first().getByText('Private draft', { exact: true })).toBeVisible()
+      await page.getByLabel('Title', { exact: true }).first().fill('Edited through Admin UI')
+      await page.getByRole('button', { name: /^Publish(?: changes)?$/i }).click()
+      await expect.poll(async () => {
+        const docResponse = await request.get(`/api/pages/${doc.id}`, { headers })
+        const result = await docResponse.json()
+        return `${result.hero.title}:${result._status}`
+      }).toBe('Edited through Admin UI:published')
+      const publishedFromUI = await request.get(`/${slug}-new`)
+      expect(publishedFromUI.ok()).toBe(true)
+      expect(await publishedFromUI.text()).toContain('Edited through Admin UI')
     } finally {
       expect((await request.delete(`/api/pages/${doc.id}`, { headers })).ok()).toBe(true)
     }
