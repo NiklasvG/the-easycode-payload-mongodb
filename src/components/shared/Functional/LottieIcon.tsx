@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import Lottie, { LottieRefCurrentProps } from 'lottie-react'
+import { Lottie, type LottieHandle } from 'lottie-react'
 
 import { LottieIconNames } from '@/fields/lottieIcon'
 
@@ -31,7 +31,7 @@ interface LottieIconProps {
 }
 
 const LottieIcon: React.FC<LottieIconProps> = ({ icon, triggerPlay }) => {
-	const lottieRef = useRef<LottieRefCurrentProps>(null)
+	const lottieRef = useRef<LottieHandle>(null)
 	const containerRef = useRef<HTMLDivElement | null>(null)
 
 	const [playedOnce, setPlayedOnce] = useState(false)
@@ -110,7 +110,8 @@ const LottieIcon: React.FC<LottieIconProps> = ({ icon, triggerPlay }) => {
 	useEffect(() => {
 		if (triggerPlay && !playedOnce && !isPlaying) {
 			setIsPlaying(true)
-			lottieRef.current?.goToAndPlay(0, true)
+			lottieRef.current?.seek({ frame: 0 })
+			lottieRef.current?.play()
 		}
 	}, [triggerPlay, playedOnce, isPlaying])
 
@@ -129,7 +130,8 @@ const LottieIcon: React.FC<LottieIconProps> = ({ icon, triggerPlay }) => {
 				entries.forEach((entry) => {
 					if (entry.isIntersecting && !playedOnce && !isPlaying) {
 						setIsPlaying(true)
-						lottieRef.current?.goToAndPlay(0, true)
+						lottieRef.current?.seek({ frame: 0 })
+						lottieRef.current?.play()
 					}
 				})
 			},
@@ -149,12 +151,14 @@ const LottieIcon: React.FC<LottieIconProps> = ({ icon, triggerPlay }) => {
 		<div ref={containerRef} className="service-card--icon shrink-0">
 			<Lottie
 				lottieRef={lottieRef}
-				animationData={animationData}
+				src={animationData}
 				loop={false}
 				autoplay={false}
-				onComplete={() => {
-					setPlayedOnce(true)
-					setIsPlaying(false)
+				subscriptions={{
+					complete: () => {
+						setPlayedOnce(true)
+						setIsPlaying(false)
+					}
 				}}
 			/>
 		</div>

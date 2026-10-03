@@ -48,7 +48,7 @@ export const revalidateProject: CollectionAfterChangeHook<Project> = async ({
 			}
 			// Immer die Übersicht und Sitemap revalidieren
 			revalidatePath('/projekte')
-			revalidateTag('projects-sitemap')
+			revalidateTag('projects-sitemap', { expire: 0 })
 		}
 
 		// 2. Revalidate Previous Doc (wenn sich Slug/Client geändert hat oder un-published wurde)
@@ -65,7 +65,7 @@ export const revalidateProject: CollectionAfterChangeHook<Project> = async ({
 				revalidatePath(oldPath)
 			}
 			revalidatePath('/projekte')
-			revalidateTag('projects-sitemap')
+			revalidateTag('projects-sitemap', { expire: 0 })
 		}
 	}
 	return doc
@@ -81,7 +81,7 @@ export const revalidateDelete: CollectionAfterDeleteHook<Project> = async ({
 			revalidatePath(path)
 		}
 		revalidatePath('/projekte')
-		revalidateTag('projects-sitemap')
+		revalidateTag('projects-sitemap', { expire: 0 })
 	}
 	return doc
 }

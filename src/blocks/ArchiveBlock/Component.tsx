@@ -64,7 +64,7 @@ export const ArchiveBlock: React.FC<
 			{introContent && (
 				<div className="container mb-16">
 					<RichText
-						className="ms-0 max-w-[48rem]"
+						className="ms-0 max-w-3xl"
 						data={introContent}
 						enableGutter={false}
 					/>

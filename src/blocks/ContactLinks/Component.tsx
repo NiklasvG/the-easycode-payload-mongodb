@@ -2,11 +2,12 @@
 import React from 'react'
 import {
 	Mail,
-	Linkedin,
-	Instagram,
-	Github,
+
+
+
 	Link as LinkIcon
 } from 'lucide-react'
+import { Github, Instagram, Linkedin } from '@/components/icons/brands'
 import { ContactLinksBlock } from '@/payload-types'
 
 type SocialType = 'linkedin' | 'instagram' | 'github' | 'website'

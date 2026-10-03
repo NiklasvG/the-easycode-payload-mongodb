@@ -10,7 +10,8 @@ import { disablePageScroll, enablePageScroll } from '@fluejs/noscroll'
 
 // Components
 import Link from 'next/link'
-import { ArrowUpRight, Instagram, Linkedin, Search } from 'lucide-react'
+import { ArrowUpRight, Search } from 'lucide-react'
+import { Instagram, Linkedin } from '@/components/icons/brands'
 import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import MenuSvg from '@/components/shared/Designs/svg/MenuSvg'
@@ -120,7 +121,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
 						<Button variant="outline" size="lg">
 							Kontakt
 							<span className="block bg-accent rounded-full p-1">
-								<ArrowUpRight className="stroke-3 !text-primary" />
+								<ArrowUpRight className="stroke-3 text-primary!" />
 							</span>
 						</Button>
 					</Link>
@@ -160,7 +161,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
 								<Button variant="outline" size="lg">
 									Kontakt
 									<span className="block bg-accent rounded-full p-1">
-										<ArrowUpRight className="stroke-3 !text-primary" />
+										<ArrowUpRight className="stroke-3 text-primary!" />
 									</span>
 								</Button>
 							</Link>
@@ -223,7 +224,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
 								<Button variant="default" size="lg">
 									Kontakt
 									<span className="block bg-accent rounded-full p-1">
-										<ArrowUpRight className="stroke-3 !text-primary" />
+										<ArrowUpRight className="stroke-3 text-primary!" />
 									</span>
 								</Button>
 							</Link>

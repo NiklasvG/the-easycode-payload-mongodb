@@ -1,5 +1,3 @@
-import { getClientSideURL } from '@/utilities/getURL'
-
 /**
  * Processes media resource URL to ensure proper formatting
  * @param url The original URL from the resource
@@ -13,12 +11,9 @@ export const getMediaUrl = (url: string | null | undefined, cacheTag?: string | 
     cacheTag = encodeURIComponent(cacheTag)
   }
 
-  // Check if URL already has http/https protocol
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return cacheTag ? `${url}?${cacheTag}` : url
-  }
-
-  // Otherwise prepend client-side URL
-  const baseUrl = getClientSideURL()
-  return cacheTag ? `${baseUrl}${url}?${cacheTag}` : `${baseUrl}${url}`
+  // Keep local uploads relative so Next's image optimizer handles them internally.
+  // Absolute localhost URLs are rejected by Next 16's private-IP protection.
+  const mediaUrl = /^https?:\/\//.test(url) || url.startsWith('/') ? url : `/${url}`
+  const separator = mediaUrl.includes('?') ? '&' : '?'
+  return cacheTag ? `${mediaUrl}${separator}${cacheTag}` : mediaUrl
 }

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Cookie, ShieldCheck } from 'lucide-react'
+import { ChartNoAxesCombined, Cookie, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
@@ -91,7 +91,7 @@ export const CookieBanner = () => {
 					initial={{ y: 100, opacity: 0 }}
 					animate={{ y: 0, opacity: 1 }}
 					exit={{ y: 100, opacity: 0 }}
-					className="fixed inset-x-4 bottom-4 z-[100] md:left-auto md:right-8 md:bottom-8 md:max-w-md"
+					className="fixed inset-x-4 bottom-4 z-100 md:left-auto md:right-8 md:bottom-8 md:max-w-md"
 				>
 					<div className="relative flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden rounded-2xl border border-border bg-card/95 p-6 shadow-2xl backdrop-blur-md">
 						<div className="mb-2 sm:mb-6 flex shrink-0 flex-col items-center gap-4 sm:flex-row sm:items-start">
@@ -182,9 +182,12 @@ export const CookieBanner = () => {
 											}
 										>
 											<div className="flex flex-col pr-4">
-												<span className="text-sm font-bold text-foreground">
-													Nutzungsanalyse
-												</span>
+												<div className="flex items-center gap-2">
+													<ChartNoAxesCombined size={14} className="text-accent" aria-hidden="true" />
+													<span className="text-sm font-bold text-foreground">
+														Nutzungsanalyse
+													</span>
+												</div>
 												<span className="mt-1 text-xs text-muted-foreground">
 													Umami hilft uns zu verstehen, wie Besucher unsere
 													Website nutzen und wie schnell sie lädt. Die Analyse

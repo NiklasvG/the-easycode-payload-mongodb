@@ -30,7 +30,7 @@ export const Search: React.FC = () => {
 							value={value}
 							onChange={(e) => setValue(e.target.value)}
 							placeholder="Projekte, Kunden, Seiten..."
-							className="w-full bg-secondary text-secondary-foreground border border-white/10 rounded-2xl py-6 pl-16 pr-6 text-xl focus:outline-none focus:border-accent/50 hover:border-accent/50 transition-all placeholder:secondary-foreground/50"
+							className="w-full bg-secondary text-secondary-foreground border border-white/10 rounded-2xl py-6 pl-16 pr-6 text-xl focus:outline-hidden focus:border-accent/50 hover:border-accent/50 transition-all placeholder:secondary-foreground/50"
 						/>
 					</div>
 				</div>

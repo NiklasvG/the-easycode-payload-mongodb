@@ -2,7 +2,7 @@ import React from 'react'
 
 const LeftCurve = () => {
 	return (
-		<div className="hidden absolute top-1/2 right-full w-[32.625rem] -mt-1 mr-10 pointer-events-none xl:block">
+		<div className="hidden absolute top-1/2 right-full w-130.5 -mt-1 mr-10 pointer-events-none xl:block">
 			<svg
 				width="522"
 				height="182"

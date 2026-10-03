@@ -124,7 +124,7 @@ export const FormBlock: React.FC<
 	)
 
 	return (
-		<div className="bg-secondary-background border border-white/5 p-8 md:p-10 rounded-3xl backdrop-blur-sm relative overflow-hidden shadow-2xl">
+		<div className="bg-secondary-background border border-white/5 p-8 md:p-10 rounded-3xl backdrop-blur-xs relative overflow-hidden shadow-2xl">
 			<div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-[60px] pointer-events-none" />
 			{enableIntro && introContent && !hasSubmitted && (
 				<RichText

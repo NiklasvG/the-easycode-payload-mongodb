@@ -22,6 +22,17 @@ import { getServerSideURL } from './utilities/getURL'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+// Payload types transportOptions as connection options; authentication belongs
+// to the SMTP transport and is passed through to Nodemailer's createTransport.
+const smtpTransportOptions = {
+	host: process.env.SMTP_HOST,
+	port: Number(process.env.SMTP_PORT),
+	auth: {
+		user: process.env.SMTP_USER,
+		pass: process.env.SMTP_PASS
+	}
+}
+
 const mongoURL = process.env.MONGODB_URI
 if (!mongoURL) {
 	throw new Error(
@@ -93,14 +104,7 @@ export default buildConfig({
 		defaultFromAddress: 'no-reply@the-easycode.eu',
 		defaultFromName: 'EasyCode',
 		// Nodemailer transportOptions
-		transportOptions: {
-			host: process.env.SMTP_HOST,
-			port: Number(process.env.SMTP_PORT),
-			auth: {
-				user: process.env.SMTP_USER,
-				pass: process.env.SMTP_PASS
-			}
-		}
+		transportOptions: smtpTransportOptions
 	}),
 	secret: process.env.PAYLOAD_SECRET,
 	sharp,

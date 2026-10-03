@@ -80,7 +80,7 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
 										data-aos="fade"
 										data-aos-duration="800"
 										data-aos-delay="500"
-										className="flex px-1 py-1 bg-n-9/40 backdrop-blur border rounded-2xl"
+										className="flex px-1 py-1 bg-n-9/40 backdrop-blur-sm border rounded-2xl"
 									>
 										{icons.map((icon, index) => (
 											<li key={index} className="p-5">

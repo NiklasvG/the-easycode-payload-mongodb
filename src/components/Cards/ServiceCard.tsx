@@ -148,7 +148,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 			<div className={`teaser__text ${icon ? 'hidden md:block' : ''}`}>
 				<p className="pb-6 2xl:pb-8 big">{abstract}</p>
 				{items && items.length > 0 && (
-					<ul className="list list--check list--icon list--line space-y-2 !mb-0">
+					<ul className="list list--check list--icon list--line space-y-2 mb-0!">
 						{items.map((item, index) => (
 							<li key={index} className="flex items-center gap-3">
 								<BadgeCheck className="size-8 text-accent" /> {item.text}

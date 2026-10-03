@@ -1,0 +1,21 @@
+name: easycode-local
+
+services:
+  mongo:
+    image: mongo:8.0
+    container_name: easycode-mongo-local
+    ports:
+      - '127.0.0.1:27018:27017'
+    command: ['mongod', '--replSet', 'rs0', '--bind_ip_all']
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+    healthcheck:
+      test:
+        ['CMD', 'mongosh', '--quiet', '--eval', 'quit(db.adminCommand({ping: 1}).ok === 1 ? 0 : 1)']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  mongo-data:

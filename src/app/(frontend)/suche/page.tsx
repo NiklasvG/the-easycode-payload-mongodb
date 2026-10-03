@@ -231,7 +231,7 @@ export default async function Page({
 				<div className="prose dark:prose-invert max-w-none text-center">
 					<div className="mb-12 text-center">
 						<h1 className="mb-8 lg:mb-16 h1 font-semibold">Suche</h1>
-						<div className="max-w-[50rem] mx-auto">
+						<div className="max-w-200 mx-auto">
 							<Search />
 						</div>
 					</div>

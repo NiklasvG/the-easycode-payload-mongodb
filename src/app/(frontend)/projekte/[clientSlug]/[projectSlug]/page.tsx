@@ -15,9 +15,10 @@ import {
   Cpu,
   Code,
   ExternalLink,
-  Github,
+
   CalendarDays,
 } from 'lucide-react'
+import { Github } from '@/components/icons/brands'
 import RichText from '@/components/RichText'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
@@ -143,7 +144,7 @@ export default async function ProjectDetailPage({ params: paramsPromise }: Args)
               )}
             </div>
 
-            <div className="lg:max-w-xs w-full bg-secondary-background border border-white/5 p-6 rounded-2xl backdrop-blur-sm">
+            <div className="lg:max-w-xs w-full bg-secondary-background border border-white/5 p-6 rounded-2xl backdrop-blur-xs">
               <div className="mb-4">
                 <div className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-1">
                   Rolle
@@ -183,7 +184,7 @@ export default async function ProjectDetailPage({ params: paramsPromise }: Args)
 
           {/* Hero Image – nutzt das Upload-Feld heroImage */}
           {project.heroImage && typeof project.heroImage === 'object' && (
-            <div className="relative w-full aspect-[16/9] lg:aspect-[21/9] rounded-2xl overflow-hidden border border-white/10 shadow-2xl group">
+            <div className="relative w-full aspect-video lg:aspect-21/9 rounded-2xl overflow-hidden border border-white/10 shadow-2xl group">
               <Image
                 src={project.heroImage.url!}
                 alt={`${project.title} Hero`}
@@ -191,7 +192,7 @@ export default async function ProjectDetailPage({ params: paramsPromise }: Args)
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                 sizes="(max-width: 1024px) 100vw, 1200px"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-linear-to-t from-background/80 to-transparent pointer-events-none" />
             </div>
           )}
         </div>
@@ -288,7 +289,7 @@ export default async function ProjectDetailPage({ params: paramsPromise }: Args)
           <div className="lg:col-span-4 space-y-12">
             {/* Quote */}
             {!!quote && (
-              <div className="bg-gradient-to-br from-secondary-background to-background border border-white/10 p-8 rounded-3xl relative">
+              <div className="bg-linear-to-br from-secondary-background to-background border border-white/10 p-8 rounded-3xl relative">
                 <MessageSquare className="absolute top-8 left-8 w-8 h-8 text-accent/20" />
                 <blockquote className="relative z-10">
                   <p className="text-xl italic text-gray-200 mb-6 leading-relaxed">

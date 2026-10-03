@@ -208,7 +208,7 @@ export const AIChat: React.FC = () => {
 			{isOpen && (
 				<div className="mb-4 w-[90vw] max-w-sm md:w-96 h-[500px] bg-black border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in slide-in-from-bottom-10 fade-in duration-300">
 					{/* Header */}
-					<div className="bg-gradient-to-r from-accent to-accent-dark p-4 flex justify-between items-center">
+					<div className="bg-linear-to-r from-accent to-accent-dark p-4 flex justify-between items-center">
 						<div className="flex items-center gap-2 text-white">
 							<Sparkles className="w-5 h-5" />
 							<span className="font-display font-bold tracking-wide">
@@ -225,7 +225,7 @@ export const AIChat: React.FC = () => {
 
 					<div className="flex-1 relative flex flex-col overflow-hidden">
 						{!hasConfirmedDisclaimer && (
-							<div className="absolute inset-0 z-20 bg-black/95 backdrop-blur-sm p-8 flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
+							<div className="absolute inset-0 z-20 bg-black/95 backdrop-blur-xs p-8 flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
 								<div className="p-4 bg-accent/10 rounded-full text-accent mb-6 ring-1 ring-accent/20">
 									<ShieldCheck className="w-8 h-8" />
 								</div>
@@ -349,7 +349,7 @@ export const AIChat: React.FC = () => {
 											? 'Frag mich etwas ...'
 											: 'Bitte erst Hinweis bestätigen'
 									}
-									className="w-full bg-background/50 border border-white/10 rounded-xl pl-4 pr-12 py-3 text-base md:text-sm text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all placeholder:text-gray-400 disabled:opacity-50"
+									className="w-full bg-background/50 border border-white/10 rounded-xl pl-4 pr-12 py-3 text-base md:text-sm text-foreground focus:outline-hidden focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all placeholder:text-gray-400 disabled:opacity-50"
 								/>
 								{inputValue.length > 800 && (
 									<div className="absolute -top-4 right-0 text-[10px] text-gray-500 font-mono">

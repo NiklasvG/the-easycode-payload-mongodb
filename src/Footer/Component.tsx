@@ -3,11 +3,12 @@ import Link from 'next/link'
 import React from 'react'
 import {
 	Mail,
-	Linkedin,
-	Instagram,
-	Github,
+
+
+
 	Link as LinkIcon
 } from 'lucide-react'
+import { Github, Instagram, Linkedin } from '@/components/icons/brands'
 
 import type { Footer } from '@/payload-types'
 
