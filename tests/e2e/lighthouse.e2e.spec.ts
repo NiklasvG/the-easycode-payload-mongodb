@@ -40,6 +40,9 @@ test('quote navigation updates the active quote without duplicate slides', async
   await expect(quotes).toBeVisible()
   await expect(quotes.locator('.splide__slide--clone')).toHaveCount(0)
   const dots = page.getByRole('button', { name: /^Gehe zu Zitat / })
+  if (process.env.TEST_DATABASE === 'true') {
+    await expect(dots).toHaveCount(2)
+  }
   const count = await dots.count()
   expect(count).toBeGreaterThan(0)
   await expect(dots.first()).toHaveAttribute('aria-current', 'true')
@@ -48,6 +51,10 @@ test('quote navigation updates the active quote without duplicate slides', async
     await expect(dots.nth(1)).toHaveAttribute('aria-current', 'true')
     await expect(quotes.locator('.splide__slide.is-active')).toHaveAttribute('aria-label', `2 of ${count}`)
     await page.getByRole('button', { name: 'Vorheriges Zitat', exact: true }).click()
+    await expect(dots.first()).toHaveAttribute('aria-current', 'true')
+    await dots.last().click()
+    await expect(dots.last()).toHaveAttribute('aria-current', 'true')
+    await page.getByRole('button', { name: 'Nächstes Zitat', exact: true }).click()
     await expect(dots.first()).toHaveAttribute('aria-current', 'true')
   }
 })

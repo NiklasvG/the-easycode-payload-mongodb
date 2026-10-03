@@ -10,7 +10,7 @@ test.describe('complete initial server render', () => {
     await expect(page.locator('header')).toBeVisible()
     await expect(page.locator('article h1')).toBeVisible()
     await expect(page.locator('article > div').first()).toBeVisible()
-    await expect(page.locator('footer')).toBeVisible()
+    await expect(page.getByRole('contentinfo')).toBeVisible()
     await expect(page.getByText('Inhalt wird geladen', { exact: false })).toHaveCount(0)
   })
 
@@ -24,6 +24,6 @@ test.describe('complete initial server render', () => {
     expect(response?.status()).toBe(200)
     await expect(page.locator('article h1')).toBeVisible()
     await expect(page.getByText('Projekt wird geladen', { exact: false })).toHaveCount(0)
-    await expect(page.locator('footer')).toBeVisible()
+    await expect(page.getByRole('contentinfo')).toBeVisible()
   })
 })

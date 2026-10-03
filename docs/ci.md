@@ -11,3 +11,5 @@ Der Workflow wird erst nach einem Push von GitHub ausgeführt. Lokale erfolgreic
 Der Workflow startet außerdem ein per Digest fixiertes Mailpit-Postfach. App-SMTP zeigt ausschließlich auf 127.0.0.1:1026 mit leeren Zugangsdaten; Nachrichten verlassen den Testdienst nicht. Das Docker-Smoke-Image erhält dieselben Testvariablen und ein schreibgeschütztes synthetisches Medienvolume.
 
 Die SSR-Browserfälle prüfen die erste Anzeige ohne JavaScript und ohne Ladehülle. PLAYWRIGHT_EXTERNAL_SERVER verhindert beim Containercheck den Start eines zusätzlichen Servers.
+
+Der Seed enthält zwei Kontaktpersonen mit Zitaten und einen `clientQuotes`-Block auf der Startseite. Der Lighthouse-Slider-Test benötigt diese Inhalte und prüft in der isolierten Testdatenbank explizit zwei Zitate, Vor-/Zurücknavigation, direkte Auswahl und den zyklischen Wechsel vom letzten zum ersten Zitat. Eine lokale Inhaltskopie der Live-Seite ersetzt für diese Prüfung nicht den CI-Seed.
