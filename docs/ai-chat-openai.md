@@ -43,7 +43,7 @@ Vertragsunterlagen und Account-Screenshots außerhalb des
 1. Beim Öffnen prüft der Browser mit einer nicht gecachten GET-Anfrage ohne Cookies,
    ob der Chat konfiguriert und aktiviert ist. Ist er deaktiviert, erscheint nur ein
    Verfügbarkeitshinweis mit Kontaktmöglichkeit. Erst danach lädt der Browser den Chat.
-   Die freiwillige Einwilligung ist versioniert (`openai-consent-v1`) und wird
+   Die freiwillige Einwilligung ist versioniert (`openai-consent-v2`) und wird
    mit Zeitpunkt und zufälliger UUID nur im Session Storage des Tabs unter
    `easycode-ai-chat-consent` gehalten. Alte Hinweisbestätigungen gelten nicht.
 2. Erst nach aktiver Einwilligung sendet der Browser Nachricht und maximal zwölf jüngste
@@ -314,8 +314,8 @@ Eingaben nicht als durch einen Warnhinweis rechtlich gelöst behandeln.
 
 ## Archiv der Einwilligung: openai-consent-v1 (4. Oktober 2026)
 
-Der maßgebliche Wortlaut steht im Einwilligungsbereich von
-`src/components/Chat/AIChat.tsx`, versioniert zusammen mit
+Der ursprüngliche vollständige Wortlaut ist im Commit `25d251a` im Einwilligungsbereich
+von `src/components/Chat/AIChat.tsx` archiviert, versioniert zusammen mit
 `CHAT_CONSENT_VERSION` in `src/utilities/chatProtocol.ts`. Er benennt Verantwortlichen,
 OpenAI Ireland, Zweck, Nachricht und Verlauf, globalen Betrieb, Anbieter-Speicherung,
 Freiwilligkeit, Kontaktalternative, Widerruf, Nachweisdaten und Eingabegrenzen.
@@ -326,3 +326,21 @@ Bewertung und gegebenenfalls neue Version und erneute Einwilligung.
 Die Bereitstellung dieses Wortlauts muss vor Livebetrieb mit der veröffentlichten
 Datenschutzerklärung übereinstimmen. Einwilligung ersetzt weder DPA noch gültige
 Drittlandgarantien oder die gesonderte Bewertung von Portfolio-/Fremddaten.
+
+## Gestufte Information: openai-consent-v2 (4. Oktober 2026)
+
+Die Chat-Bubble enthält die aktive Einwilligung mit Verantwortlichem, Empfänger,
+Daten und Zweck, Hinweis auf Speicherung und mögliche Verarbeitung außerhalb der
+EU, Freiwilligkeit, zeitlicher Gültigkeit und Widerruf. Speicherregeln, Nachweis,
+Kontaktangaben, Betroffenenrechte und weitere Details stehen direkt erreichbar
+auf `/datenschutz/ki-chat`. Der Link öffnet einen neuen Tab, damit die Entscheidung
+und der bisherige Zustand im ursprünglichen Tab bleiben. Das Lesen der Seite
+erteilt keine Einwilligung. Die Detailseite wird mit dem Code bereitgestellt;
+sie hängt nicht von einer noch unveröffentlichten CMS-Änderung ab und ersetzt
+nicht die allgemeine Datenschutzerklärung.
+
+Kurztexte und Detailabschnitte stehen in `src/constants/chatPrivacy.ts`.
+Die neue Version verlangt erneut aktive Zustimmung; v1-Bestätigungen sind ungültig.
+Keine Änderung von Verarbeitungszweck, Empfänger, Speicherregeln oder Widerruf.
+Quellen zur gestuften Information:
+[EDSA: Transparenzleitlinien](https://www.edpb.europa.eu/documents/guideline/transparency_en).

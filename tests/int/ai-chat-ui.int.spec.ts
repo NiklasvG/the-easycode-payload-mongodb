@@ -34,6 +34,27 @@ afterEach(() => {
 })
 
 describe('AI chat privacy and interaction', () => {
+  it('offers detailed privacy information without granting consent or contacting the provider', () => {
+    sessionStorage.setItem(
+      'easycode-ai-chat-consent',
+      JSON.stringify({
+        accepted: true,
+        version: 'openai-consent-v1',
+        acceptedAt: Date.now(),
+        id: '11111111-1111-4111-8111-111111111111',
+      }),
+    )
+    render(React.createElement(AIChat, { initiallyOpen: true }))
+    const details = screen.getByRole('link', { name: 'Datenschutz zum KI-Chat (neuer Tab)' })
+    expect(details.getAttribute('href')).toBe('/datenschutz/ki-chat')
+    expect(details.getAttribute('target')).toBe('_blank')
+    fireEvent.click(details)
+    expect(fetch).not.toHaveBeenCalled()
+    expect(sessionStorage.getItem('easycode-ai-chat-consent')).toBeNull()
+    expect(
+      (screen.getByRole('button', { name: 'Nachricht senden' }) as HTMLButtonElement).disabled,
+    ).toBe(true)
+  })
   it('automatically withdraws session consent when its 24-hour validity ends', () => {
     vi.useFakeTimers()
     render(React.createElement(AIChat, { initiallyOpen: true }))
@@ -54,7 +75,7 @@ describe('AI chat privacy and interaction', () => {
     send()
     await screen.findByText('Webentwicklung.')
     const body = JSON.parse(vi.mocked(fetch).mock.calls[0][1]?.body as string)
-    expect(body.consent).toMatchObject({ accepted: true, version: 'openai-consent-v1' })
+    expect(body.consent).toMatchObject({ accepted: true, version: 'openai-consent-v2' })
     expect(body.consent.id).toBeTruthy()
     expect(body.history).toEqual([])
     expect(sessionStorage.getItem('easycode-ai-chat-consent')).not.toContain('Webentwicklung')
@@ -109,7 +130,7 @@ describe('AI chat privacy and interaction', () => {
       'easycode-ai-chat-consent',
       JSON.stringify({
         accepted: true,
-        version: 'openai-consent-v1',
+        version: 'openai-consent-v2',
         acceptedAt: Date.now() - 86400000,
         id: '11111111-1111-4111-8111-111111111111',
       }),

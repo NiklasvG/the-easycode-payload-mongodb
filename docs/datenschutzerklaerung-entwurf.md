@@ -212,7 +212,9 @@ für die Auftragsverarbeitung ist laut abgeschlossenem DPA OpenAI Ireland Ltd.,
 1st Floor, The Liffey Trust Centre, 117–126 Sheriff Street Upper, Dublin 1,
 D01 YC43, Irland. Ein personalisierter
 Auftragsverarbeitungsvertrag vom 3. Oktober 2026 liegt mit Abschlusszertifikat vor.
-Vor der ersten Nachricht entscheiden Sie aktiv über Ihre Einwilligung. Ohne
+Vor der ersten Nachricht entscheiden Sie aktiv über Ihre Einwilligung. Die
+wichtigsten Angaben stehen im Chat; ergänzende Informationen sind vor der
+Entscheidung über [Datenschutz im KI-Chat](/datenschutz/ki-chat) direkt erreichbar. Ohne
 Einwilligung werden keine Chat-Inhalte an OpenAI übermittelt. Die übrigen
 Website-Funktionen und das Kontaktformular können Sie weiterhin nutzen.
 

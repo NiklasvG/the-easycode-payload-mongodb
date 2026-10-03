@@ -21,7 +21,7 @@ const input = {
   message: 'Hallo',
   consent: {
     accepted: true,
-    version: 'openai-consent-v1',
+    version: 'openai-consent-v2',
     acceptedAt: Date.now(),
     id: '11111111-1111-4111-8111-111111111111',
   },

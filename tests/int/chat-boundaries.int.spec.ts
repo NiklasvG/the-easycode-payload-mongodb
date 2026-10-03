@@ -77,7 +77,7 @@ describe('chat boundaries', () => {
         message: 'Hi',
         consent: {
           accepted: true,
-          version: 'openai-consent-v1',
+          version: 'openai-consent-v2',
           acceptedAt: Date.now(),
           id: '11111111-1111-4111-8111-111111111111',
         },
@@ -88,7 +88,7 @@ describe('chat boundaries', () => {
   it('rejects missing, expired, future and old consent; strips extra receipt fields', () => {
     const consent = {
       accepted: true,
-      version: 'openai-consent-v1',
+      version: 'openai-consent-v2',
       acceptedAt: Date.now(),
       id: '11111111-1111-4111-8111-111111111111',
     }
@@ -97,6 +97,7 @@ describe('chat boundaries', () => {
       null,
       { ...consent, accepted: false },
       { ...consent, version: 'openai-v1' },
+      { ...consent, version: 'openai-consent-v1' },
       { ...consent, id: 'invalid' },
       { ...consent, acceptedAt: Date.now() - CHAT_CONSENT_MAX_AGE },
       { ...consent, acceptedAt: Date.now() + 120000 },

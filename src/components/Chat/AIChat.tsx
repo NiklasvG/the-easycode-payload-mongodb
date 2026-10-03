@@ -6,7 +6,6 @@ import React, { useState, useRef, useEffect, useCallback } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { MessageSquare, Send, Sparkles, X, ShieldCheck, Trash2, LoaderCircle } from 'lucide-react'
-import Link from 'next/link'
 import {
   CHAT_MESSAGE_CHARS,
   CHAT_CONSENT_VERSION,
@@ -15,6 +14,12 @@ import {
   type ChatConsent,
   compactChatHistory,
 } from '@/utilities/chatProtocol'
+import {
+  CHAT_PRIVACY_PATH,
+  CHAT_CONSENT_SUMMARY,
+  CHAT_CONSENT_CHOICE,
+  CHAT_CONSENT_WARNING,
+} from '@/constants/chatPrivacy'
 import { readChatEvents } from '@/utilities/readChatEvents'
 
 interface ChatMessage {
@@ -327,41 +332,23 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
           <div className="flex-1 relative flex flex-col overflow-hidden">
             {!consent && (
               <div className="absolute inset-0 z-20 bg-black/95 backdrop-blur-xs overflow-y-auto p-5 flex flex-col items-center justify-start text-center animate-in fade-in duration-300">
-                <div className="p-4 bg-accent/10 rounded-full text-accent mb-6 ring-1 ring-accent/20">
-                  <ShieldCheck className="w-8 h-8" />
+                <div className="p-3 bg-accent/10 rounded-full text-accent mb-4 ring-1 ring-accent/20">
+                  <ShieldCheck className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-4">KI-Chat freiwillig nutzen</h3>
                 <div className="text-sm text-gray-300 leading-relaxed space-y-3 mb-5 payload-richtext">
+                  <p>{CHAT_CONSENT_SUMMARY}</p>
+                  <p>{CHAT_CONSENT_CHOICE}</p>
+                  <p className="text-xs text-gray-400">{CHAT_CONSENT_WARNING}</p>
                   <p>
-                    Ich willige ein, dass Niklas von Grzymala – The-EasyCode meine Nachrichten und
-                    den begrenzten Gesprächsverlauf an OpenAI Ireland Ltd. übermittelt, um
-                    KI-Antworten zu Leistungen, öffentlichen Projekten und Kontaktwegen zu
-                    erstellen.
-                  </p>
-                  <p>
-                    Die Verarbeitung erfolgt derzeit über den globalen API-Endpunkt und kann
-                    außerhalb der EU stattfinden. OpenAI verwendet die API-Inhalte standardmäßig
-                    nicht zum Training. Missbrauchsprotokolle können bis zu 30 Tage, bei
-                    gesetzlichen oder Sicherheitsausnahmen länger, und verschlüsselte
-                    Cache-Zwischenzustände bis zu 24 Stunden gespeichert werden.
-                  </p>
-                  <p>
-                    Bitte keine sensiblen Daten, Zugangsdaten, vertraulichen Informationen oder
-                    personenbezogenen Daten anderer Personen eingeben. KI-Antworten können Fehler
-                    enthalten.
-                  </p>
-                  <p>
-                    Die Einwilligung gilt für diesen Browser-Tab, höchstens 24 Stunden. Du kannst
-                    sie jederzeit im Chat widerrufen. Dann wird der lokale Verlauf gelöscht und eine
-                    laufende Anfrage abgebrochen; eine sofortige Löschung bei OpenAI ist damit nicht
-                    garantiert. Bereits erfolgte Verarbeitung bleibt vom Widerruf unberührt.
-                  </p>
-                  <p>
-                    Als Nachweis protokolliert der Server bei Anfragen ausschließlich eine zufällige
-                    Bestätigungs-ID, Version und Zeitpunkt der Einwilligung, keine Chat-Inhalte.
-                    Mehr in der <Link href="/datenschutz">Datenschutzerklärung</Link>. Ohne
-                    Einwilligung bleiben alle anderen Website-Funktionen verfügbar, insbesondere das{' '}
-                    <Link href="/kontakt">Kontaktformular</Link>.
+                    <a
+                      href={CHAT_PRIVACY_PATH}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-accent underline underline-offset-4"
+                    >
+                      Datenschutz zum KI-Chat (neuer Tab)
+                    </a>
                   </p>
                 </div>
                 <button
