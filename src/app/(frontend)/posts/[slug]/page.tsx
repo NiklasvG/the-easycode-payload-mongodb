@@ -8,11 +8,12 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import RichText from '@/components/RichText'
 import { PostHero } from '@/heros/PostHero'
 import { generateMeta } from '@/utilities/generateMeta'
+import { getPreviewAccess } from '@/utilities/getPreviewAccess'
 
 type Args = { params: Promise<{ slug: string }> }
 const getPost = cache(async (slug: string) => {
-  const { isEnabled: draft } = await draftMode()
   const payload = await getPayload({ config })
+  const draft = await getPreviewAccess(payload)
   const result = await payload.find({ collection: 'posts', draft, overrideAccess: draft, limit: 1, pagination: false, where: { slug: { equals: slug } } })
   return result.docs[0] || null
 })
@@ -32,5 +33,5 @@ export default async function PostPage({ params }: Args) {
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug } = await params
-  return generateMeta({ doc: await getPost(slug) })
+  return generateMeta({ doc: await getPost(slug), collection: 'posts' })
 }

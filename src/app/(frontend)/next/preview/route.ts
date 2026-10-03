@@ -27,8 +27,11 @@ export async function GET(req: NextRequest): Promise<Response> {
 	if (!path || !collection || !slug) {
 		return new Response('Insufficient search params', { status: 404 })
 	}
+	if (!['pages', 'posts', 'projects'].includes(collection)) {
+		return new Response('Unsupported preview collection', { status: 400 })
+	}
 
-	if (!path.startsWith('/') || path.startsWith('//') || path.includes('\\')) {
+	if (!path.startsWith('/') || path.startsWith('//') || /[\\\x00-\x1f\x7f]|%2f|%5c/i.test(path)) {
 		return new Response(
 			'This endpoint can only be used for relative previews',
 			{ status: 500 }

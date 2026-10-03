@@ -14,8 +14,9 @@ import {
 import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
 
-import { Page, Post } from '@/payload-types'
+import { Page, Post, Project } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
+import { getContentPath } from '@/utilities/generateMeta'
 import { authenticated } from '@/access/authenticated'
 import { validateFormSubmission } from '@/hooks/validateFormSubmission'
 
@@ -23,9 +24,14 @@ const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
 	return doc?.title ? `${doc.title} | The-EasyCode` : 'The-EasyCode'
 }
 
-const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
-	const url = getServerSideURL()
-	return doc?.slug ? `${url}/${doc.slug}` : url
+const generateURL: GenerateURL<Post | Page | Project> = async ({ doc, collectionSlug, req }) => {
+  const collection = collectionSlug === 'posts' || collectionSlug === 'projects' ? collectionSlug : 'pages'
+  let resolved = doc
+  if (collection === 'projects' && 'client' in doc && typeof doc.client === 'string') {
+    const client = await req.payload.findByID({ collection: 'clients', id: doc.client, depth: 0, overrideAccess: false, req })
+    resolved = { ...doc, client }
+  }
+  return new URL(getContentPath(resolved, collection), getServerSideURL()).href
 }
 
 export const plugins: Plugin[] = [

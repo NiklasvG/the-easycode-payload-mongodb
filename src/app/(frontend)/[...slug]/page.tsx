@@ -13,6 +13,7 @@ import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { getPreviewAccess } from '@/utilities/getPreviewAccess'
 
 // Helper um Params korrekt zu typisieren
 type Args = {
@@ -82,9 +83,8 @@ export async function generateMetadata({
 }
 
 const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
-	const { isEnabled: draft } = await draftMode()
-
 	const payload = await getPayload({ config: configPromise })
+	const draft = await getPreviewAccess(payload)
 
 	const result = await payload.find({
 		collection: 'pages',

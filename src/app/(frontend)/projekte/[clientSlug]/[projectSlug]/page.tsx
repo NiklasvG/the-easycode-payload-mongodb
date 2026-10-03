@@ -1,3 +1,4 @@
+import { generateMeta } from '@/utilities/generateMeta'
 import React, { cache } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
@@ -21,24 +22,12 @@ import {
 import { Github } from '@/components/icons/brands'
 import RichText from '@/components/RichText'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { getPreviewAccess } from '@/utilities/getPreviewAccess'
 
 type Project = RequiredDataFromCollectionSlug<'projects'>
 type Client = RequiredDataFromCollectionSlug<'clients'>
 
-function formatProjectDateRange(startDate?: string | null, endDate?: string | null): string | null {
-  if (!startDate) return null
-
-  const dateFormatter = new Intl.DateTimeFormat('de-DE', {
-    month: 'short',
-    year: 'numeric',
-  })
-
-  const start = dateFormatter.format(new Date(startDate))
-  const end = endDate ? dateFormatter.format(new Date(endDate)) : 'laufend'
-
-  return start === end ? start : `${start} - ${end}`
-}
-
+import { formatProjectDateRange } from '@/utilities/projectPresentation'
 
 type Params = {
   clientSlug: string
@@ -410,21 +399,14 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
   if (!project) return {}
 
-  return {
-    title: project.title,
-    description: project.shortDescription,
-    openGraph: {
-      title: project.title,
-      description: project.shortDescription,
-    },
-  }
+  return generateMeta({ doc: project, collection: 'projects' })
 }
 
 // -------- Helpers --------
 
 const queryProjectBySlug = cache(async ({ slug, clientSlug }: { slug: string; clientSlug: string }) => {
-  const { isEnabled: draft } = await draftMode()
   const payload = await getPayload({ config: configPromise })
+  const draft = await getPreviewAccess(payload)
 
   const result = await payload.find({
     collection: 'projects',
