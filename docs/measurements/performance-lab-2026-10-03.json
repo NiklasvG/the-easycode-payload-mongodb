@@ -1,0 +1,840 @@
+{
+  "measuredAt": "2026-10-03T15:05:24.772Z",
+  "origin": "http://localhost:3002",
+  "results": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 1,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 2088,
+      "cls": 0.4235022166505694,
+      "ttfb": 741.5,
+      "responseMs": 1176.5,
+      "transferredBytes": 485925,
+      "labInteractionCandidateMs": 16,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 1,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 348,
+      "cls": 0,
+      "ttfb": 3.100000023841858,
+      "responseMs": 67.70000004768372,
+      "transferredBytes": 17863,
+      "labInteractionCandidateMs": 16,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 1,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 8.300000071525574,
+      "responseMs": 78.90000009536743
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 2,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 1888,
+      "cls": 0.12627116978504527,
+      "ttfb": 738.7000000476837,
+      "responseMs": 1116.2999999523163,
+      "transferredBytes": 484411,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 2,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 84,
+      "cls": 0,
+      "ttfb": 2.799999952316284,
+      "responseMs": 55.299999952316284,
+      "transferredBytes": 17869,
+      "labInteractionCandidateMs": 16,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 2,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 7.700000047683716,
+      "responseMs": 103
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 3,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 1928,
+      "cls": 0.12627116978504527,
+      "ttfb": 763.2999999523163,
+      "responseMs": 1161.3999999761581,
+      "transferredBytes": 485925,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 3,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 376,
+      "cls": 0,
+      "ttfb": 3.1999999284744263,
+      "responseMs": 49.299999952316284,
+      "transferredBytes": 17866,
+      "labInteractionCandidateMs": 16,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 3,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 9.199999928474426,
+      "responseMs": 89.69999992847443
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte",
+      "run": 1,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 1916,
+      "cls": 0,
+      "ttfb": 733,
+      "responseMs": 1143.3000000715256,
+      "transferredBytes": 486184,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte",
+      "run": 1,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 80,
+      "cls": 0,
+      "ttfb": 3.100000023841858,
+      "responseMs": 45.700000047683716,
+      "transferredBytes": 21741,
+      "labInteractionCandidateMs": 16,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte",
+      "run": 1,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 7.700000047683716,
+      "responseMs": 91.60000002384186
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte",
+      "run": 2,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 1880,
+      "cls": 0,
+      "ttfb": 770.7999999523163,
+      "responseMs": 1156.8999999761581,
+      "transferredBytes": 486186,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte",
+      "run": 2,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 80,
+      "cls": 0,
+      "ttfb": 3.100000023841858,
+      "responseMs": 49.60000002384186,
+      "transferredBytes": 21744,
+      "labInteractionCandidateMs": 16,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte",
+      "run": 2,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 7.600000023841858,
+      "responseMs": 108.40000009536743
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte",
+      "run": 3,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 1988,
+      "cls": 0,
+      "ttfb": 779.7000000476837,
+      "responseMs": 1178.2000000476837,
+      "transferredBytes": 486176,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte",
+      "run": 3,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 108,
+      "cls": 0,
+      "ttfb": 4.800000071525574,
+      "responseMs": 72.60000002384186,
+      "transferredBytes": 21743,
+      "labInteractionCandidateMs": 16,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte",
+      "run": 3,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 7.600000023841858,
+      "responseMs": 100.79999995231628
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 1,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 2304,
+      "cls": 0,
+      "ttfb": 733.7000000476837,
+      "responseMs": 1079.3999999761581,
+      "transferredBytes": 417852,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 1,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 568,
+      "cls": 0,
+      "ttfb": 3.399999976158142,
+      "responseMs": 50.5,
+      "transferredBytes": 22095,
+      "labInteractionCandidateMs": 16,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 1,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 10.099999904632568,
+      "responseMs": 58.699999928474426
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 2,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 2356,
+      "cls": 0,
+      "ttfb": 792,
+      "responseMs": 1144,
+      "transferredBytes": 417847,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 2,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 572,
+      "cls": 0,
+      "ttfb": 3.5,
+      "responseMs": 46.299999952316284,
+      "transferredBytes": 22094,
+      "labInteractionCandidateMs": 16,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 2,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 6.200000047683716,
+      "responseMs": 75.39999997615814
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 3,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 1920,
+      "cls": 0,
+      "ttfb": 814.5999999046326,
+      "responseMs": 1173.6999999284744,
+      "transferredBytes": 417858,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 3,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 568,
+      "cls": 0,
+      "ttfb": 3.799999952316284,
+      "responseMs": 45,
+      "transferredBytes": 22097,
+      "labInteractionCandidateMs": 16,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 3,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 3.3000000715255737,
+      "responseMs": 85.30000007152557
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 1,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 2376,
+      "cls": 0.001528661908436214,
+      "ttfb": 924.6000000238419,
+      "responseMs": 1389.1999999284744,
+      "transferredBytes": 487426,
+      "labInteractionCandidateMs": 32,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 1,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 340,
+      "cls": 0,
+      "ttfb": 3.799999952316284,
+      "responseMs": 60.59999990463257,
+      "transferredBytes": 22886,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 1,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 8.5,
+      "responseMs": 74.89999997615814
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 2,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 2140,
+      "cls": 0.001528661908436214,
+      "ttfb": 863.7999999523163,
+      "responseMs": 1320,
+      "transferredBytes": 487430,
+      "labInteractionCandidateMs": 40,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 2,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 112,
+      "cls": 0,
+      "ttfb": 3.6999999284744263,
+      "responseMs": 65.29999995231628,
+      "transferredBytes": 22885,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 1
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 2,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 8.100000023841858,
+      "responseMs": 72.80000007152557
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 3,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 2232,
+      "cls": 0.001528661908436214,
+      "ttfb": 866.7999999523163,
+      "responseMs": 1386.2000000476837,
+      "transferredBytes": 487443,
+      "labInteractionCandidateMs": 40,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 3,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 112,
+      "cls": 0,
+      "ttfb": 4.399999976158142,
+      "responseMs": 62.89999997615814,
+      "transferredBytes": 22883,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 3,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 8,
+      "responseMs": 74.10000002384186
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte",
+      "run": 1,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 1828,
+      "cls": 0.001528661908436214,
+      "ttfb": 731.3000000715256,
+      "responseMs": 1096,
+      "transferredBytes": 489167,
+      "labInteractionCandidateMs": 32,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte",
+      "run": 1,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 84,
+      "cls": 0,
+      "ttfb": 3.299999952316284,
+      "responseMs": 45.699999928474426,
+      "transferredBytes": 24583,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte",
+      "run": 1,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 8.700000047683716,
+      "responseMs": 81
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte",
+      "run": 2,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 1920,
+      "cls": 0.001528661908436214,
+      "ttfb": 754.3999999761581,
+      "responseMs": 1143.6000000238419,
+      "transferredBytes": 489161,
+      "labInteractionCandidateMs": 40,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte",
+      "run": 2,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 100,
+      "cls": 0,
+      "ttfb": 3.299999952316284,
+      "responseMs": 59.10000002384186,
+      "transferredBytes": 24583,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte",
+      "run": 2,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 8.800000071525574,
+      "responseMs": 73.60000002384186
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte",
+      "run": 3,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 2032,
+      "cls": 0.001528661908436214,
+      "ttfb": 788.7999999523163,
+      "responseMs": 1218.5,
+      "transferredBytes": 489161,
+      "labInteractionCandidateMs": 32,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte",
+      "run": 3,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 92,
+      "cls": 0,
+      "ttfb": 3.799999952316284,
+      "responseMs": 47,
+      "transferredBytes": 24578,
+      "labInteractionCandidateMs": 32,
+      "recordedInteractions": 1
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte",
+      "run": 3,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 10.200000047683716,
+      "responseMs": 70.39999997615814
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 1,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 1780,
+      "cls": 0.001528661908436214,
+      "ttfb": 720.5,
+      "responseMs": 1059.7000000476837,
+      "transferredBytes": 419990,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 1,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 572,
+      "cls": 0,
+      "ttfb": 3,
+      "responseMs": 38.800000071525574,
+      "transferredBytes": 24931,
+      "labInteractionCandidateMs": 16,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 1,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 10.5,
+      "responseMs": 80.30000007152557
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 2,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 1800,
+      "cls": 0.001528661908436214,
+      "ttfb": 713.3000000715256,
+      "responseMs": 1072.4000000953674,
+      "transferredBytes": 419999,
+      "labInteractionCandidateMs": 32,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 2,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 572,
+      "cls": 0,
+      "ttfb": 2.899999976158142,
+      "responseMs": 38.800000071525574,
+      "transferredBytes": 24934,
+      "labInteractionCandidateMs": 16,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 2,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 7.799999952316284,
+      "responseMs": 56
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 3,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 1808,
+      "cls": 0.001528661908436214,
+      "ttfb": 729.1000000238419,
+      "responseMs": 1073.7999999523163,
+      "transferredBytes": 419987,
+      "labInteractionCandidateMs": 32,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 3,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 572,
+      "cls": 0,
+      "ttfb": 3,
+      "responseMs": 40.799999952316284,
+      "transferredBytes": 24935,
+      "labInteractionCandidateMs": 16,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/projekte/testkunde/testprojekt",
+      "run": 3,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 9,
+      "responseMs": 66.39999997615814
+    }
+  ],
+  "limitations": [
+    "Unthrottled local Chromium",
+    "New process does not clear persistent data caches or OS caches",
+    "Scripted Event Timing is a lab candidate, not real-user INP",
+    "Event durations below 16 ms are not reported"
+  ]
+}
