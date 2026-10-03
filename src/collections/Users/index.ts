@@ -15,7 +15,13 @@ export const Users: CollectionConfig = {
     defaultColumns: ['name', 'email'],
     useAsTitle: 'name',
   },
-  auth: true,
+  auth: {
+    maxLoginAttempts: 5,
+    lockTime: 10 * 60 * 1000,
+    cookies: { sameSite: 'Lax', secure: process.env.NEXT_PUBLIC_SERVER_URL?.startsWith('https://') },
+  },
+  // Provision the first editor through the trusted CLI/Local API, never a public endpoint.
+  endpoints: [{ path: '/first-register', method: 'post', handler: () => Response.json({ error: 'Public registration is disabled' }, { status: 403 }) }],
   fields: [
     {
       name: 'name',

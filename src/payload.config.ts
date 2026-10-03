@@ -3,7 +3,9 @@ import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 
 import sharp from 'sharp' // sharp-import
 import path from 'path'
-import { buildConfig, PayloadRequest } from 'payload'
+import { buildConfig } from 'payload'
+import { runJobs } from './access/runJobs'
+import { authenticated } from './access/authenticated'
 import { fileURLToPath } from 'url'
 
 import { Categories } from './collections/Categories'
@@ -103,6 +105,9 @@ export default buildConfig({
 	}),
 	collections: [Pages, Posts, Media, Categories, Users, Clients, Projects],
 	cors: [getServerSideURL()].filter(Boolean),
+	csrf: [getServerSideURL()],
+	maxDepth: 5,
+	graphQL: { maxComplexity: 500, disablePlaygroundInProduction: true },
 	globals: [Header, Footer],
 	plugins: [...plugins],
 	email: nodemailerAdapter({
@@ -119,15 +124,9 @@ export default buildConfig({
 	},
 	jobs: {
 		access: {
-			run: ({ req }: { req: PayloadRequest }): boolean => {
-				// Allow logged in users to execute this endpoint (default)
-				if (req.user) return true
-
-				// External schedulers authenticate with CRON_SECRET in the
-				// Authorization header (for example, a Coolify scheduled task).
-				const authHeader = req.headers.get('authorization')
-				return authHeader === `Bearer ${process.env.CRON_SECRET}`
-			}
+			run: runJobs,
+			queue: authenticated,
+			cancel: authenticated,
 		},
 		tasks: []
 	}

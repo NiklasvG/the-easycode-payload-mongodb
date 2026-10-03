@@ -9,9 +9,12 @@ const NEXT_PUBLIC_SERVER_URL =
 const nextConfig = {
 	output: 'standalone',
 	async headers() {
-		return process.env.APP_ENV === 'staging'
-			? [{ source: '/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] }]
-			: []
+		return [{ source: '/:path*', headers: [
+			{ key: 'X-Content-Type-Options', value: 'nosniff' },
+			{ key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+			{ key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+			...(process.env.APP_ENV === 'staging' ? [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] : []),
+		] }]
 	},
 	images: {
 		qualities: [75, 85, 100],
