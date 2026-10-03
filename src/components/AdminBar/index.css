@@ -1,0 +1,4 @@
+/* Payload's small-break is 768px; this rule needs no framework Sass mixins. */
+@media (max-width: 768px) {
+  .admin-bar { display: none; }
+}
