@@ -2,25 +2,33 @@
 
 Stand: 3. Oktober 2026.
 
-## Aktualisierung: geplanter Wechsel auf OpenAI
+## Aktualisierung: aktiver globaler OpenAI-Staging-Test
 
 Die bisherigen Gemini-Angaben unten sind historische Prüfergebnisse zum vorherigen
 Code und kein Nachweis für den neuen Betrieb. Abschnitt 7 des Website-Entwurfs
-wurde auf den noch deaktivierten OpenAI-Betrieb umgestellt. Neue Prüfpunkte,
+wurde auf OpenAI umgestellt. Der globale Chat ist nach Betreiberbestätigung auf
+Staging aktiviert und erfolgreich getestet. Neue Prüfpunkte,
 Account-Bestätigungen, Datenfluss, VVT- und Interessenabwägungsentwurf stehen in
 [ai-chat-openai.md](ai-chat-openai.md).
 
-Sales-Freigabe für EU/ZDR oder MAM, DPA, Retention-Zusatz, endgültiges API-Projekt,
-Abrechnung und Proxy-IP-Konfiguration stehen aus. Sharing und API-Logging sind
+API-Key und Abrechnung (10 USD Guthaben) sind eingerichtet. Traefik mit
+Cloudflare DNS only, nicht veröffentlichtem Anwendungsport und `x-real-ip`
+wurde in den dokumentierten Testfällen geprüft. Die temporäre Diagnose ist entfernt.
+DPA-PDF heruntergeladen; wirksame Einbeziehung noch nicht belegt. EU/ZDR-/MAM-Anfrage
+läuft, wird für den aktuellen globalen Test aber nicht als Freigabe behauptet.
+Offen bleiben Vertragsnachweise, Rechtsgrundlage, tatsächliche Retention und
+Drittlandgarantien für den endgültigen Betrieb. Sharing und API-Logging sind
 nach Betreiberbestätigung deaktiviert; MFA/Passkey und alleiniger Owner-Zugriff
-sind bestätigt. Keine rechtliche Freigabe oder erfolgtes Deployment behaupten.
+sind bestätigt. Staging-Deployment ist bestätigt, eine rechtliche oder produktive
+Freigabe daraus nicht ableiten. Die Markdown-Änderungen veröffentlichen nichts im CMS.
 
 Die alte Beschreibung einer nicht bereinigten Chat-IP-Map gilt für den neuen
 Chat nicht: Er verwendet pseudonymisierte IP-Zähler mit Ablauf und regelmäßigem
 Sweep. Separate Protokolle und deren Löschregeln bleiben zu klären.
 
 ## Bisheriger Prüfstand
- Belege und Fundstellen für die verbleibenden Angaben
+
+Belege und Fundstellen für die verbleibenden Angaben
 stehen in [datenschutz-offene-angaben.md](datenschutz-offene-angaben.md).
 
 Der Entwurf beschreibt den vorbereiteten `staging`-Stand auf Hetzner mit Umami.
@@ -76,7 +84,7 @@ committed oder deployed.
   automatisch nach 14 Monaten. Gewünschte Frist technisch implementieren und
   erst dann im Text behaupten. Auch die Aufbewahrung in Backups berücksichtigen.
 - Mailserver-Logs, Warteschlangen und Backups beim Löschkonzept berücksichtigen.
-- Gemini-Vertragsgesellschaft, aktives Billing, einschlägiger Datenschutzvertrag,
+- OpenAI-Vertragsgesellschaft und wirksam einbezogener Datenschutzvertrag,
   Speicherfristen und konkrete Garantien für Verarbeitung außerhalb des EWR.
 - Funktion des bestätigten Cookie-Einstellungen-Links testen: Banner erneut
   öffnen, Auswahl ändern und Analyse widerrufen.
@@ -96,7 +104,7 @@ Datenschutzhinweise für ihre jeweiligen Verarbeitungsvorgänge, Anbieter und
 verantwortlichen Betreiber. Aus ihrer gemeinsamen Infrastruktur folgt keine
 Verarbeitung von Shopbestellungen auf der EasyCode-Website.
 
-## Gemini: bisheriger Text muss korrigiert werden
+## Historischer Gemini-Prüfstand (vor dem OpenAI-Wechsel)
 
 Für EWR-API-Clients verlangen Googles Bedingungen Paid Services, bei der API also
 ein Projekt mit aktivem Billing. Die EWR-Sonderregel zur Datennutzung widerspricht
@@ -116,10 +124,10 @@ Chatbetrieb muss dokumentiert und rechtlich geprüft werden.
 - Google Analytics und Sentry sind im aktuellen Projekt nicht eingebunden.
 - Schriftarten werden durch `next/font/google` beim Build eingebunden.
 - Chatverläufe sind React-State; keine vorgesehene CMS-Speicherung.
-- Der Chat begrenzt Anfragen über eine IP-basierte In-Memory-Map. Das Zeitfenster
-  beträgt eine Minute, aber alte Map-Einträge werden nicht durch einen Timer
-  gelöscht. Daher keine Löschung „nach einer Minute“ versprechen. Unveränderte
-  Einträge können bis zum Neustart des Anwendungsprozesses bestehen bleiben.
+- Der OpenAI-Chat verwendet prozesslokale pseudonymisierte IP-Zähler mit
+  Minutenfenster und Bereinigung alle 15 Sekunden. Bei normal laufendem Event
+  Loop werden Einträge spätestens nach etwa 75 Sekunden entfernt; verzögerte
+  Timer können später laufen. Separate Infrastruktur-Logs sind davon unabhängig.
 - Consent- und Theme-Auswahl sowie Chat-Hinweisbestätigung liegen im Local Storage.
   Der geöffnete Chat wird im Session Storage vermerkt. Consent hat keinen
   automatischen Ablaufzeitpunkt.

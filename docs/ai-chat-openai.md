@@ -1,10 +1,12 @@
 # OpenAI-Chat: Betrieb und Datenschutzvorbereitung
 
-Stand: 3. Oktober 2026. Lokale Vorbereitung, nicht deployed und keine rechtliche Freigabe.
+Stand: 3. Oktober 2026. Globaler Staging-Betrieb laut Betreiber getestet; keine rechtliche Freigabe für den Produktivbetrieb.
 
 ## Status
 
-Der Chat wurde von Gemini auf GPT-6 Luna über die OpenAI Responses API vorbereitet.
+Der Chat wurde von Gemini auf GPT-6 Luna über die OpenAI Responses API umgestellt.
+Der Betreiber bestätigt erfolgreiche Antworten auf `staging.the-easycode.eu`
+mit `OPENAI_CHAT_REGION=global`. Der produktive Betrieb ist nicht bestätigt.
 Es erfolgt kein automatischer Rückfall auf Gemini oder einen globalen OpenAI-Endpunkt.
 Der explizite globale Staging-Modus ist unten beschrieben.
 Ohne explizite Aktivierung, passende Region-Konfiguration, API-Key und Proxy-IP-Header
@@ -12,7 +14,11 @@ antwortet die Route mit 503, ohne CMS-Inhalte abzurufen oder OpenAI aufzurufen.
 
 Betreiberbestätigungen aus diesem Chat:
 
-- Organisation: The-Easycode; API-Konto vorhanden, Abrechnung noch nicht eingerichtet.
+- Organisation: The-Easycode; API-Konto und API-Key eingerichtet, 10 USD Guthaben aufgeladen.
+- Globaler Staging-Chat deployed und Antworten vom Betreiber erfolgreich getestet.
+- DPA-PDF heruntergeladen; wirksame Vertragseinbeziehung noch nicht durch Unterlagen bestätigt.
+- Proxy: Traefik, Cloudflare DNS only, kein Host-Port-Mapping der Anwendung;
+  `x-real-ip` in den dokumentierten normalen und manipulierten Testanfragen geprüft.
 - Sales-Anfrage zu EU-Verarbeitung/ZDR beziehungsweise MAM versendet; Antwort ausstehend.
 - Sharing: Feedback, Evaluation/Fine-Tuning und Eingaben/Ausgaben deaktiviert.
 - API call logging deaktiviert; Nutzungsübersicht eingeschränkt, Logs nur für Owner sichtbar.
@@ -39,7 +45,9 @@ Einbeziehung des DPA. Vertragsunterlagen und Account-Screenshots außerhalb des
    und öffentliche Projekt-URLs übertragen, insgesamt höchstens 6.000 Zeichen.
    Nicht enthalten: interne Kundenfelder, E-Mail-Adressen aus Beziehungen, Uploads,
    Kontaktanfragen, CMS-Authentifizierung, Besucher-IP oder Browser-Header.
-5. Native serverseitige HTTPS-Anfrage an `https://eu.api.openai.com/v1/responses`:
+5. Native serverseitige HTTPS-Anfrage auf Staging aktuell an
+   `https://api.openai.com/v1/responses`. Bei explizit freigegebener EU-Konfiguration
+   stattdessen `https://eu.api.openai.com/v1/responses`:
    `model=gpt-6-luna`, `store=false`, `stream=true`, `reasoning.effort=none`,
    `text.verbosity=low`, `max_output_tokens=800`. Kein SDK, keine Tools, Files,
    Conversations, Background-Anfragen oder providerseitigen Response-IDs im Verlauf.

@@ -191,11 +191,11 @@ erforderlichen Kontaktangaben kann ich Ihre Anfrage gegebenenfalls nicht bearbei
 
 ## 7. KI-gestützter Chat „EasyCode AI“
 
-**[Dieser Abschnitt beschreibt den lokal vorbereiteten OpenAI-Betrieb. Er ist
-noch nicht aktiviert oder als produktiver Betrieb bestätigt. Vor Veröffentlichung
-Verträge, EU-Konfiguration, Rechtsgrundlage und Speicherregeln nachweisen und
-diesen Bearbeitungshinweis entfernen. Bei weiterbetriebenem Gemini-Chat muss
-stattdessen dessen tatsächliche Verarbeitung beschrieben werden.]**
+**[OpenAI ist nach Betreiberbestätigung auf Staging über den globalen Endpunkt
+aktiv und getestet. Der produktive Betrieb ist nicht bestätigt. Vor Veröffentlichung
+Verträge, tatsächliche Verarbeitungsregion, Rechtsgrundlage, Drittlandgarantien
+und Speicherregeln belegen und diesen Bearbeitungshinweis entfernen. Diese
+Markdown-Datei aktualisiert nicht automatisch die Datenschutzerklärung im CMS.]**
 
 Auf der Website können Sie freiwillig einen KI-Assistenten nutzen, um Informationen
 über meine Leistungen, öffentliche Projekte und Kontaktmöglichkeiten zu erhalten.
@@ -212,10 +212,11 @@ Chat-Hinweises dient der Information und ist keine Datenschutz-Einwilligung.
 Im Anwendungscode erfolgt keine dauerhafte Speicherung der Gesprächsinhalte
 in meiner CMS-Datenbank. Der Verlauf wird im Browser-Arbeitsspeicher gehalten
 und bei Folgefragen begrenzt erneut übertragen. „Verlauf löschen“ oder das
-Neuladen der Seite verwirft den Verlauf dort. Das Schließen des Chats beendet
-eine laufende Antworterzeugung, behält den sichtbaren Verlauf aber für das
+Neuladen der Seite verwirft den Verlauf dort. Das Schließen des Chats bricht
+die laufende Verbindung zur Antworterzeugung ab, behält den sichtbaren Verlauf aber für das
 Wiederöffnen innerhalb derselben Seite. Die Löschung im Browser löscht keine
 bereits beim Anbieter verarbeiteten Daten.
+Ein sofortiger Abbruch der Verarbeitung beim Anbieter ist damit nicht garantiert.
 
 Die Anwendung fordert keine Speicherung von Antworten als abrufbaren
 Antwortzustand bei OpenAI an (API-Einstellung store=false). Nach der
@@ -226,11 +227,12 @@ Prompt-Caching, menschliche Einsicht sowie gesetzliche Ausnahmen bestätigen.
 Ohne besondere Freigabe nennt OpenAI für Missbrauchsprotokolle grundsätzlich
 bis zu 30 Tage mit Ausnahmen. Nicht als bestehende ZDR-Zusage veröffentlichen.]
 
-[Die freigegebene regionale Verarbeitung von Kundeninhalten im EWR und der
-Schweiz, verwendete Endpunkte sowie Ausnahmen für System-, Konto- und
-Abrechnungsdaten bestätigen. Etwaige Drittlandverarbeitung, Empfänger und
-anwendbare Übermittlungsgarantien einschließlich möglicher erforderlicher
-Zusatzprüfung konkret dokumentieren. Keine uneingeschränkte EU-only-Zusage.]
+Der aktuelle Staging-Test verwendet den globalen OpenAI-Endpunkt. Eine
+ausschließliche Verarbeitung in der EU wird für diesen Betrieb nicht zugesagt.
+[Für die endgültige veröffentlichte Fassung den tatsächlichen Betriebsmodus,
+Verarbeitungsländer, Empfänger und Übermittlungsgarantien bei Drittlandverarbeitung
+aus den anwendbaren Verträgen übernehmen und prüfen. Falls später EU Data Residency
+aktiviert wird, deren bestätigten Umfang und Ausnahmen gesondert beschreiben.]
 
 Zur Missbrauchsbegrenzung verarbeitet meine Anwendung die vom vertrauenswürdigen
 Server-Proxy übermittelte IP-Adresse und daraus gebildete pseudonymisierte

@@ -2,18 +2,25 @@
 
 Stand: 3. Oktober 2026.
 
-## Aktualisierung: geplanter Wechsel auf OpenAI
+## Aktualisierung: aktiver globaler OpenAI-Staging-Test
 
 Die bisherigen Gemini-Angaben unten sind historische Prüfergebnisse zum vorherigen
 Code und kein Nachweis für den neuen Betrieb. Abschnitt 7 des Website-Entwurfs
-wurde auf den noch deaktivierten OpenAI-Betrieb umgestellt. Neue Prüfpunkte,
+wurde auf OpenAI umgestellt. Der globale Chat ist nach Betreiberbestätigung auf
+Staging aktiviert und erfolgreich getestet. Neue Prüfpunkte,
 Account-Bestätigungen, Datenfluss, VVT- und Interessenabwägungsentwurf stehen in
 [ai-chat-openai.md](ai-chat-openai.md).
 
-Sales-Freigabe für EU/ZDR oder MAM, DPA, Retention-Zusatz, endgültiges API-Projekt,
-Abrechnung und Proxy-IP-Konfiguration stehen aus. Sharing und API-Logging sind
+API-Key und Abrechnung (10 USD Guthaben) sind eingerichtet. Traefik mit
+Cloudflare DNS only, nicht veröffentlichtem Anwendungsport und `x-real-ip`
+wurde in den dokumentierten Testfällen geprüft. Die temporäre Diagnose ist entfernt.
+DPA-PDF heruntergeladen; wirksame Einbeziehung noch nicht belegt. EU/ZDR-/MAM-Anfrage
+läuft, wird für den aktuellen globalen Test aber nicht als Freigabe behauptet.
+Offen bleiben Vertragsnachweise, Rechtsgrundlage, tatsächliche Retention und
+Drittlandgarantien für den endgültigen Betrieb. Sharing und API-Logging sind
 nach Betreiberbestätigung deaktiviert; MFA/Passkey und alleiniger Owner-Zugriff
-sind bestätigt. Keine rechtliche Freigabe oder erfolgtes Deployment behaupten.
+sind bestätigt. Staging-Deployment ist bestätigt, eine rechtliche oder produktive
+Freigabe daraus nicht ableiten. Die Markdown-Änderungen veröffentlichen nichts im CMS.
 
 Die alte Beschreibung einer nicht bereinigten Chat-IP-Map gilt für den neuen
 Chat nicht: Er verwendet pseudonymisierte IP-Zähler mit Ablauf und regelmäßigem
@@ -79,9 +86,9 @@ Aufbewahrungskonzept einzubeziehen.
 | --- | --- | --- |
 | Abschnitt 2: technische Protokolle | Coolify: zugehöriger Server und Proxy-Konfiguration; auf dem Server Docker-Logging-Konfiguration, gegebenenfalls `logrotate` und `journald`; Logs der Website und Datenbanken | Welche Zugriffs-/Fehlerprotokolle tatsächlich entstehen, ob IP-Adressen enthalten sind und wann sie gelöscht werden. Eine Größenbegrenzung durch Logrotation ist keine feste Frist in Tagen. Hetzner-Fristen für Managed Webhosting lassen sich nicht auf selbst verwaltete Cloud-Server übertragen. |
 | Abschnitt 5: Umami-Aufbewahrung | Coolify → Umami/PostgreSQL-Service; konfigurierte geplante Jobs, Datenbank-Wartung und gegebenenfalls externe Cronjobs | Tatsächliches Lösch-/Aggregationsverfahren und Frist. Die Installationsanleitung `docs/umami-coolify.md` belegt keine eingerichtete automatische Datenlöschung. Falls kein Verfahren existiert, eine Frist festlegen und technisch umsetzen, bevor sie im Text zugesagt wird. |
-| Abschnitt 7: Google-Vertragsgesellschaft | Google AI Studio: zum verwendeten API-Key gehörendes Projekt ermitteln; Google Cloud Console: zugehöriges Abrechnungskonto, Vertrags-/Rechnungsunterlagen; [Gemini-Bedingungen](https://ai.google.dev/gemini-api/terms) | Die für genau dieses Projekt geltende Gesellschaft und Anschrift bestätigen. Der Code verwendet die Gemini API über `GEMINI_API_KEY`; daraus folgt keine Vertragsgesellschaft. |
-| Abschnitt 7: Löschfrist der IP-/Anfragezähler | `src/app/api/ai-chat/route.ts` und tatsächlich bereitgestellte Version | Aktuell: fünf Anfragen je Minutenfenster, aber kein automatisches Entfernen abgelaufener Map-Einträge. Ohne weitere Anfrage bleibt der Eintrag bis zum Ende des Anwendungsprozesses erhalten. Eine Minute ist deshalb keine Löschfrist. Eine Bereinigung implementieren und testen, dann die wirksame Frist eintragen. |
-| Abschnitt 7: Google-Datenverarbeitung, Speicherfristen und Drittlandgarantien | Für das API-Projekt geltende [Gemini-Bedingungen](https://ai.google.dev/gemini-api/terms), verlinktes Data Processing Addendum und Missbrauchsüberwachungs-Dokumentation; Billing-Status des Projekts | Aktives Billing, anwendbare Datenverarbeitungsvereinbarung, Übermittlungsgarantien und konkrete Speicherfristen prüfen. Die aktuellen Bedingungen verlangen Paid Services für API-Anwendungen, die Nutzern im EWR bereitgestellt werden; die API gilt bei einem Projekt mit aktivem Abrechnungskonto als Paid Service. Bedingungen zur Datennutzung enthalten zusätzlich eine EWR-Sonderregel. Nicht pauschal aus „kostenlos“ auf Training schließen und keine Frist aus Regeln für andere Funktionen wie Search Grounding übernehmen. |
+| Abschnitt 7: OpenAI-Vertragsgesellschaft | Organisations-/Rechnungsunterlagen und [OpenAI-DPA](https://openai.com/policies/data-processing-addendum/) | Geltenden Vertragspartner und Anschrift sowie die wirksame Einbeziehung des DPA bestätigen. Eine heruntergeladene PDF allein ist kein Nachweis der Account-Vertragskonfiguration. |
+| Abschnitt 7: IP-/Anfragezähler | `src/utilities/chatLimits.ts` und tatsächlich bereitgestellte Version | Minutenfenster, HMAC-Identifier und regelmäßige Bereinigung sind implementiert und getestet. Abgelaufene Einträge werden alle 15 Sekunden entfernt, bei normal laufendem Event Loop spätestens nach etwa 75 Sekunden; verzögerte Ausführung ist möglich. Separate Infrastruktur-Logs unabhängig prüfen. |
+| Abschnitt 7: OpenAI-Verarbeitung, Speicherfristen und Drittlandgarantien | API-Projekt, anwendbarer DPA und [OpenAI-Datenkontrollen](https://developers.openai.com/api/docs/guides/your-data) | Aktuell globaler Staging-Endpunkt, Abrechnung eingerichtet. Vertragsgarantien, Missbrauchsprotokolle, Caching, menschliche Einsicht und Ausnahmen dokumentieren. `store=false` ist keine ZDR-Zusage. EU-Verarbeitung nur nach gesonderter bestätigter Konfiguration behaupten. |
 | Abschnitt 9: Backups | Hetzner Console → betreffender Server → Backups; zusätzlich Snapshots; Coolify → Datenbank-Backups und Speicherziele; eigene Cronjobs/Backup-Skripte und gegebenenfalls Storage Box oder S3-Anbieter | Laut Betreiber sind Backups eingerichtet und liegen bei Hetzner in Falkenstein. Der Umfang (Coolify, Datenbanken, Maildaten, Volumes und Images) ist bestätigt. Noch Sicherungsrhythmus, Aufbewahrung/Rotation und Löschung dokumentieren. Anbieter und Standort sind durch Betreiberangabe bestätigt. Snapshots und Datenbank-Backups können andere Aufbewahrungsregeln als Server-Backups haben. |
 
 Die technischen Ergänzungen beruhen auf dem lokalen Projektstand. Vor Veröffentlichung
