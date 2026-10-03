@@ -77,7 +77,7 @@ export default buildConfig({
 		connectOptions: {
 			// weniger lange „hängen“, wenn ein Node in der Replica-Set mal zickt
 			serverSelectionTimeoutMS: 5000,
-			// verlässlicher Pool, aber nicht zu groß für Vercel Lambdas
+			// Limit connections per application instance.
 			maxPoolSize: 10,
 			minPoolSize: 0,
 			maxIdleTimeMS: 60000,
@@ -113,9 +113,8 @@ export default buildConfig({
 				// Allow logged in users to execute this endpoint (default)
 				if (req.user) return true
 
-				// If there is no logged in user, then check
-				// for the Vercel Cron secret to be present as an
-				// Authorization header:
+				// External schedulers authenticate with CRON_SECRET in the
+				// Authorization header (for example, a Coolify scheduled task).
 				const authHeader = req.headers.get('authorization')
 				return authHeader === `Bearer ${process.env.CRON_SECRET}`
 			}

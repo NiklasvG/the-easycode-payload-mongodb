@@ -1,5 +1,8 @@
 # Hetzner / Coolify deployment
 
+For self-hosted analytics, performance and uptime alternatives, see
+[Monitoring on Coolify](monitoring-coolify.md).
+
 ## Staging first
 
 - Branch: `staging`. Deploy to `https://staging.the-easycode.eu`.
