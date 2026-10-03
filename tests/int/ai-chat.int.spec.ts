@@ -17,7 +17,15 @@ const request = (data: unknown, extra: Record<string, string> = {}) =>
     },
     body: JSON.stringify(data),
   })
-const input = { message: 'Hallo', noticeVersion: 'openai-v1' }
+const input = {
+  message: 'Hallo',
+  consent: {
+    accepted: true,
+    version: 'openai-consent-v1',
+    acceptedAt: Date.now(),
+    id: '11111111-1111-4111-8111-111111111111',
+  },
+}
 const sse = (events: unknown[]) =>
   new Response(events.map((e) => `data: ${JSON.stringify(e)}\n\n`).join(''), {
     headers: { 'content-type': 'text/event-stream' },
@@ -32,6 +40,7 @@ describe('OpenAI chat region and request contract', () => {
   beforeEach(async () => {
     vi.resetModules()
     vi.clearAllMocks()
+    vi.spyOn(console, 'info').mockImplementation(() => {})
     for (const [key, value] of Object.entries({
       AI_CHAT_ENABLED: 'true',
       OPENAI_CHAT_REGION: 'eu',
@@ -48,8 +57,26 @@ describe('OpenAI chat region and request contract', () => {
     GET = (await import('@/app/api/ai-chat/route')).GET
   })
   afterEach(() => {
+    vi.restoreAllMocks()
     vi.unstubAllEnvs()
     vi.unstubAllGlobals()
+  })
+  it('rejects old notice-only requests before querying CMS or provider', async () => {
+    expect((await POST(request({ message: 'Hallo', noticeVersion: 'openai-v1' }))).status).toBe(400)
+    expect(mocks.find).not.toHaveBeenCalled()
+    expect(fetch).not.toHaveBeenCalled()
+    expect(console.info).not.toHaveBeenCalled()
+  })
+  it('logs only normalized consent metadata and does not send it to OpenAI', async () => {
+    const response = await POST(
+      request({ ...input, consent: { ...input.consent, privateText: 'PRIVATE' } }),
+    )
+    await response.text()
+    expect(console.info).toHaveBeenCalledWith('[ai-chat-consent]', JSON.stringify(input.consent))
+    const upstream = JSON.parse(vi.mocked(fetch).mock.calls[0][1]?.body as string)
+    expect(upstream.consent).toBeUndefined()
+    expect(JSON.stringify(upstream)).not.toContain(input.consent.id)
+    expect(JSON.stringify(vi.mocked(console.info).mock.calls)).not.toContain('PRIVATE')
   })
   it('is disabled until approval and configuration are confirmed', async () => {
     vi.stubEnv('OPENAI_EU_APPROVED', 'false')
@@ -101,7 +128,7 @@ describe('OpenAI chat region and request contract', () => {
     expect(response.status).toBe(200)
     expect(await response.text()).toContain('Hallo Welt')
   })
-  it('validates message, notice, roles and total history before querying CMS or provider', async () => {
+  it('validates message, consent, roles and total history before querying CMS or provider', async () => {
     for (const data of [
       { message: 'hello' },
       { ...input, message: 'x'.repeat(1001) },

@@ -1,6 +1,6 @@
 # Belege und offene Angaben zur Datenschutzerklärung
 
-Stand: 3. Oktober 2026.
+Stand: 4. Oktober 2026.
 
 ## Aktualisierung: aktiver globaler OpenAI-Staging-Test
 
@@ -22,7 +22,12 @@ Keine eigenständige kryptografische Signaturvalidierung. EU/ZDR-/MAM-Anfrage
 läuft, wird für den aktuellen globalen Test aber nicht als Freigabe behauptet.
 Anbieteranschrift und dokumentierte Standardfristen (Missbrauchsprotokolle bis
 30 Tage mit Ausnahmen, verschlüsselte Cache-Zwischenzustände bis 24 Stunden)
-sind anhand offizieller OpenAI-Quellen ergänzt. Offen bleiben Rechtsgrundlage,
+sind anhand offizieller OpenAI-Quellen ergänzt. Der Betreiber hat am 4. Oktober
+2026 die Einwilligung für Nutzer-Chat-Inhalte gewählt; aktive Zustimmung,
+Session-Bestätigung (maximal 24 Stunden) und Widerruf sind im Code vorbereitet.
+Nachweis nur mit Version, Zeitpunkt und zufälliger ID in rotierenden Anwendungslogs;
+keine Chat-Inhalte oder IP in diesen Nachweiseinträgen. Bereitstellung, manueller
+Test und abschließende Bewertung des Nachweiskonzepts bleiben offen. Ebenso
 eigene Infrastruktur-Speicherfristen und die konkrete Bewertung von Empfängern,
 Zielländern und Transfergarantien für den endgültigen Betrieb. Sharing und API-Logging sind
 nach Betreiberbestätigung deaktiviert; MFA/Passkey und alleiniger Owner-Zugriff

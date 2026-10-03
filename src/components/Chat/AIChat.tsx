@@ -1,7 +1,7 @@
 // src\components\Chat\AIChat.tsx
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -9,7 +9,10 @@ import { MessageSquare, Send, Sparkles, X, ShieldCheck, Trash2, LoaderCircle } f
 import Link from 'next/link'
 import {
   CHAT_MESSAGE_CHARS,
-  CHAT_NOTICE_VERSION,
+  CHAT_CONSENT_VERSION,
+  CHAT_CONSENT_MAX_AGE,
+  parseChatConsent,
+  type ChatConsent,
   compactChatHistory,
 } from '@/utilities/chatProtocol'
 import { readChatEvents } from '@/utilities/readChatEvents'
@@ -22,7 +25,14 @@ interface ChatMessage {
 }
 
 const STORAGE_KEY = 'easycode-ai-chat-opened'
-const DISCLAIMER_KEY = 'easycode-ai-chat-disclaimer-confirmed'
+const CONSENT_KEY = 'easycode-ai-chat-consent'
+function storedConsent() {
+  try {
+    return parseChatConsent(JSON.parse(storedSetting('sessionStorage', CONSENT_KEY) || 'null'))
+  } catch {
+    return null
+  }
+}
 function storedSetting(storage: 'localStorage' | 'sessionStorage', key: string) {
   try {
     return typeof window === 'undefined' ? null : window[storage].getItem(key)
@@ -36,9 +46,8 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
   const [hasOpenedOnce, setHasOpenedOnce] = useState(
     () => initiallyOpen || storedSetting('sessionStorage', STORAGE_KEY) === 'true',
   )
-  const [hasConfirmedDisclaimer, setHasConfirmedDisclaimer] = useState(
-    () => storedSetting('localStorage', DISCLAIMER_KEY) === CHAT_NOTICE_VERSION,
-  )
+  const [consent, setConsent] = useState<ChatConsent | null>(storedConsent)
+  const consentRef = useRef(consent)
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'model',
@@ -93,15 +102,62 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
     })
   }, [isOpen])
 
+  const handleConsent = () => {
+    const accepted: ChatConsent = {
+      accepted: true,
+      version: CHAT_CONSENT_VERSION,
+      acceptedAt: Date.now(),
+      id: window.crypto.randomUUID(),
+    }
+    consentRef.current = accepted
+    setConsent(accepted)
+    try {
+      window.sessionStorage.setItem(CONSENT_KEY, JSON.stringify(accepted))
+      window.localStorage.removeItem('easycode-ai-chat-disclaimer-confirmed')
+    } catch {
+      /* Consent remains valid in memory if browser storage is unavailable. */
+    }
+    requestAnimationFrame(() => inputRef.current?.focus())
+  }
+
+  const handleWithdrawConsent = useCallback(() => {
+    consentRef.current = null
+    setConsent(null)
+    requestAbort.current?.abort()
+    setMessages((previous) => previous.slice(0, 1))
+    setInputValue('')
+    setErrorMessage('')
+    try {
+      window.sessionStorage.removeItem(CONSENT_KEY)
+    } catch {
+      /* The in-memory withdrawal still blocks further requests. */
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!consent) {
+      try {
+        window.sessionStorage.removeItem(CONSENT_KEY)
+      } catch {
+        /* Browser storage may be unavailable. */
+      }
+      return
+    }
+    const timer = window.setTimeout(
+      handleWithdrawConsent,
+      Math.max(0, consent.acceptedAt + CHAT_CONSENT_MAX_AGE - Date.now()),
+    )
+    return () => window.clearTimeout(timer)
+  }, [consent, handleWithdrawConsent])
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (
-      !inputValue.trim() ||
-      requestAbort.current ||
-      !hasConfirmedDisclaimer ||
-      Date.now() < retryAt
-    )
+    if (!inputValue.trim() || requestAbort.current || !consent || Date.now() < retryAt) return
+    const activeConsent = parseChatConsent(consentRef.current)
+    if (!activeConsent) {
+      handleWithdrawConsent()
       return
+    }
     const userText = inputValue.trim()
     const honeypot = new FormData(e.currentTarget).get('hp_field')
     const abort = new AbortController()
@@ -130,7 +186,7 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
         body: JSON.stringify({
           message: userText,
           history,
-          noticeVersion: CHAT_NOTICE_VERSION,
+          consent: activeConsent,
           _hp: typeof honeypot === 'string' ? honeypot : '',
         }),
       })
@@ -151,6 +207,7 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
         )
       }
       for await (const event of readChatEvents(res.body)) {
+        if (consentRef.current?.id !== activeConsent.id || abort.signal.aborted) return
         if (event.type !== 'delta') continue
         fullText += event.text
         if (performance.now() - lastPaint < 50) continue
@@ -161,12 +218,14 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
           ),
         )
       }
+      if (consentRef.current?.id !== activeConsent.id || abort.signal.aborted) return
       setMessages((prev) =>
         prev.map((message, index) =>
           index === userIndex + 1 ? { ...message, text: fullText, isStreaming: false } : message,
         ),
       )
     } catch (error) {
+      if (consentRef.current?.id !== activeConsent.id) return
       setErrorMessage(
         abort.signal.aborted
           ? 'Antwort abgebrochen. Du kannst deine Frage erneut senden.'
@@ -209,17 +268,6 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
         } catch {
           /* Keep the in-memory choice. */
         }
-      }
-    }
-  }
-
-  const handleConfirmDisclaimer = () => {
-    setHasConfirmedDisclaimer(true)
-    if (typeof window !== 'undefined') {
-      try {
-        window.localStorage.setItem(DISCLAIMER_KEY, CHAT_NOTICE_VERSION)
-      } catch {
-        /* Keep the in-memory choice. */
       }
     }
   }
@@ -277,25 +325,58 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
           </div>
 
           <div className="flex-1 relative flex flex-col overflow-hidden">
-            {!hasConfirmedDisclaimer && (
+            {!consent && (
               <div className="absolute inset-0 z-20 bg-black/95 backdrop-blur-xs overflow-y-auto p-5 flex flex-col items-center justify-start text-center animate-in fade-in duration-300">
                 <div className="p-4 bg-accent/10 rounded-full text-accent mb-6 ring-1 ring-accent/20">
                   <ShieldCheck className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-4">Wichtiger Hinweis</h3>
-                <p className="text-sm text-gray-300 leading-relaxed mb-8 payload-richtext">
-                  Du nutzt einen KI-Assistenten. Deine Nachricht und der erforderliche
-                  Gesprächsverlauf werden zur Antworterzeugung an OpenAI übermittelt. Antworten
-                  können Fehler enthalten. Bitte keine sensiblen personenbezogenen Daten,
-                  Gesundheitsdaten, Zugangsdaten oder vertraulichen Informationen eingeben. Mehr
-                  Infos in der
-                  <Link href="/datenschutz"> Datenschutzerklärung</Link>.
-                </p>
+                <h3 className="text-xl font-bold text-white mb-4">KI-Chat freiwillig nutzen</h3>
+                <div className="text-sm text-gray-300 leading-relaxed space-y-3 mb-5 payload-richtext">
+                  <p>
+                    Ich willige ein, dass Niklas von Grzymala – The-EasyCode meine Nachrichten und
+                    den begrenzten Gesprächsverlauf an OpenAI Ireland Ltd. übermittelt, um
+                    KI-Antworten zu Leistungen, öffentlichen Projekten und Kontaktwegen zu
+                    erstellen.
+                  </p>
+                  <p>
+                    Die Verarbeitung erfolgt derzeit über den globalen API-Endpunkt und kann
+                    außerhalb der EU stattfinden. OpenAI verwendet die API-Inhalte standardmäßig
+                    nicht zum Training. Missbrauchsprotokolle können bis zu 30 Tage, bei
+                    gesetzlichen oder Sicherheitsausnahmen länger, und verschlüsselte
+                    Cache-Zwischenzustände bis zu 24 Stunden gespeichert werden.
+                  </p>
+                  <p>
+                    Bitte keine sensiblen Daten, Zugangsdaten, vertraulichen Informationen oder
+                    personenbezogenen Daten anderer Personen eingeben. KI-Antworten können Fehler
+                    enthalten.
+                  </p>
+                  <p>
+                    Die Einwilligung gilt für diesen Browser-Tab, höchstens 24 Stunden. Du kannst
+                    sie jederzeit im Chat widerrufen. Dann wird der lokale Verlauf gelöscht und eine
+                    laufende Anfrage abgebrochen; eine sofortige Löschung bei OpenAI ist damit nicht
+                    garantiert. Bereits erfolgte Verarbeitung bleibt vom Widerruf unberührt.
+                  </p>
+                  <p>
+                    Als Nachweis protokolliert der Server bei Anfragen ausschließlich eine zufällige
+                    Bestätigungs-ID, Version und Zeitpunkt der Einwilligung, keine Chat-Inhalte.
+                    Mehr in der <Link href="/datenschutz">Datenschutzerklärung</Link>. Ohne
+                    Einwilligung bleiben alle anderen Website-Funktionen verfügbar, insbesondere das{' '}
+                    <Link href="/kontakt">Kontaktformular</Link>.
+                  </p>
+                </div>
                 <button
-                  onClick={handleConfirmDisclaimer}
-                  className="w-full bg-accent hover:bg-accent-dark text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                  type="button"
+                  onClick={handleConsent}
+                  className="w-full bg-accent hover:bg-accent-dark text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
-                  Hinweis gelesen – Chat nutzen
+                  Einwilligen und Chat nutzen
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  className="mt-3 w-full rounded-xl border border-white/20 py-3 px-6 text-sm text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  Ohne KI-Chat fortfahren
                 </button>
               </div>
             )}
@@ -394,6 +475,16 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
               <div ref={messagesEndRef} />
             </div>
 
+            {consent && (
+              <button
+                type="button"
+                onClick={handleWithdrawConsent}
+                className="shrink-0 bg-secondary-background px-4 py-2 text-xs text-gray-300 underline underline-offset-4 hover:text-white focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-accent"
+              >
+                Einwilligung widerrufen
+              </button>
+            )}
+
             {/* Input */}
             <form
               onSubmit={handleSubmit}
@@ -424,12 +515,10 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                   type="text"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  disabled={!hasConfirmedDisclaimer || isLoading || cooldown > 0}
+                  disabled={!consent || isLoading || cooldown > 0}
                   maxLength={CHAT_MESSAGE_CHARS}
                   aria-label="Deine Nachricht an den KI-Assistenten"
-                  placeholder={
-                    hasConfirmedDisclaimer ? 'Frag mich etwas ...' : 'Bitte erst Hinweis bestätigen'
-                  }
+                  placeholder={consent ? 'Frag mich etwas ...' : 'Bitte erst einwilligen'}
                   className="w-full bg-background/50 border border-white/10 rounded-xl pl-4 pr-12 py-3 text-base md:text-sm text-foreground focus:outline-hidden focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all placeholder:text-gray-400 disabled:opacity-50"
                 />
                 {inputValue.length > 800 && (
@@ -441,9 +530,7 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                   type="submit"
                   aria-label="Nachricht senden"
                   title={isLoading ? 'Antwort wird erstellt' : 'Nachricht senden'}
-                  disabled={
-                    isLoading || cooldown > 0 || !inputValue.trim() || !hasConfirmedDisclaimer
-                  }
+                  disabled={isLoading || cooldown > 0 || !inputValue.trim() || !consent}
                   className="absolute right-1 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-lg text-accent transition-colors hover:bg-accent/10 hover:text-accent-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (

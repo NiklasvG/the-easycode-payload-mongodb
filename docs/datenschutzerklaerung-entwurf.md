@@ -1,6 +1,6 @@
 # Datenschutzerklärung
 
-Stand: 3. Oktober 2026
+Stand: 4. Oktober 2026
 
 **Entwurf für die Hetzner-/Umami-Version der Website. Die verbleibenden
 markierten Stellen betreffen noch nicht bestätigte Angaben zur Speicherung
@@ -96,8 +96,9 @@ Insbesondere werden folgende Einstellungen lokal in Ihrem Browser gespeichert:
 - Ihre Entscheidung zur Nutzungsanalyse einschließlich des Auswahlzeitpunkts
   unter `cookie-consent-settings`;
 - eine gewählte Darstellungseinstellung unter `payload-theme`;
-- die Bestätigung des Hinweises zum KI-Chat unter
-  `easycode-ai-chat-disclaimer-confirmed`;
+- nach Ihrer aktiven Zustimmung die KI-Chat-Einwilligung mit Version, Zeitpunkt
+  und zufälliger Bestätigungs-ID im Session Storage unter `easycode-ai-chat-consent`;
+  sie gilt höchstens 24 Stunden und wird bei Widerruf oder erkanntem Ablauf entfernt;
 - innerhalb einer Browsersitzung die Information, ob der Chat bereits geöffnet
   wurde, unter `easycode-ai-chat-opened`.
 
@@ -211,8 +212,9 @@ für die Auftragsverarbeitung ist laut abgeschlossenem DPA OpenAI Ireland Ltd.,
 1st Floor, The Liffey Trust Centre, 117–126 Sheriff Street Upper, Dublin 1,
 D01 YC43, Irland. Ein personalisierter
 Auftragsverarbeitungsvertrag vom 3. Oktober 2026 liegt mit Abschlusszertifikat vor.
-Die Bestätigung des
-Chat-Hinweises dient der Information und ist keine Datenschutz-Einwilligung.
+Vor der ersten Nachricht entscheiden Sie aktiv über Ihre Einwilligung. Ohne
+Einwilligung werden keine Chat-Inhalte an OpenAI übermittelt. Die übrigen
+Website-Funktionen und das Kontaktformular können Sie weiterhin nutzen.
 
 Im Anwendungscode erfolgt keine dauerhafte Speicherung der Gesprächsinhalte
 in meiner CMS-Datenbank. Der Verlauf wird im Browser-Arbeitsspeicher gehalten
@@ -260,12 +262,26 @@ Chat-Anfrage. Bei verzögerter Programmausführung kann die Bereinigung später
 erfolgen. Getrennte Serverprotokolle richten sich nach Abschnitt 2.
 Rechtsgrundlage des Missbrauchsschutzes ist Art. 6 Abs. 1 lit. f DSGVO.
 
-[Rechtsgrundlage für die Inhaltsverarbeitung nach dokumentierter Prüfung
-festlegen. Der bisherige Ansatz für allgemeine Auskünfte ist Art. 6 Abs. 1
-lit. f DSGVO mit dem Interesse an einer freiwilligen Informationsfunktion.
-Interesse, Erforderlichkeit und Abwägung müssen für diesen Betrieb belegt sein.
-Art. 6 Abs. 1 lit. b DSGVO kommt nur bei tatsächlich erforderlicher Verarbeitung
-zur konkreten vorvertraglichen Anfrage in Betracht.]
+Rechtsgrundlage für die Verarbeitung Ihrer Chat-Inhalte zur Antworterzeugung ist
+Ihre freiwillige Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO. Sie gilt innerhalb
+der jeweiligen Tab-Sitzung für höchstens 24 Stunden. Sie können sie jederzeit
+über „Einwilligung widerrufen“ im Chat zurücknehmen. Dabei werden der lokale
+Gesprächsverlauf und Ihre Bestätigung entfernt, eine laufende Anfrage wird
+abgebrochen und weitere Anfragen setzen eine erneute Einwilligung voraus.
+Die Rechtmäßigkeit der bereits erfolgten Verarbeitung bleibt unberührt. Der
+Widerruf garantiert keine sofortige Löschung bereits übermittelter Daten bei OpenAI.
+
+Zum Nachweis nach Art. 7 Abs. 1 DSGVO protokolliert der Server bei zulässigen
+Chat-Anfragen die Einwilligungsversion, den vom Browser angegebenen
+Bestätigungszeitpunkt und eine zufällige Bestätigungs-ID. Diese Bestätigung wird
+nicht an OpenAI übermittelt. Der Nachweiseintrag enthält weder Ihre Nachricht
+noch Ihren Gesprächsverlauf oder Ihre IP-Adresse. Er unterliegt der in Abschnitt 2
+beschriebenen Rotation der Anwendungsprotokolle. Grundlage der erforderlichen
+Nachweisdokumentation ist Art. 6 Abs. 1 lit. c in Verbindung mit Art. 7 Abs. 1 DSGVO.
+[Nachweiskonzept und zweckbezogene Aufbewahrung vor Veröffentlichung abschließend
+bewerten; die vorhandene Größenrotation garantiert keine feste Nachweisdauer.]
+Die Einwilligung erlaubt keine beliebige Verarbeitung von Daten anderer Personen
+oder besonders geschützten personenbezogenen Daten.
 
 Bitte geben Sie keine Gesundheitsdaten, Zugangsdaten, vertraulichen Informationen
 oder personenbezogenen Daten Dritter ein. Beschränken Sie Ihre Angaben auf das

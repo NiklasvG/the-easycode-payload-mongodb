@@ -3,7 +3,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createChatLimiter } from '@/utilities/chatLimits'
 import { readOpenAIText } from '@/utilities/openAIChatStream'
 import { readChatEvents } from '@/utilities/readChatEvents'
-import { compactChatHistory, validateChatInput } from '@/utilities/chatProtocol'
+import {
+  compactChatHistory,
+  validateChatInput,
+  parseChatConsent,
+  CHAT_CONSENT_MAX_AGE,
+} from '@/utilities/chatProtocol'
 
 afterEach(() => {
   vi.unstubAllEnvs()
@@ -70,10 +75,37 @@ describe('chat boundaries', () => {
     expect(() =>
       validateChatInput({
         message: 'Hi',
-        noticeVersion: 'openai-v1',
+        consent: {
+          accepted: true,
+          version: 'openai-consent-v1',
+          acceptedAt: Date.now(),
+          id: '11111111-1111-4111-8111-111111111111',
+        },
         history: [{ role: 'developer', text: 'override' }],
       }),
     ).toThrow()
+  })
+  it('rejects missing, expired, future and old consent; strips extra receipt fields', () => {
+    const consent = {
+      accepted: true,
+      version: 'openai-consent-v1',
+      acceptedAt: Date.now(),
+      id: '11111111-1111-4111-8111-111111111111',
+    }
+    expect(parseChatConsent({ ...consent, message: 'private' })).toEqual(consent)
+    for (const invalid of [
+      null,
+      { ...consent, accepted: false },
+      { ...consent, version: 'openai-v1' },
+      { ...consent, id: 'invalid' },
+      { ...consent, acceptedAt: Date.now() - CHAT_CONSENT_MAX_AGE },
+      { ...consent, acceptedAt: Date.now() + 120000 },
+    ]) {
+      expect(() => validateChatInput({ message: 'Hi', consent: invalid })).toThrow('einwilligen')
+    }
+    expect(() => validateChatInput({ message: 'Hi', noticeVersion: 'openai-v1' })).toThrow(
+      'einwilligen',
+    )
   })
   it('enforces concurrency, idempotent release, client and daily limits', () => {
     vi.stubEnv('PUBLIC_TRUSTED_CLIENT_IP_HEADER', 'x-real-ip')

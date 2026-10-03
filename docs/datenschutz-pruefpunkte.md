@@ -1,6 +1,6 @@
 # Prüfpunkte zum Datenschutzerklärungsentwurf
 
-Stand: 3. Oktober 2026.
+Stand: 4. Oktober 2026.
 
 ## Aktualisierung: aktiver globaler OpenAI-Staging-Test
 
@@ -22,7 +22,12 @@ Keine eigenständige kryptografische Signaturvalidierung. EU/ZDR-/MAM-Anfrage
 läuft, wird für den aktuellen globalen Test aber nicht als Freigabe behauptet.
 Anbieteranschrift und dokumentierte Standardfristen (Missbrauchsprotokolle bis
 30 Tage mit Ausnahmen, verschlüsselte Cache-Zwischenzustände bis 24 Stunden)
-sind anhand offizieller OpenAI-Quellen ergänzt. Offen bleiben Rechtsgrundlage,
+sind anhand offizieller OpenAI-Quellen ergänzt. Der Betreiber hat am 4. Oktober
+2026 die Einwilligung für Nutzer-Chat-Inhalte gewählt; aktive Zustimmung,
+Session-Bestätigung (maximal 24 Stunden) und Widerruf sind im Code vorbereitet.
+Nachweis nur mit Version, Zeitpunkt und zufälliger ID in rotierenden Anwendungslogs;
+keine Chat-Inhalte oder IP in diesen Nachweiseinträgen. Bereitstellung, manueller
+Test und abschließende Bewertung des Nachweiskonzepts bleiben offen. Ebenso
 eigene Infrastruktur-Speicherfristen und die konkrete Bewertung von Empfängern,
 Zielländern und Transfergarantien für den endgültigen Betrieb. Sharing und API-Logging sind
 nach Betreiberbestätigung deaktiviert; MFA/Passkey und alleiniger Owner-Zugriff
@@ -123,10 +128,9 @@ ein Projekt mit aktivem Billing. Die EWR-Sonderregel zur Datennutzung widerspric
 zudem einer pauschalen „Free Tier = Training“-Aussage. Projektkonfiguration und
 Verträge prüfen; eine Textänderung löst kein Konfigurationsproblem.
 
-Der Chat-Hinweis „Verstanden“ ist im bestehenden Code keine gesonderte,
-informierte Datenschutz-Einwilligung. Der Entwurf bezeichnet ihn entsprechend
-als Hinweisbestätigung. Die angesetzte Interessenabwägung für den konkreten
-Chatbetrieb muss dokumentiert und rechtlich geprüft werden.
+Der damalige Chat-Hinweis „Verstanden“ war keine gesonderte,
+informierte Datenschutz-Einwilligung. Dies ist ein historischer Prüfpunkt;
+der aktuelle OpenAI-Code verwendet die oben beschriebene aktive Einwilligung.
 
 ## Technisch festgestellte Details
 
@@ -140,9 +144,9 @@ Chatbetrieb muss dokumentiert und rechtlich geprüft werden.
   Minutenfenster und Bereinigung alle 15 Sekunden. Bei normal laufendem Event
   Loop werden Einträge spätestens nach etwa 75 Sekunden entfernt; verzögerte
   Timer können später laufen. Separate Infrastruktur-Logs sind davon unabhängig.
-- Consent- und Theme-Auswahl sowie Chat-Hinweisbestätigung liegen im Local Storage.
-  Der geöffnete Chat wird im Session Storage vermerkt. Consent hat keinen
-  automatischen Ablaufzeitpunkt.
+- Analyse-Consent und Theme-Auswahl liegen im Local Storage; Analyse-Consent hat
+  keinen automatischen Ablaufzeitpunkt. Chat-Einwilligung und Öffnungsstatus liegen
+  im Session Storage. Chat-Einwilligung gilt höchstens 24 Stunden und ist widerrufbar.
 
 ## Quellen
 

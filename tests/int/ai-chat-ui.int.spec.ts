@@ -1,5 +1,5 @@
 import React from 'react'
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AIChat } from '@/components/Chat/AIChat'
 vi.mock('next/link', () => ({
@@ -11,7 +11,7 @@ const stream = (text: string) =>
     headers: { 'content-type': 'application/x-ndjson' },
   })
 const confirm = () =>
-  fireEvent.click(screen.getByRole('button', { name: 'Hinweis gelesen – Chat nutzen' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Einwilligen und Chat nutzen' }))
 const send = (text = 'Welche Leistungen bietet Niklas?') => {
   fireEvent.change(screen.getByRole('textbox', { name: 'Deine Nachricht an den KI-Assistenten' }), {
     target: { value: text },
@@ -28,29 +28,96 @@ afterEach(() => {
   cleanup()
   vi.unstubAllGlobals()
   vi.restoreAllMocks()
+  vi.useRealTimers()
   localStorage.clear()
   sessionStorage.clear()
 })
 
 describe('AI chat privacy and interaction', () => {
-  it('requires the new provider notice even if the old disclaimer was confirmed', async () => {
-    localStorage.setItem('easycode-ai-chat-disclaimer-confirmed', 'true')
+  it('automatically withdraws session consent when its 24-hour validity ends', () => {
+    vi.useFakeTimers()
+    render(React.createElement(AIChat, { initiallyOpen: true }))
+    confirm()
+    expect(sessionStorage.getItem('easycode-ai-chat-consent')).not.toBeNull()
+    act(() => vi.advanceTimersByTime(86400000))
+    expect(sessionStorage.getItem('easycode-ai-chat-consent')).toBeNull()
+    expect(screen.getByRole('button', { name: 'Einwilligen und Chat nutzen' })).toBeTruthy()
+    expect(fetch).not.toHaveBeenCalled()
+  })
+  it('requires active consent even if the old provider disclaimer was confirmed', async () => {
+    localStorage.setItem('easycode-ai-chat-disclaimer-confirmed', 'openai-v1')
     render(React.createElement(AIChat, { initiallyOpen: true }))
     send()
     expect(fetch).not.toHaveBeenCalled()
     confirm()
-    expect(localStorage.getItem('easycode-ai-chat-disclaimer-confirmed')).toBe('openai-v1')
+    expect(localStorage.getItem('easycode-ai-chat-disclaimer-confirmed')).toBeNull()
     send()
     await screen.findByText('Webentwicklung.')
     const body = JSON.parse(vi.mocked(fetch).mock.calls[0][1]?.body as string)
-    expect(body.noticeVersion).toBe('openai-v1')
+    expect(body.consent).toMatchObject({ accepted: true, version: 'openai-consent-v1' })
+    expect(body.consent.id).toBeTruthy()
     expect(body.history).toEqual([])
-    expect(localStorage.getItem('easycode-ai-chat-disclaimer-confirmed')).not.toContain(
-      'Webentwicklung',
-    )
+    expect(sessionStorage.getItem('easycode-ai-chat-consent')).not.toContain('Webentwicklung')
     fireEvent.click(screen.getByRole('button', { name: 'Verlauf löschen' }))
     expect(screen.queryByText('Webentwicklung.')).toBeNull()
     expect(screen.queryByText('Welche Leistungen bietet Niklas?')).toBeNull()
+  })
+  it('declines without a provider request and leaves the rest of the site available', () => {
+    render(React.createElement(AIChat, { initiallyOpen: true }))
+    fireEvent.click(screen.getByRole('button', { name: 'Ohne KI-Chat fortfahren' }))
+    expect(screen.queryByRole('region')).toBeNull()
+    expect(fetch).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: 'KI-Chat öffnen' }))
+    expect(screen.getByRole('button', { name: 'Einwilligen und Chat nutzen' })).toBeTruthy()
+  })
+  it('withdraws during a request, clears local data and does not restore an aborted question', async () => {
+    vi.mocked(fetch).mockImplementation(
+      (_url, options) =>
+        new Promise((_resolve, reject) => {
+          options?.signal?.addEventListener('abort', () => reject(new Error('Aborted')), {
+            once: true,
+          })
+        }),
+    )
+    render(React.createElement(AIChat, { initiallyOpen: true }))
+    confirm()
+    send('Meine private Frage')
+    fireEvent.click(screen.getByRole('button', { name: 'Einwilligung widerrufen' }))
+    await waitFor(() =>
+      expect(
+        (screen.getByRole('button', { name: 'Nachricht senden' }) as HTMLButtonElement).disabled,
+      ).toBe(true),
+    )
+    expect(sessionStorage.getItem('easycode-ai-chat-consent')).toBeNull()
+    expect((vi.mocked(fetch).mock.calls[0][1]?.signal as AbortSignal).aborted).toBe(true)
+    expect(screen.queryByText('Meine private Frage')).toBeNull()
+    expect(screen.queryByRole('alert')).toBeNull()
+    await waitFor(() =>
+      expect(
+        (
+          screen.getByRole('textbox', {
+            name: 'Deine Nachricht an den KI-Assistenten',
+          }) as HTMLInputElement
+        ).value,
+      ).toBe(''),
+    )
+    send()
+    expect(fetch).toHaveBeenCalledTimes(1)
+  })
+  it('requires fresh consent after 24 hours and keeps expired input from reaching the API', () => {
+    sessionStorage.setItem(
+      'easycode-ai-chat-consent',
+      JSON.stringify({
+        accepted: true,
+        version: 'openai-consent-v1',
+        acceptedAt: Date.now() - 86400000,
+        id: '11111111-1111-4111-8111-111111111111',
+      }),
+    )
+    render(React.createElement(AIChat, { initiallyOpen: true }))
+    send()
+    expect(fetch).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: 'Einwilligen und Chat nutzen' })).toBeTruthy()
   })
   it('locks duplicate submission and aborts when the chat is closed', async () => {
     vi.mocked(fetch).mockImplementation(

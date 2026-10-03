@@ -1,6 +1,6 @@
 # OpenAI-Chat: Betrieb und Datenschutzvorbereitung
 
-Stand: 3. Oktober 2026. Globaler Staging-Betrieb laut Betreiber getestet; keine rechtliche Freigabe für den Produktivbetrieb.
+Stand: 4. Oktober 2026. Globaler Staging-Betrieb laut Betreiber getestet; keine rechtliche Freigabe für den Produktivbetrieb.
 
 ## Status
 
@@ -43,12 +43,22 @@ Vertragsunterlagen und Account-Screenshots außerhalb des
 1. Beim Öffnen prüft der Browser mit einer nicht gecachten GET-Anfrage ohne Cookies,
    ob der Chat konfiguriert und aktiviert ist. Ist er deaktiviert, erscheint nur ein
    Verfügbarkeitshinweis mit Kontaktmöglichkeit. Erst danach lädt der Browser den Chat.
-   Die Hinweisbestätigung ist versioniert:
-   `easycode-ai-chat-disclaimer-confirmed=openai-v1`. Alte Gemini-Bestätigungen gelten nicht.
-2. Erst nach Hinweisbestätigung sendet der Browser Nachricht und maximal zwölf jüngste
+   Die freiwillige Einwilligung ist versioniert (`openai-consent-v1`) und wird
+   mit Zeitpunkt und zufälliger UUID nur im Session Storage des Tabs unter
+   `easycode-ai-chat-consent` gehalten. Alte Hinweisbestätigungen gelten nicht.
+2. Erst nach aktiver Einwilligung sendet der Browser Nachricht und maximal zwölf jüngste
    Kontextnachrichten (zusammen höchstens 6.000 Zeichen) an `/api/ai-chat`.
-3. Der Server prüft Origin, JSON-Format, Honeypot, Hinweisversion und Größenlimits.
-   Der Hinweis ist keine Datenschutz-Einwilligung und kein wirksamer Bot-Schutz.
+3. Der Server prüft Origin, JSON-Format, Honeypot, aktuelle Einwilligungsversion,
+   aktive Bestätigung, UUID-Format, Alter (höchstens 24 Stunden) und Größenlimits.
+   Vor CMS-/Providerzugriff protokolliert er ausschließlich die bereinigte
+   Einwilligungsbestätigung (Version, Zeitpunkt, ID, accepted=true). Zusätzliche
+   Client-Felder werden nicht übernommen. Chat-Inhalte und IP sind nicht Teil
+   dieses Eintrags; die Bestätigung wird nicht an OpenAI weitergegeben.
+   Die Erklärung ist eine Client-Angabe, kein Identitätsnachweis, kryptografisch
+   signierter Klickbeleg oder Bot-Schutz. Nachweise liegen in den rotierenden
+   Anwendungslogs (drei Dateien à 10 MB); keine feste Nachweisdauer garantiert.
+   Für öffentliche Aktivierung Nachweiskonzept und angemessene Aufbewahrung
+   abschließend bewerten, ohne unbegrenzt Besucherkennungen zu archivieren.
 4. Payload liefert maximal zwölf jüngste veröffentlichte Projekte unter anonymen
    Zugriffsrechten. Es werden nur Titel, Kurzbeschreibung, bis zu acht Technologien
    und öffentliche Projekt-URLs übertragen, insgesamt höchstens 6.000 Zeichen.
@@ -66,6 +76,12 @@ Vertragsunterlagen und Account-Screenshots außerhalb des
    Begrüßung plus 40 jüngste Nachrichten. Verlauf löschen entfernt diesen Inhalt.
    Ein Neuladen verwirft ihn ebenfalls. Schließen stoppt die laufende Anfrage,
    behält den Verlauf aber für ein späteres Öffnen im selben Dokument.
+   Einwilligung widerrufen löscht Verlauf, Eingabe und Session-Bestätigung,
+   bricht laufende Anfragen ab und verhindert neue bis zur erneuten Einwilligung.
+   Ein Timer beendet die Einwilligung nach 24 Stunden; zusätzlich prüfen Client
+   und Server das Alter beim Senden. Hintergrund-Timer können verzögert laufen.
+   Ablauf wird beim nächsten Laden erkannt. Browser-Tabs können Session Storage
+   bei Duplizierung oder Wiederherstellung übernehmen; die 24-Stunden-Prüfung bleibt.
 
 `store=false` verhindert nicht sämtliche OpenAI-Verarbeitung oder Speicherwege.
 Abuse Monitoring und Prompt-Caching sind gesondert anhand der freigegebenen
@@ -193,7 +209,7 @@ entfernt. Nach Änderungen am Proxy oder Zugriffsweg erneut prüfen.
    über Modellqualität aus Mocktests ableiten. Freigabekriterien: keine erfundenen
    Preise/Verfügbarkeiten; Links korrekt; Datenschutzgrenzen verständlich.
 7. Tatsächliche Speicherwege inklusive Logs, Caches und Backups prüfen.
-   Datenschutzerklärung, Hinweis und Rechtsgrundlage vor öffentlicher Aktivierung
+   Datenschutzerklärung, Einwilligung und Nachweiskonzept vor öffentlicher Aktivierung
    fertigstellen. EU-Zusagen nur im belegten Umfang verwenden.
 
 ## Verzeichnis der Verarbeitungstätigkeiten: Entwurf
@@ -205,15 +221,62 @@ entfernt. Nach Änderungen am Proxy oder Zugriffsweg erneut prüfen.
   separat pseudonymisierte IP-Zähler und technische Verbindungsdaten.
 - Empfänger: eigene Hetzner-Infrastruktur; OpenAI-Vertragsgesellschaft und deren
   vertraglich festgelegte Unterauftragnehmer nach Bestätigung.
-- Rechtsgrundlage: für allgemeine Auskünfte Art. 6 Abs. 1 lit. f DSGVO als zu prüfender
-  Ansatz; Art. 6 Abs. 1 lit. b nur bei nachgewiesener Erforderlichkeit zur konkreten
-  vorvertraglichen Anfrage. Kein pauschaler Wechsel der Rechtsgrundlage durch Thema.
-- Drittlandverarbeitung und Löschregeln: Account-/Vertragsnachweise ausstehend;
+- Rechtsgrundlage für Nutzer-Chat-Inhalte: aktive Einwilligung, Art. 6 Abs. 1 lit. a
+  DSGVO, Betreiberentscheidung vom 4. Oktober 2026. Technische Bereitstellung und
+  Missbrauchsschutz getrennt nach Art. 6 Abs. 1 lit. f; erforderlicher Nachweis
+  nach Art. 6 Abs. 1 lit. c in Verbindung mit Art. 7 Abs. 1. Öffentliche
+  Portfolio-Personendaten und unbeabsichtigte Fremd-/Art.-9-Daten separat bewerten.
+- Drittlandverarbeitung und Löschregeln: personalisierter DPA liegt vor;
+  aktueller Test verwendet den globalen Endpunkt. Anbieter-Speicherwege wie oben,
   eigene IP-Zähler und Browserverlauf wie oben, Infrastruktur-Logs wie Hosting-Konzept.
+  Konkrete Empfänger-/Länderbewertung und Übermittlungsgarantien bleiben offen.
 - Maßnahmen: Zugangsschutz, Schlüssel nur serverseitig, Verschlüsselung bei Übertragung,
   Begrenzungen, Trennung von privaten CMS-Daten, minimierter Kontext, keine Inhaltslogs.
 
-## Interessenabwägung: Arbeitsentwurf, Betreiberentscheidung ausstehend
+## Rechtsgrundlage: Einwilligung gewählt; bisherige Interessenabwägung dokumentiert
+
+### Fallbezogene Bewertung vom 4. Oktober 2026
+
+Der getestete Chat beantwortet frei formulierte Fragen und Folgefragen über
+öffentliche Leistungen und Referenzen und verlinkt passende Projekte. Das ist
+ein konkreter Nutzen für Besucher und für die Darstellung des eigenen Angebots.
+Die gleichen Ausgangsinformationen sind jedoch über Website-Navigation und
+Kontaktformular verfügbar. Die bisherigen Funktionstests belegen den Nutzen,
+aber noch nicht die Erforderlichkeit einer externen LLM-Verarbeitung unter
+Art. 6 Abs. 1 lit. f DSGVO. Insbesondere sind weniger eingriffsintensive
+Alternativen (z. B. Suche oder FAQ) anhand dieses Zwecks zu bewerten.
+
+Für die Abwägung sprechen der enge Informationszweck, begrenzte Eingaben und
+Verläufe, keine Uploads, keine eigenen dauerhaften Inhaltsprotokolle und die
+Kontaktalternative. Dagegen stehen mögliche Angaben über Dritte oder sensible
+Daten im Freitext, globale Anbieter-Verarbeitung, die beschriebenen
+Anbieter-Speicherwege und potenziell falsche Aussagen. Ein Warnhinweis verhindert
+solche Eingaben nicht zuverlässig. ZDR/MAM und EU-Verarbeitung sind noch nicht
+bestätigt und dürfen nicht als bestehende Schutzmaßnahmen gewichtet werden.
+
+**Vorläufiges Ergebnis:** Eine tragfähige abschließende Interessenabwägung ist
+damit noch nicht belegt. Empfehlung für die optionale Inhaltsverarbeitung:
+eine informierte, aktive und freiwillige Einwilligung nach Art. 6 Abs. 1 lit. a
+DSGVO, mit einfacher Widerrufsmöglichkeit, technisch und textlich vorbereiten.
+Der Betreiber hat diese Variante am 4. Oktober 2026 gewählt. Sie ist im Code
+vorbereitet; Bereitstellung und manueller Staging-Test stehen noch aus. Missbrauchsschutz und technische Bereitstellung gesondert
+beurteilen. Die Einwilligung des Chat-Nutzers deckt keine beliebigen Daten
+Dritter oder Art.-9-Daten ab und ersetzt keine Drittland-Transferprüfung.
+Öffentliche Portfolio-Inhalte ebenfalls gesondert bewerten.
+
+Bei Umsetzung: Anbieter, Zweck, Datenumfang und Anbieter-Speicherung vor der
+Einwilligung nennen; keine vorangekreuzte Auswahl; Ablehnung ohne Nachteile für
+die übrige Website; Nachweis und Version der Einwilligung datensparsam festlegen;
+Widerruf für künftige Anfragen ermöglichen und lokale Chat-Inhalte löschen.
+Ein Widerruf macht bereits erfolgte Verarbeitung nicht rückwirkend unrechtmäßig
+und garantiert keine sofortige Löschung beim Anbieter. Bestehende
+Hinweisbestätigungen dürfen nicht als Einwilligungen weiterverwendet werden.
+
+Quellen: [EDSA-Stellungnahme 28/2024, insbesondere Erforderlichkeit und Abwägung](https://www.edpb.europa.eu/system/files/2024-12/edpb_opinion_202428_ai-models_en.pdf),
+[DSGVO Art. 6 und 7](https://eur-lex.europa.eu/eli/reg/2016/679/oj/deu).
+Diese Bewertung ist ein Arbeitsstand und keine rechtliche Freigabe des Betriebs.
+
+### Bisheriger Prüfrahmen
 
 Interesse: Besuchern niedrigschwellig Orientierung zum eigenen Angebot ermöglichen.
 Geeignetheit: textbasierte Auskünfte aus einem abgegrenzten öffentlichen Wissensbestand.
@@ -248,3 +311,18 @@ Eingaben nicht als durch einen Warnhinweis rechtlich gelöst behandeln.
 - [DSK: KI und Datenschutz](https://www.datenschutzkonferenz-online.de/media/oh/20240506_DSK_Orientierungshilfe_KI_und_Datenschutz.pdf)
 - [DSGVO](https://eur-lex.europa.eu/eli/reg/2016/679/oj/deu)
 - [KI-Verordnung, Transparenz nach Art. 50](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-50)
+
+## Archiv der Einwilligung: openai-consent-v1 (4. Oktober 2026)
+
+Der maßgebliche Wortlaut steht im Einwilligungsbereich von
+`src/components/Chat/AIChat.tsx`, versioniert zusammen mit
+`CHAT_CONSENT_VERSION` in `src/utilities/chatProtocol.ts`. Er benennt Verantwortlichen,
+OpenAI Ireland, Zweck, Nachricht und Verlauf, globalen Betrieb, Anbieter-Speicherung,
+Freiwilligkeit, Kontaktalternative, Widerruf, Nachweisdaten und Eingabegrenzen.
+Aktive Schaltfläche: „Einwilligen und Chat nutzen“; Ablehnung: „Ohne KI-Chat fortfahren“.
+Keine vorangekreuzte Checkbox, keine Umdeutung alter Bestätigungen. Änderungen
+an Zweck, Anbieter, Region oder wesentlichen Speicherregeln erfordern eine
+Bewertung und gegebenenfalls neue Version und erneute Einwilligung.
+Die Bereitstellung dieses Wortlauts muss vor Livebetrieb mit der veröffentlichten
+Datenschutzerklärung übereinstimmen. Einwilligung ersetzt weder DPA noch gültige
+Drittlandgarantien oder die gesonderte Bewertung von Portfolio-/Fremddaten.
