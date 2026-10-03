@@ -13,3 +13,10 @@ playwright-report
 blob-report
 *.tsbuildinfo
 .test-media
+
+.quality-*
+docs/
+tests/
+experiments/
+scripts/
+.github/

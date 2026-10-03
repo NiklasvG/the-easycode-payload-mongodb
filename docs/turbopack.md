@@ -1,9 +1,18 @@
-# Turbopack-Prüfung
+# Turbopack: geprüft und optional verfügbar
 
-Next 16.3.8 und Payload 3.90.2 wurden lokal mit `pnpm exec next build --turbopack` geprüft. Erster Lauf: Fehler im Import `~@payloadcms/ui/scss` der Admin-Leiste (vars-Stylesheet nicht auflösbar). Die Komponente benötigte daraus nur small-break = 768px. Lokales CSS ersetzt den kompletten Sass-Import.
+Next 16.3.8/Payload 3.90.2: Produktionsbuild, Docker-Standalone sowie Entwicklung mit Admin-Login, allen 18 Lottie-Icons und CSS-Hot-Reload wurden geprüft. Der Hot-Reload-Test verändert CSS zweimal und prüft, dass Suchwert und DOM-Markierung erhalten bleiben. Der frühere Sass-Import der Admin-Leiste wurde durch benötigtes lokales CSS ersetzt. withPayload ergänzt die erforderliche Turbopack-Konfiguration; die Webpack-extensionAlias-Konfiguration benötigt keine pauschale Übertragung.
 
-Zweiter Lauf: erfolgreicher Produktionsbuild, Kompilierung 7,5 s, gesamte gemessene Wandzeit 26,06 s. Der vorherige Webpack-Build kompilierte in 39,2 s; das ist wegen unterschiedlicher Cachezustände kein kontrollierter Benchmark. Kein belastbarer Peak-Memory-Vergleich vorhanden.
+Kontrollierter Vergleich am 3. Oktober 2026: identisches Docker-build-input-Abbild, je drei sequenzielle Linux-Container ohne Netzwerk. Eigener Cache-Volume pro Bundler; erster Lauf leer, danach erhalten. Keine parallelen Compiler während dieser Messung. docker stats liefert alle zwei Sekunden Container-Speicherwerte, keine exakte Prozess-RSS-Spitze. OS-/Abhängigkeitscaches bleiben warm.
 
-Die eigene Webpack-extensionAlias-Konfiguration stammt aus dem Template und löst explizite .js-Imports auf TypeScript-Dateien. Die installierte Turbopack-Dokumentation bietet resolveExtensions und resolveAlias, keine identische extensionAlias-Option. Der erfolgreiche Build benötigt keine zusätzliche pauschale Alias-Übertragung; withPayload ergänzt seine eigene Turbopack-Konfiguration und deaktiviert problematischen Server Fast Refresh.
+| Bundler | Lauf | Buildcache | Dauer s | maximal beobachtet GiB |
+| --- | --- | --- | --- | --- |
+| webpack | 1 | leer | 168.9 | 3.41 |
+| webpack | 2 | erhalten | 169.8 | 3.31 |
+| webpack | 3 | erhalten | 162.4 | 3.30 |
+| turbopack | 1 | leer | 88.5 | 5.42 |
+| turbopack | 2 | erhalten | 42.9 | 3.75 |
+| turbopack | 3 | erhalten | 33.9 | 4.13 |
 
-Entwicklung separat starten: `pnpm exec next dev --turbopack`. Admin-Login, Bearbeiten/Live Preview, CSS, Icons, Lottie und Hot Reload überprüfen. Docker mit Turbopack sowie kontrollierte kalte/warme Zeit- und Speichermessungen stehen noch aus. Bis dahin bleiben `pnpm dev` und `pnpm build` explizit Webpack; damit ist der Rückweg sofort verfügbar.
+Turbopack baut deutlich schneller, braucht insbesondere beim ersten Lauf mehr Speicher. Ohne verifiziertes Speicherbudget des Deployment-Builders bleiben pnpm dev und pnpm build bei Webpack. pnpm dev:turbopack und pnpm build:turbopack stehen als geprüfte Optionen bereit. Docker: --build-arg NEXT_BUNDLER=turbopack; Rückweg --build-arg NEXT_BUNDLER=webpack. Ungültige Werte werden abgelehnt.
+
+Reproduzieren: docker build --target build-input -t easycode-build-input .; danach node scripts/compare-builds.mjs. BUILD_BENCH_RUNS (2–10) und BUILD_BENCH_IMAGE sind optional. Das Script entfernt ausschließlich seine eigenen Container und Cache-Volumes. Ergebnisse/Logs liegen unter test-results. Ein schneller Image-Cache-Hit ist kein erneuter Compilerlauf.

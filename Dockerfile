@@ -8,21 +8,25 @@ RUN npm install --global pnpm@10.23.0
 COPY package.json pnpm-lock.yaml .npmrc ./
 RUN pnpm install --frozen-lockfile
 
-FROM deps AS builder
+FROM deps AS build-input
 COPY . .
+
+FROM build-input AS builder
 ARG NEXT_PUBLIC_SERVER_URL
 ARG APP_ENV=production
+ARG NEXT_BUNDLER=webpack
 ENV NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
 ENV APP_ENV=${APP_ENV}
-# Compilation only: frontend routes are dynamic and do not query this database.
+# Runtime boundaries prevent CMS database queries during prerendering.
 # Production credentials are supplied to the runtime container by Coolify.
-RUN test -n "$NEXT_PUBLIC_SERVER_URL" \
+RUN --network=none test -n "$NEXT_PUBLIC_SERVER_URL" \
+    && case "$NEXT_BUNDLER" in webpack|turbopack) ;; *) exit 1 ;; esac \
     && MONGODB_URI=mongodb://127.0.0.1:27017/build-only \
     PAYLOAD_SECRET=build-only-secret-not-used-at-runtime \
     GEMINI_API_KEY=build-only-key-not-used-at-runtime \
     EMAIL_TRANSPORT=json \
     SMTP_PORT=587 \
-    pnpm run build
+    pnpm exec next build --${NEXT_BUNDLER}
 
 FROM base AS runner
 ENV NODE_ENV=production
