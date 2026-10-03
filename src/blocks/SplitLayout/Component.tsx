@@ -36,12 +36,12 @@ const RenderNestedBlocks: React.FC<{ blocks?: Page['layout'] }> = ({ blocks }) =
   return (
     <Fragment>
       {blocks.map((block, index) => {
-        const { blockType } = block as any
+        const { blockType } = block
         const backgroundVariant =
-          'backgroundVariant' in (block as any) ? (block as any).backgroundVariant : null
+          'backgroundVariant' in block ? block.backgroundVariant : null
 
         if (blockType && blockType in blockComponents) {
-          const Block = (blockComponents as any)[blockType]
+          const Block = blockComponents[blockType]
 
           const previousBlock = blocks[index - 1]
           const previousBackground =
@@ -58,7 +58,9 @@ const RenderNestedBlocks: React.FC<{ blocks?: Page['layout'] }> = ({ blocks }) =
           if (Block) {
             return (
               <div key={index} className={outerClassName}>
-                <Block {...(block as any)} />
+                {/* Components are selected by the discriminated CMS blockType at runtime. */}
+                {/* @ts-expect-error TypeScript cannot correlate a union of component props with the registry key. */}
+                <Block {...block} />
               </div>
             )
           }

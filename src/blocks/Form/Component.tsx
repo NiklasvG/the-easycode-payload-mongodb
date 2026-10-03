@@ -1,20 +1,37 @@
 'use client'
 import type {
-	Form as FormType
+	Form as FormType,
+	FormFieldBlock,
+	TextField,
 } from '@payloadcms/plugin-form-builder/types'
 
 import { Check, Send } from 'lucide-react'
 
 import { useRouter } from 'next/navigation'
 import React, { useCallback, useState } from 'react'
-import { useForm, FormProvider } from 'react-hook-form'
+import { useForm, FormProvider, type UseFormReturn } from 'react-hook-form'
 import RichText from '@/components/RichText'
-import { Button } from '@/components/ui/button'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 
 import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
 import { widthToColSpan } from './widthToColSpan'
+
+type SupportedFormField = FormFieldBlock | (Omit<TextField, 'blockType'> & { blockType: 'number' })
+function renderField(field: SupportedFormField, methods: UseFormReturn<Record<string, unknown>>) {
+	switch (field.blockType) {
+		case 'checkbox': return <fields.checkbox {...field} {...methods} errors={methods.formState.errors} />
+		case 'country': return <fields.country {...field} {...methods} errors={methods.formState.errors} />
+		case 'email': return <fields.email {...field} {...methods} errors={methods.formState.errors} />
+		case 'number': return <fields.number {...field} {...methods} errors={methods.formState.errors} />
+		case 'select': return <fields.select {...field} {...methods} errors={methods.formState.errors} />
+		case 'state': return <fields.state {...field} {...methods} errors={methods.formState.errors} />
+		case 'text': return <fields.text {...field} {...methods} errors={methods.formState.errors} />
+		case 'textarea': return <fields.textarea {...field} {...methods} errors={methods.formState.errors} />
+		case 'message': return 'root' in field.message ? <fields.message message={field.message as DefaultTypedEditorState} /> : null
+		default: return null
+	}
+}
 
 export type FormBlockType = {
 	blockName?: string
@@ -42,20 +59,17 @@ export const FormBlock: React.FC<
 		introContent
 	} = props
 
-	const formMethods = useForm({
+	const formMethods = useForm<Record<string, unknown>>({
 		defaultValues: Object.fromEntries(
 			(formFromProps.fields || []).flatMap((field) =>
 				'name' in field && field.name
-					? [[field.name, 'defaultValue' in field ? field.defaultValue ?? '' : '']]
+					? [[field.name, 'defaultValue' in field ? field.defaultValue ?? (field.blockType === 'checkbox' ? false : '') : '']]
 					: [],
 			),
 		),
 	})
 	const {
-		control,
-		formState: { errors },
 		handleSubmit,
-		register
 	} = formMethods
 
 	const [isLoading, setIsLoading] = useState(false)
@@ -73,7 +87,7 @@ export const FormBlock: React.FC<
 
 				const dataToSend = Object.entries(data).map(([name, value]) => ({
 					field: name,
-					value
+					value: value == null ? '' : String(value),
 				}))
 
 				try {
@@ -162,23 +176,11 @@ export const FormBlock: React.FC<
 					<form id={formID} onSubmit={handleSubmit(onSubmit)}>
 						<div className="relative z-10 grid grid-cols-12 gap-6">
 							{formFromProps?.fields?.map((field, index) => {
-								const Field: React.FC<any> =
-									fields?.[field.blockType as keyof typeof fields]
-
-								if (!Field) return null
-
-								const colSpan = widthToColSpan((field as any).width)
+								const colSpan = widthToColSpan('width' in field ? field.width : undefined)
 
 								return (
-									<div key={(field as any).name ?? index} className={colSpan}>
-										<Field
-											form={formFromProps}
-											{...field}
-											{...formMethods}
-											control={control}
-											errors={errors}
-											register={register}
-										/>
+									<div key={'name' in field ? field.name : index} className={colSpan}>
+										{renderField(field, formMethods)}
 									</div>
 								)
 							})}

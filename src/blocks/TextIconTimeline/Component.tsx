@@ -1,6 +1,6 @@
 // src/blocks/TextIconTimeline/Component.tsx
 import React from 'react'
-import type { TextIconTimelineBlock, Media } from '@/payload-types'
+import type { TextIconTimelineBlock } from '@/payload-types'
 import { highlightPhrase } from '@/utilities/highlightPhrase'
 import { TextIconTimelineSlider } from './Component.client'
 

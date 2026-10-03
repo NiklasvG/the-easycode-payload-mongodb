@@ -12,36 +12,7 @@ type Props = ProjectsGridBlock & {
 	className?: string
 }
 
-// Mapping von Value -> Label wie im Select-Feld
-const projectTypeLabelMap: Record<string, string> = {
-	'brand-webseite': 'Brand Webseite',
-	individualsoftware: 'Individualsoftware',
-	'e-commerce': 'E-Commerce',
-	'app-entwicklung': 'App-Entwicklung',
-	hosting: 'Hosting'
-}
-
-function getProjectTypeLabel(value?: string | null): string | null {
-	if (!value) return null
-	return projectTypeLabelMap[value] ?? null
-}
-
-function formatProjectDateRange(
-	startDate?: string | null,
-	endDate?: string | null
-): string | null {
-	if (!startDate) return null
-
-	const dateFormatter = new Intl.DateTimeFormat('de-DE', {
-		month: 'short',
-		year: 'numeric'
-	})
-
-	const start = dateFormatter.format(new Date(startDate))
-	const end = endDate ? dateFormatter.format(new Date(endDate)) : 'laufend'
-
-	return start === end ? start : `${start} - ${end}`
-}
+import { projectTypeLabels as projectTypeLabelMap, getProjectTypeLabel, formatProjectDateRange } from '@/utilities/projectPresentation'
 
 export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 	overhead,

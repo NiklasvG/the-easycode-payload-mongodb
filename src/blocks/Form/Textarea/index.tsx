@@ -1,4 +1,4 @@
-import type { TextField } from '@payloadcms/plugin-form-builder/types'
+import type { TextAreaField } from '@payloadcms/plugin-form-builder/types'
 import type {
 	FieldErrorsImpl,
 	FieldValues,
@@ -12,7 +12,7 @@ import React from 'react'
 import { Error } from '../Error'
 
 export const Textarea: React.FC<
-	TextField & {
+	TextAreaField & {
 		errors: Partial<FieldErrorsImpl>
 		register: UseFormRegister<FieldValues>
 		rows?: number

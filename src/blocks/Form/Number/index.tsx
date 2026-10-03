@@ -12,7 +12,7 @@ import React from 'react'
 import { Error } from '../Error'
 
 export const Number: React.FC<
-	TextField & {
+	Omit<TextField, 'blockType'> & { blockType: 'number' } & {
 		errors: Partial<FieldErrorsImpl>
 		register: UseFormRegister<FieldValues>
 	}

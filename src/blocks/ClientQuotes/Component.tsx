@@ -23,6 +23,7 @@ export const ClientQuotesBlockComponent: React.FC<Props> = async ({
 
 	const { docs } = await payload.find({
 		collection: 'clients',
+		overrideAccess: false,
 		limit: 100,
 		depth: 2
 	})
@@ -41,7 +42,7 @@ export const ClientQuotesBlockComponent: React.FC<Props> = async ({
 				role: contact.position,
 				company: client.companyName,
 				// zuerst Kontaktbild, sonst Firmenlogo, sonst nichts
-				image: (contact.image as any) || (client.logo as any) || null
+				image: (typeof contact.image === 'object' ? contact.image : null) || (typeof client.logo === 'object' ? client.logo : null),
 			})
 		})
 	})
