@@ -1,159 +1,36 @@
-import { BeforeSync, DocToSync } from '@payloadcms/plugin-search/types'
+import type { BeforeSync, DocToSync } from '@payloadcms/plugin-search/types'
+import type { Client, Page, Post, Project } from '@/payload-types'
+import { getPagePath } from '@/utilities/contentPaths'
 
-function buildFullSlugFromBreadcrumbs(originalDoc: any): string | null {
-	const breadcrumbs = originalDoc?.breadcrumbs
-
-	if (!Array.isArray(breadcrumbs) || breadcrumbs.length === 0) return null
-
-	// Breadcrumb items enthalten i.d.R. { url, label, ... }
-	// url ist meist schon der komplette Pfad (z.B. "/leistungen/dev-ops")
-	const last = breadcrumbs[breadcrumbs.length - 1]
-	const url = last?.url
-
-	if (typeof url === 'string' && url.length > 0) {
-		// "/leistungen/dev-ops" -> "leistungen/dev-ops"
-		return url.replace(/^\/+/, '').replace(/\/+$/, '')
-	}
-
-	// Fallback, falls kein url vorhanden: über "slug" / "path" / "value" o.ä.
-	// (je nach Breadcrumb-Shape in deinem Projekt)
-	const parts = breadcrumbs
-		.map((b: any) => b?.slug || b?.path || b?.value)
-		.filter((v: any) => typeof v === 'string' && v.length > 0)
-
-	return parts.length ? parts.join('/') : null
-}
-
-export const beforeSyncWithSearch: BeforeSync = async ({
-	req,
-	originalDoc,
-	searchDoc
-}) => {
-	const {
-		doc: { relationTo: collection }
-	} = searchDoc
-
-	const { slug: rawSlug, id, categories, title, meta } = originalDoc as any
-
-	// ✅ Pages: verschachtelten Pfad berücksichtigen
-	const slug =
-		collection === 'pages'
-			? (buildFullSlugFromBreadcrumbs(originalDoc) ?? rawSlug)
-			: rawSlug
-
-	const modifiedDoc: DocToSync & {
-		clientSlug?: string | null
-		shortDescription?: string | null
-		projectType?: string | null
-		imageHint?: string | null
-		startDate?: string | null
-		endDate?: string | null
-		image?: string | null
-		tags?: { tag?: string | null }[]
-	} = {
-		...searchDoc,
-		slug,
-		meta: {
-			...meta,
-			title: meta?.title || title,
-			image: meta?.image?.id || meta?.image,
-			description: meta?.description
-		},
-		categories: []
-	}
-
-	// … dein bestehender Categories-Code bleibt unverändert …
-
-	if (categories && Array.isArray(categories) && categories.length > 0) {
-		const populatedCategories: { id: string | number; title: string }[] = []
-
-		for (const category of categories) {
-			if (!category) continue
-
-			if (typeof category === 'object') {
-				if (category?.id && category?.title) populatedCategories.push(category)
-				continue
-			}
-
-			const doc = await req.payload.findByID({
-				collection: 'categories',
-				id: category,
-				disableErrors: true,
-				depth: 0,
-				select: { title: true },
-				req
-			})
-
-			if (doc !== null) populatedCategories.push(doc as any)
-			else {
-				console.error(
-					`Failed. Category not found when syncing collection '${collection}' with id: '${id}' to search.`
-				)
-			}
-		}
-
-		modifiedDoc.categories = populatedCategories.map((each) => ({
-			relationTo: 'categories',
-			categoryID: String(each.id),
-			title: each.title
-		}))
-	}
-
-	// ✅ PROJECTS: wie bei dir
-	if (collection === 'projects') {
-		const {
-			client,
-			shortDescription,
-			projectType,
-			imageHint,
-			startDate,
-			endDate,
-			image,
-			tags
-		} = originalDoc as any
-
-		modifiedDoc.shortDescription = shortDescription ?? null
-		modifiedDoc.projectType = projectType ?? null
-		modifiedDoc.imageHint = imageHint ?? null
-		modifiedDoc.startDate = startDate ?? null
-		modifiedDoc.endDate = endDate ?? null
-		modifiedDoc.image = image?.id || (typeof image === 'string' ? image : null)
-
-		modifiedDoc.tags = Array.isArray(tags)
-			? tags
-					.map((t: any) => {
-						if (!t) return null
-						if (typeof t === 'string') return { tag: t }
-						return { tag: t?.tag ?? null }
-					})
-					.filter((t: any): t is { tag: string | null } => t !== null)
-			: []
-
-		if (client && typeof client === 'object') {
-			modifiedDoc.clientSlug = client.slug ?? null
-		} else if (typeof client === 'string') {
-			const clientDoc = await req.payload.findByID({
-				collection: 'clients',
-				id: client,
-				disableErrors: true,
-				depth: 0,
-				select: { slug: true },
-				req
-			})
-			modifiedDoc.clientSlug = (clientDoc as any)?.slug ?? null
-		} else {
-			modifiedDoc.clientSlug = null
-		}
-	} else {
-		modifiedDoc.clientSlug = null
-		modifiedDoc.shortDescription = null
-		modifiedDoc.projectType = null
-		modifiedDoc.imageHint = null
-		modifiedDoc.startDate = null
-		modifiedDoc.endDate = null
-		modifiedDoc.image = null
-		modifiedDoc.tags = []
-	}
-
-	return modifiedDoc
+export const beforeSyncWithSearch: BeforeSync = async ({ req, originalDoc, searchDoc }) => {
+  const collection = searchDoc.doc.relationTo
+  const doc = originalDoc as Page | Post | Project | Client
+  const meta = 'meta' in doc ? doc.meta : undefined
+  const modified: DocToSync = {
+    ...searchDoc,
+    title: 'companyName' in doc ? doc.companyName : doc.title,
+    slug: collection === 'pages' ? getPagePath(doc as Page).replace(/^\//, '') : doc.slug,
+    meta: { ...meta, title: meta?.title || ('companyName' in doc ? doc.companyName : doc.title), image: typeof meta?.image === 'object' ? meta.image?.id : meta?.image, description: meta?.description },
+    categories: [], clientSlug: null, shortDescription: null, projectType: null,
+    imageHint: null, startDate: null, endDate: null, image: null, tags: [],
+  }
+  if ('categories' in doc) {
+    const categories = await Promise.all((doc.categories || []).map(async (category) => {
+      const resolved = typeof category === 'object' ? category : await req.payload.findByID({ collection: 'categories', id: category, depth: 0, disableErrors: true, req })
+      return resolved ? { relationTo: 'categories', categoryID: String(resolved.id), title: resolved.title } : null
+    }))
+    modified.categories = categories.filter((category) => category !== null)
+  }
+  if (collection === 'projects') {
+    const project = doc as Project
+    const client = typeof project.client === 'object' ? project.client : await req.payload.findByID({ collection: 'clients', id: project.client, depth: 0, disableErrors: true, req })
+    Object.assign(modified, {
+      clientSlug: client?.slug ?? null, shortDescription: project.shortDescription,
+      projectType: project.projectType, imageHint: project.imageHint,
+      startDate: project.startDate, endDate: project.endDate,
+      image: typeof project.image === 'object' ? project.image?.id : project.image,
+      tags: project.tags ?? [],
+    })
+  }
+  return modified
 }

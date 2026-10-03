@@ -2,6 +2,7 @@ import { authenticated } from '@/access/authenticated'
 import { revalidateRelatedContent } from '@/hooks/revalidateRelatedContent'
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
+import { syncProjectSearch, removeClientProjectsFromSearch } from './syncProjectSearch'
 
 export const Clients: CollectionConfig<'clients'> = {
   slug: 'clients',
@@ -16,7 +17,7 @@ export const Clients: CollectionConfig<'clients'> = {
     update: authenticated,
     delete: authenticated,
   },
-  hooks: { afterChange: [revalidateRelatedContent], afterDelete: [revalidateRelatedContent] },
+  hooks: { afterChange: [syncProjectSearch, revalidateRelatedContent], afterDelete: [removeClientProjectsFromSearch, revalidateRelatedContent] },
   fields: [
     {
       name: 'companyName',
