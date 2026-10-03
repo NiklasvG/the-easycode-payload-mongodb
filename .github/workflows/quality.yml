@@ -1,0 +1,72 @@
+name: Quality
+on:
+  pull_request:
+  push:
+    branches: [main, staging]
+permissions:
+  contents: read
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      CI: 'true'
+      TEST_DATABASE: 'true'
+      MONGODB_URI: mongodb://127.0.0.1:27017/easycode_test?replicaSet=rs0&directConnection=true
+      PAYLOAD_SECRET: ci-only-secret-never-use-in-production
+      PREVIEW_SECRET: ci-preview-secret
+      NEXT_PUBLIC_SERVER_URL: http://localhost:3000
+      APP_ENV: staging
+      EMAIL_TRANSPORT: json
+      SMTP_PORT: '1025'
+      GEMINI_API_KEY: ci-no-network-key
+      PAYLOAD_UPLOAD_DIR: ./test-results/media
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.23.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Isolated MongoDB replica set
+        run: |
+          docker run -d --name mongo-test -p 27017:27017 mongo:8 --replSet rs0 --bind_ip_all
+          for attempt in $(seq 1 60); do
+            if docker exec mongo-test mongosh --quiet --eval 'try { rs.status() } catch (e) { rs.initiate({_id:"rs0",members:[{_id:0,host:"localhost:27017"}]}) }; quit(db.hello().isWritablePrimary ? 0 : 1)'; then exit 0; fi
+            sleep 1
+          done
+          exit 1
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test:int
+      - run: pnpm payload run scripts/seed-test.ts
+      - run: pnpm build
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+      - name: Docker build and runtime smoke test
+        run: |
+          docker build --build-arg NEXT_PUBLIC_SERVER_URL=http://localhost:3000 --build-arg APP_ENV=staging -t easycode-test .
+          docker run -d --name app-test --network host --env MONGODB_URI --env PAYLOAD_SECRET --env PREVIEW_SECRET --env NEXT_PUBLIC_SERVER_URL --env APP_ENV --env EMAIL_TRANSPORT --env SMTP_PORT --env GEMINI_API_KEY easycode-test
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://localhost:3000/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          docker logs app-test
+          exit 1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+      - name: Container logs
+        if: failure()
+        run: docker logs mongo-test; docker logs app-test || true
