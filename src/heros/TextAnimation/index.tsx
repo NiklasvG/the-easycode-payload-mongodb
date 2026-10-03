@@ -66,6 +66,7 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
           <div className="grid place-items-center w-full h-full relative py-16 lg:pt-0">
             <Media
               className=""
+              pictureClassName="block w-full sm:w-fit"
               imgClassName="w-full h-auto sm:h-96 sm:w-auto"
               size="(max-width: 639px) calc(100vw - 32px), 384px"
               priority
