@@ -1,172 +1,51 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
-import { LottieSvg, type LottieHandle } from 'lottie-react'
-import { useReducedMotion } from 'framer-motion'
+import { lazy, Suspense, useRef } from 'react'
+import { useInView } from 'framer-motion'
+import type { LottieSvgProps } from 'lottie-react'
+import type { LottieIconNames } from '@/fields/lottieIcon'
 
-import { LottieIconNames } from '@/fields/lottieIcon'
-
-import AppleAnimation from '@/Icons/Apple.json'
-import CartAnimation from '@/Icons/Cart.json'
-import CloudAnimation from '@/Icons/Cloud.json'
-import ComputerAnimation from '@/Icons/Computer.json'
-import PenAnimation from '@/Icons/Pen.json'
-import EngagementAnimation from '@/Icons/Engagement.json'
-import CodeAnimation from '@/Icons/Code.json'
-import ClockAnimation from '@/Icons/Clock.json'
-import ApplauseAnimation from '@/Icons/Applause.json'
-import GitAnimation from '@/Icons/Git.json'
-import BookAnimation from '@/Icons/Book.json'
-import FireworkAnimation from '@/Icons/Firework.json'
-import ConfettiAnimation from '@/Icons/Confetti.json'
-import DeveloperAnimation from '@/Icons/Developer.json'
-import SchoolAnimation from '@/Icons/School.json'
-import ServerAnimation from '@/Icons/Server.json'
-import LoadBalancerAnimation from '@/Icons/Load-Balancer.json'
-import MailAnimation from '@/Icons/Mail.json'
-
-// use LottieIconNames
-interface LottieIconProps {
-  icon: LottieIconNames
-  triggerPlay: boolean
+type PlaybackProps = { triggerPlay: boolean }
+function loadIcon(loadData: () => Promise<{ default: LottieSvgProps['src'] }>) {
+  return lazy(async () => {
+    const [{ default: Player }, { default: animationData }] = await Promise.all([
+      import('./LottiePlayer'), loadData(),
+    ])
+    return { default: function IconPlayer(props: PlaybackProps) {
+      return <Player {...props} animationData={animationData} />
+    } }
+  })
 }
 
-const LottieIcon: React.FC<LottieIconProps> = ({ icon, triggerPlay }) => {
-  const lottieRef = useRef<LottieHandle>(null)
-  const containerRef = useRef<HTMLDivElement | null>(null)
+// Module-level lazy components keep identities stable and fetch only the selected icon.
+const icons = {
+  apple: loadIcon(() => import('@/Icons/Apple.json')),
+  applause: loadIcon(() => import('@/Icons/Applause.json')),
+  book: loadIcon(() => import('@/Icons/Book.json')),
+  cart: loadIcon(() => import('@/Icons/Cart.json')),
+  clock: loadIcon(() => import('@/Icons/Clock.json')),
+  cloud: loadIcon(() => import('@/Icons/Cloud.json')),
+  code: loadIcon(() => import('@/Icons/Code.json')),
+  computer: loadIcon(() => import('@/Icons/Computer.json')),
+  confetti: loadIcon(() => import('@/Icons/Confetti.json')),
+  developer: loadIcon(() => import('@/Icons/Developer.json')),
+  engagement: loadIcon(() => import('@/Icons/Engagement.json')),
+  firework: loadIcon(() => import('@/Icons/Firework.json')),
+  git: loadIcon(() => import('@/Icons/Git.json')),
+  loadBalancer: loadIcon(() => import('@/Icons/Load-Balancer.json')),
+  mail: loadIcon(() => import('@/Icons/Mail.json')),
+  pen: loadIcon(() => import('@/Icons/Pen.json')),
+  school: loadIcon(() => import('@/Icons/School.json')),
+  server: loadIcon(() => import('@/Icons/Server.json')),
+} satisfies Record<LottieIconNames, ReturnType<typeof loadIcon>>
 
-  const playedOnce = useRef(false)
-  const reducedMotion = useReducedMotion()
-  const isPlaying = useRef(false)
-
-  // Icon → Animation zuordnen
-  let animationData
-  switch (icon) {
-    case 'computer':
-      animationData = ComputerAnimation
-      break
-    case 'cloud':
-      animationData = CloudAnimation
-      break
-    case 'apple':
-      animationData = AppleAnimation
-      break
-    case 'cart':
-      animationData = CartAnimation
-      break
-    case 'pen':
-      animationData = PenAnimation
-      break
-    case 'engagement':
-      animationData = EngagementAnimation
-      break
-    case 'code':
-      animationData = CodeAnimation
-      break
-    case 'clock':
-      animationData = ClockAnimation
-      break
-    case 'applause':
-      animationData = ApplauseAnimation
-      break
-    case 'git':
-      animationData = GitAnimation
-      break
-    case 'book':
-      animationData = BookAnimation
-      break
-    case 'firework':
-      animationData = FireworkAnimation
-      break
-    case 'confetti':
-      animationData = ConfettiAnimation
-      break
-    case 'developer':
-      animationData = DeveloperAnimation
-      break
-    case 'school':
-      animationData = SchoolAnimation
-      break
-    case 'server':
-      animationData = ServerAnimation
-      break
-    case 'loadBalancer':
-      animationData = LoadBalancerAnimation
-      break
-    case 'mail':
-      animationData = MailAnimation
-      break
-    default:
-      animationData = ComputerAnimation
-      break
-  }
-
-  // Wenn von außen neu getriggert wird → Reset
-  useEffect(() => {
-    if (reducedMotion) lottieRef.current?.pause()
-    if (triggerPlay) {
-      playedOnce.current = false
-    }
-  }, [triggerPlay, reducedMotion])
-
-  // Normales Verhalten: über Prop triggerPlay steuern (z. B. Hover, Scroll, etc.)
-  useEffect(() => {
-    if (triggerPlay && !playedOnce.current && !isPlaying.current && !reducedMotion) {
-      isPlaying.current = true
-      lottieRef.current?.seek({ frame: 0 })
-      lottieRef.current?.play()
-    }
-  }, [triggerPlay, reducedMotion])
-
-  // Zusatz: Auf mobilen Geräten einmal abspielen, wenn im Viewport
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-
-    const isMobile = window.matchMedia('(max-width: 767px)').matches
-    if (!isMobile) return
-
-    const element = containerRef.current
-    if (!element) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !playedOnce.current && !isPlaying.current && !reducedMotion) {
-            isPlaying.current = true
-            lottieRef.current?.seek({ frame: 0 })
-            lottieRef.current?.play()
-          }
-        })
-      },
-      {
-        threshold: 1, // ~100% sichtbar
-      },
-    )
-
-    observer.observe(element)
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [reducedMotion])
-
+export default function LottieIcon({ icon, triggerPlay }: PlaybackProps & { icon: LottieIconNames }) {
+  const container = useRef<HTMLDivElement>(null)
+  const visible = useInView(container, { once: true, margin: '200px' })
+  const Icon = icons[icon] || icons.computer
   return (
-    <div ref={containerRef} className="service-card--icon shrink-0">
-      <LottieSvg
-        lottieRef={lottieRef}
-        src={animationData}
-        loop={false}
-        autoplay={false}
-        subscriptions={{
-          complete: () => {
-            playedOnce.current = true
-            isPlaying.current = false
-          },
-        }}
-      />
+    <div ref={container} className="service-card--icon shrink-0">
+      {visible && <Suspense fallback={null}><Icon triggerPlay={triggerPlay} /></Suspense>}
     </div>
   )
 }
-
-export default LottieIcon
-
