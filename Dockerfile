@@ -20,6 +20,7 @@ RUN test -n "$NEXT_PUBLIC_SERVER_URL" \
     && MONGODB_URI=mongodb://127.0.0.1:27017/build-only \
     PAYLOAD_SECRET=build-only-secret-not-used-at-runtime \
     GEMINI_API_KEY=build-only-key-not-used-at-runtime \
+    EMAIL_TRANSPORT=json \
     SMTP_PORT=587 \
     pnpm run build
 
