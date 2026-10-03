@@ -221,7 +221,7 @@ async function SearchResults({
 
 			{/* PAGES */}
 			{pageDocs.length > 0 && (
-				<div className="container mt-126">
+				<div className="container">
 					<h2 className="mb-6 text-5xl">Seiten</h2>
 					<PageTiles pages={pageDocs} />
 				</div>
