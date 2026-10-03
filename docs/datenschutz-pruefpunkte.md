@@ -31,7 +31,12 @@ Freigabe daraus nicht ableiten. Die Markdown-Änderungen veröffentlichen nichts
 
 Die alte Beschreibung einer nicht bereinigten Chat-IP-Map gilt für den neuen
 Chat nicht: Er verwendet pseudonymisierte IP-Zähler mit Ablauf und regelmäßigem
-Sweep. Separate Protokolle und deren Löschregeln bleiben zu klären.
+Sweep. Docker-Logging für Staging-Website und Proxy ist bestätigt:
+`json-file`, jeweils drei Dateien à 10 MB, ohne feste Frist in Tagen.
+Kein Access-Logging in den geprüften Proxy-Startargumenten oder der vorgelegten
+Compose-Konfiguration. Zusätzliche statische Konfiguration, tatsächliche
+Log-Inhalte und weitere Speicherwege bleiben zu prüfen; Details stehen in
+[datenschutz-offene-angaben.md](datenschutz-offene-angaben.md).
 
 ## Bisheriger Prüfstand
 

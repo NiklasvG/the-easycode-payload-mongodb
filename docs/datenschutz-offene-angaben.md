@@ -31,7 +31,14 @@ Freigabe daraus nicht ableiten. Die Markdown-Änderungen veröffentlichen nichts
 
 Die alte Beschreibung einer nicht bereinigten Chat-IP-Map gilt für den neuen
 Chat nicht: Er verwendet pseudonymisierte IP-Zähler mit Ablauf und regelmäßigem
-Sweep. Separate Protokolle und deren Löschregeln bleiben zu klären.
+Sweep. Für den Staging-Website-Container und `coolify-proxy` ist per
+`docker inspect` jeweils Docker-Logging `json-file` mit `max-file=3` und
+`max-size=10m` bestätigt. Das ist Größenrotation, keine feste Frist in Tagen.
+Die Abfrage der Proxy-Startargumente ergab keinen `accesslog`-Eintrag; auch die
+bereitgestellte Compose-Konfiguration aktiviert kein Access-Logging. Eine
+zusätzliche statische Traefik-Konfigurationsdatei und die tatsächlichen Inhalte
+der Anwendungs-/Fehlerprotokolle wurden damit nicht geprüft. Weitere Speicherwege
+und deren Löschregeln bleiben zu klären.
 
 ## Bisheriger Prüfstand
 

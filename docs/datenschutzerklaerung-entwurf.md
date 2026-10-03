@@ -40,8 +40,10 @@ vor missbräuchlichen Zugriffen verarbeitet. Rechtsgrundlage ist Art. 6 Abs. 1
 lit. f DSGVO. Mein berechtigtes Interesse liegt in der sicheren und zuverlässigen
 Bereitstellung meines Online-Angebots.
 
-Die Container-Protokolle auf dem Website-Server werden in einem begrenzten
-Speicherumfang vorgehalten. Ältere Protokolldateien werden automatisch entfernt,
+Für den Website-Container und den vorgeschalteten Proxy werden jeweils bis zu
+drei Docker-Protokolldateien mit einer konfigurierten Größe von jeweils 10 MB
+vorgehalten. Eine feste Löschfrist in Tagen ist hierfür nicht eingerichtet.
+Ältere Protokolldateien werden automatisch entfernt,
 sobald neue Einträge die konfigurierte Speichergrenze erreichen. Der Zeitpunkt
 der Entfernung hängt damit vom Umfang der anfallenden Protokolldaten ab.
 [Aufbewahrungskriterien für gegebenenfalls zusätzliche personenbezogene
