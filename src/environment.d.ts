@@ -4,6 +4,8 @@ declare global {
 			MONGODB_URI: string
 			PAYLOAD_SECRET: string
 			NEXT_PUBLIC_SERVER_URL: string
+			UMAMI_SCRIPT_URL?: string
+			UMAMI_WEBSITE_ID?: string
 			CRON_SECRET: string
 			PREVIEW_SECRET: string
 			SMTP_HOST: string

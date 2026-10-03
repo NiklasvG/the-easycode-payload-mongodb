@@ -15,7 +15,7 @@ import { draftMode } from 'next/headers'
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 import { AIChat } from '@/components/Chat/AIChat'
-import { GoogleAnalytics } from '@/components/GoogleAnalytics'
+import { UmamiAnalytics } from '@/components/UmamiAnalytics'
 import { CookieBanner } from '@/components/CookieBanner'
 
 // Read CMS content at request time; Docker builds need no database connection.
@@ -65,7 +65,10 @@ export default async function RootLayout({
 					{children}
 					<Footer />
 					<AIChat />
-					<GoogleAnalytics />
+					<UmamiAnalytics
+						scriptUrl={process.env.UMAMI_SCRIPT_URL}
+						websiteId={process.env.UMAMI_WEBSITE_ID}
+					/>
 					<CookieBanner />
 				</Providers>
 			</body>

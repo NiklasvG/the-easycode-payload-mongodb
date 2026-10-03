@@ -2,6 +2,8 @@
 
 For self-hosted analytics, performance and uptime alternatives, see
 [Monitoring on Coolify](monitoring-coolify.md).
+For the configured Umami integration and runtime variables, see
+[Umami setup](umami-coolify.md).
 
 ## Staging first
 

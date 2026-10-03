@@ -11,11 +11,8 @@ import {
 	COOKIE_CONSENT_KEY,
 	ConsentSettings,
 	getConsent,
-	dispatchConsentUpdate,
-	clearGoogleAnalyticsCookies,
-	setGoogleAnalyticsDisable
+	dispatchConsentUpdate
 } from '@/utilities/cookieConsent'
-import { GA_MEASUREMENT_ID } from '@/components/GoogleAnalytics'
 
 export const CookieBanner = () => {
 	const [isOpen, setIsOpen] = useState(false)
@@ -33,7 +30,6 @@ export const CookieBanner = () => {
 			setIsOpen(true)
 		} else {
 			setSettings(stored)
-			updateGtagConsent(stored)
 		}
 
 		const handleOpenBanner = () => {
@@ -54,23 +50,6 @@ export const CookieBanner = () => {
 		}
 	}, [])
 
-	const updateGtagConsent = (consent: ConsentSettings) => {
-		if (typeof window !== 'undefined' && window.gtag) {
-			window.gtag('consent', 'update', {
-				ad_storage: consent.marketing ? 'granted' : 'denied',
-				ad_user_data: consent.marketing ? 'granted' : 'denied',
-				ad_personalization: consent.marketing ? 'granted' : 'denied',
-				analytics_storage: consent.analytics ? 'granted' : 'denied'
-			})
-		}
-
-		setGoogleAnalyticsDisable(GA_MEASUREMENT_ID, !consent.analytics)
-
-		if (!consent.analytics) {
-			clearGoogleAnalyticsCookies(GA_MEASUREMENT_ID)
-		}
-	}
-
 	const saveSettings = (newSettings: ConsentSettings) => {
 		const settingsWithTimestamp: ConsentSettings = {
 			...newSettings,
@@ -83,7 +62,6 @@ export const CookieBanner = () => {
 			JSON.stringify(settingsWithTimestamp)
 		)
 
-		updateGtagConsent(settingsWithTimestamp)
 		dispatchConsentUpdate()
 		setIsOpen(false)
 		setShowDetails(false)
@@ -130,7 +108,8 @@ export const CookieBanner = () => {
 								</h3>
 								<p className="mt-1 text-sm leading-relaxed text-muted-foreground">
 									Wir verwenden Cookies, um die grundlegenden Funktionen der
-									Website sicherzustellen sowie zur Analyse der Nutzung. Weitere
+									Website sicherzustellen. Mit deiner Zustimmung analysieren wir
+									die Nutzung und Ladezeiten mit Umami ohne Analyse-Cookies. Weitere
 									Informationen befinden sich in unserer{' '}
 									<Link
 										href="/datenschutz"
@@ -207,13 +186,13 @@ export const CookieBanner = () => {
 										>
 											<div className="flex flex-col pr-4">
 												<span className="text-sm font-bold text-foreground">
-													Analytische Cookies
+													Nutzungsanalyse
 												</span>
 												<span className="mt-1 text-xs text-muted-foreground">
-													Analytische Cookies (Google Analytics) helfen uns zu
-													verstehen, wie Besucher unsere Website nutzen. Dabei
-													werden Daten anonymisiert verarbeitet und können in
-													die USA übertragen werden.
+													Umami hilft uns zu verstehen, wie Besucher unsere
+													Website nutzen und wie schnell sie lädt. Die Analyse
+													läuft auf unserer eigenen Infrastruktur und verwendet
+													keine Analyse-Cookies.
 												</span>
 											</div>
 
