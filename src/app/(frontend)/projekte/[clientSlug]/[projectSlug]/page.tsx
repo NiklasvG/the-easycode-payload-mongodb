@@ -52,11 +52,12 @@ type Args = {
 export default async function ProjectDetailPage({ params: paramsPromise }: Args) {
   // 1. Draft Mode Status abrufen
   const { isEnabled: draft } = await draftMode()
-  const { projectSlug } = await paramsPromise
+  const { projectSlug, clientSlug } = await paramsPromise
 
   // Deine Query Funktion berücksichtigt bereits "draft: isEnabled", das passt also!
   const project = await queryProjectBySlug({
     slug: decodeURIComponent(projectSlug),
+    clientSlug,
   })
 
   if (!project) {
@@ -401,9 +402,10 @@ export default async function ProjectDetailPage({ params: paramsPromise }: Args)
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { projectSlug } = await paramsPromise
+  const { projectSlug, clientSlug } = await paramsPromise
   const project = await queryProjectBySlug({
     slug: decodeURIComponent(projectSlug),
+    clientSlug,
   })
 
   if (!project) return {}
@@ -420,7 +422,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
 // -------- Helpers --------
 
-const queryProjectBySlug = cache(async ({ slug }: { slug: string }) => {
+const queryProjectBySlug = cache(async ({ slug, clientSlug }: { slug: string; clientSlug: string }) => {
   const { isEnabled: draft } = await draftMode()
   const payload = await getPayload({ config: configPromise })
 
@@ -438,5 +440,7 @@ const queryProjectBySlug = cache(async ({ slug }: { slug: string }) => {
     depth: 2,
   })
 
-  return (result.docs?.[0] as Project | undefined) || null
+  const project = result.docs?.[0] as Project | undefined
+  const client = project?.client
+  return client && typeof client === 'object' && client.slug === clientSlug ? project : null
 })
