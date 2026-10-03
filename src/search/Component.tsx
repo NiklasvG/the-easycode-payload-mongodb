@@ -1,18 +1,24 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import { useDebounce } from '@/utilities/useDebounce'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { SearchCode } from 'lucide-react'
 
 export const Search: React.FC = () => {
-	const [value, setValue] = useState('')
+	const searchParams = useSearchParams()
+	const query = searchParams.get('q') || ''
+	const [input, setInput] = useState<{ value: string; queryAtEdit: string } | null>(null)
+	const value = input?.queryAtEdit === query ? input.value : query
 	const router = useRouter()
 
 	const debouncedValue = useDebounce(value)
 
 	useEffect(() => {
-		router.push(`/suche${debouncedValue ? `?q=${debouncedValue}` : ''}`)
-	}, [debouncedValue, router])
+		if (!input || input.queryAtEdit !== query || debouncedValue === query) return
+		const params = new URLSearchParams()
+		if (debouncedValue) params.set('q', debouncedValue)
+		router.replace(`/suche${params.size ? `?${params}` : ''}`, { scroll: false })
+	}, [debouncedValue, query, input, router])
 
 	return (
 		<div>
@@ -28,7 +34,9 @@ export const Search: React.FC = () => {
 							type="text"
 							id="search"
 							value={value}
-							onChange={(e) => setValue(e.target.value)}
+							onChange={(e) => setInput({ value: e.target.value, queryAtEdit: query })}
+							maxLength={200}
+							aria-label="Website durchsuchen"
 							placeholder="Projekte, Kunden, Seiten..."
 							className="w-full bg-secondary text-secondary-foreground border border-white/10 rounded-2xl py-6 pl-16 pr-6 text-xl focus:outline-hidden focus:border-accent/50 hover:border-accent/50 transition-all placeholder:secondary-foreground/50"
 						/>
