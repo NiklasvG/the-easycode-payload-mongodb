@@ -1,28 +1,80 @@
 # Prüfpunkte zum Datenschutzerklärungsentwurf
 
+Stand: 3. Oktober 2026. Belege und Fundstellen für die verbleibenden Angaben
+stehen in [datenschutz-offene-angaben.md](datenschutz-offene-angaben.md).
+
 Der Entwurf beschreibt den vorbereiteten `staging`-Stand auf Hetzner mit Umami.
 Er wurde nicht in Payload veröffentlicht. Solange die Hauptdomain auf der alten
 Infrastruktur läuft, darf deren Erklärung nicht einfach durch diese Fassung
 ersetzt werden. Marketing wurde lokal entfernt, diese Änderung ist noch nicht
 committed oder deployed.
 
+## Durch Unterlagen bestätigt
+
+- Zusätzlich durch Betreiberangabe bestätigt: selbst betriebener Mailserver
+  `mail.ec-host.de` bei Hetzner in Falkenstein; die Website verwendet ihn als
+  `SMTP_HOST` mit Absender `no-reply@the-easycode.eu`. Das Kontaktpostfach
+  `info@the-easycode.eu` liegt ebenfalls dort; eingesetzte Software ist mailcow.
+- Laut Betreiber bestehen für das Kontaktpostfach keine zusätzlichen
+  Weiterleitungen. Die Routing-Übersicht zeigt keine senderabhängigen Transporte;
+  die Domain verwendet „Keine Auswahl / Erben“. Der Betreiber bestätigt zusätzlich,
+  dass kein globales SMTP-Relay eingerichtet ist.
+- Die Quarantäne ist laut Screenshot deaktiviert und enthält keine Einträge.
+  Die mailcow-Logansicht nennt `LOG_LINES=10000` je Anwendung und zusätzliches
+  Logging in den Docker-Daemon. Die Eintragsgrenze ist keine Frist in Tagen.
+- Laut Betreiber sind Backups eingerichtet und liegen bei Hetzner in Falkenstein.
+  Gesichert werden Coolify, Datenbanken, Maildaten, Volumes und Images.
+  Aufbewahrung und Löschregeln sind noch offen.
+- Die Coolify-Docker-Ausgabe bestätigt `json-file` mit drei Dateien à 10 MB
+  je aufgeführtem Container. Das belegt Größenrotation, keine Tagesfrist.
+- Hetzner Online GmbH, Industriestr. 25, 91710 Gunzenhausen, Deutschland,
+  ist Vertragspartner im personalisierten AV-Vertrag vom 3. Oktober 2026
+  (`dpa-2026-10-03.pdf`, Version 1.2 vom 16. Februar 2026).
+- Der AV-Vertrag enthält in Anlage 1 alle fünf ausgewählten Standard-Datenarten
+  sowie die vollständigen Zusatztexte zu Nutzungs-/Analysedaten, Warenkorb,
+  Sitzungen, Authentifizierung und den betroffenen Personengruppen.
+- Für gewählte EU-Serverstandorte sichert Anlage 3 die Verarbeitung der Serverdaten
+  innerhalb der EU zu; Support erfolgt ebenfalls innerhalb der EU. Diese Zusage
+  betrifft Hetzner und bestätigt keine EU-only-Verarbeitung durch Google.
+- Der Screenshot zeigt Falkenstein für alle aufgeführten Server. Der Betreiber
+  bestätigt, dass Website, MongoDB und Umami auf dem Coolify-Server in Falkenstein
+  laufen. Backup-Umfang und Aufbewahrung sind separat zu prüfen.
+- Der Betreiber bestätigt, dass `#cookie-settings` im Payload-Footer hinterlegt
+  und auf jeder Seite sichtbar ist.
+- Die TOMs und der TÜV-Bericht belegen Maßnahmen von Hetzner. Der Auditbericht
+  vom 19. Februar 2026 nennt keine festgestellten Abweichungen im geprüften Umfang.
+  Er bestätigt keine Prüfung unserer Anwendungen oder Serverkonfiguration.
+- Das Admin-Authentifizierungs-Cookie hat nach der lokalen Payload-Konfiguration
+  zwei Stunden Gültigkeit ab Ausstellung bzw. Erneuerung; produktiv abgleichen.
+
 ## Vor Veröffentlichung klären
 
 - Geltungsbereich und tatsächlicher Deployment-Stand der betreffenden Domain.
-- Hetzner-Vertragsgesellschaft, Serverstandort und tatsächlich abgeschlossener
-  AVV; kein Vertragsabschluss wurde aus dem Code abgeleitet.
-- Tatsächlich erfasste und gespeicherte Proxy-/Serverlogs und deren Löschung.
+- Zusätzliche Proxy-/Serverlogs außerhalb der bestätigten Docker-Rotation und
+  die Löschregeln auf dem separaten Mailserver prüfen.
 - Umami-Aufbewahrung: Self-hosted Umami löscht laut FAQ standardmäßig nicht
   automatisch nach 14 Monaten. Gewünschte Frist technisch implementieren und
   erst dann im Text behaupten. Auch die Aufbewahrung in Backups berücksichtigen.
-- E-Mail-/SMTP-Anbieter und gegebenenfalls dessen AVV, Speicherorte und Garantien
-  für Drittlandübermittlungen. Zugangsdaten müssen dafür nicht offengelegt werden.
+- Mailserver-Logs, Warteschlangen und Backups beim Löschkonzept berücksichtigen.
 - Gemini-Vertragsgesellschaft, aktives Billing, einschlägiger Datenschutzvertrag,
   Speicherfristen und konkrete Garantien für Verarbeitung außerhalb des EWR.
-- Cookie-Einstellungen-Link im CMS-Footer als Custom URL `#cookie-settings`
-  hinterlegen und testen. Der Code unterstützt ihn; seine Existenz in den
-  Live-CMS-Daten ist nicht bestätigt.
-- Laufzeit des Payload-Authentifizierungs-Cookies und verwendete Backups.
+- Funktion des bestätigten Cookie-Einstellungen-Links testen: Banner erneut
+  öffnen, Auswahl ändern und Analyse widerrufen.
+- Cookie-Laufzeit von zwei Stunden am Deployment bestätigen; verwendete
+  Backups, Speicherorte, Aufbewahrung und Löschung dokumentieren.
+- Eigene Schutzmaßnahmen für Cloud-Server prüfen und dokumentieren:
+  Updates, Zugriffsrechte, Daten-/Backup-Verschlüsselung und Wiederherstellung.
+  Die Hetzner-TOMs belegen deren Umsetzung auf unseren Systemen nicht.
+
+## Geltungsbereich der Website und der Shops
+
+Der Hosting-AVV erfasst in Anlage 1 auch Shopdaten und die betroffenen Personen
+von Unternehmen, für die Hosting oder technischer Betrieb übernommen wird.
+Der Website-Entwurf beschreibt weiterhin die EasyCode-Website mit Payload,
+Umami und KI-Chat. Die getrennten Gatsby-/Strapi- und Shopware-Shops benötigen
+Datenschutzhinweise für ihre jeweiligen Verarbeitungsvorgänge, Anbieter und
+verantwortlichen Betreiber. Aus ihrer gemeinsamen Infrastruktur folgt keine
+Verarbeitung von Shopbestellungen auf der EasyCode-Website.
 
 ## Gemini: bisheriger Text muss korrigiert werden
 
@@ -61,3 +113,30 @@ Chatbetrieb muss dokumentiert und rechtlich geprüft werden.
 - [Umami: erfasste Daten](https://docs.umami.is/docs/metric-definitions)
 - [Gemini-API-Bedingungen](https://ai.google.dev/gemini-api/terms)
 - [Sächsische Aufsicht: Beschwerden](https://www.datenschutz.sachsen.de/beschwerde-einreichen.html)
+
+## Umgang mit dem überarbeiteten Entwurf
+
+Der öffentliche Text beschränkt sich auf die tatsächlichen Verarbeitungsvorgänge.
+Technische Diagnosen und Implementierungsaufträge stehen in diesen internen
+Notizen. Es werden keine ungeprüften Standardfristen oder bereits aktiven
+Löschverfahren behauptet. Nach Art. 13 Abs. 2 lit. a DSGVO sind die tatsächliche
+Speicherdauer oder, wenn diese nicht angegeben werden kann, konkrete Kriterien
+für ihre Festlegung zu beschreiben. Ein bloß unbekannter Konfigurationswert
+rechtfertigt keine erfundene Frist und keine allgemeine Ersatzfloskel.
+
+Die wenigen verbleibenden Textlücken betreffen zusätzliche personenbezogene
+Logs/Mailprotokolle, Umami-Aufbewahrung, Backup-Löschung sowie den konkreten
+Google-Vertragspartner und die anwendbaren Übermittlungsgarantien. Eine exakte
+Tageszahl ist nicht für jeden Bereich erforderlich; eine zutreffende konkrete
+Löschregel genügt, soweit sie die Verarbeitung verständlich beschreibt.
+
+Die aktuelle Chat-IP-Speicherung ist im Entwurf ohne Platzhalter beschrieben.
+Das beseitigt nicht den technischen Handlungsbedarf für eine zweckgerechte
+Bereinigung. Die zuvor autorisierte automatische Umami-Löschung wurde noch
+nicht eingerichtet. Google nennt für die Missbrauchsüberwachung 55 Tage;
+diese Quellenangabe ersetzt weder die Prüfung des API-Projekts noch eine
+vollständige rechtliche Bewertung des Chats.
+
+Quellen: [Art. 13 DSGVO](https://amtliche-handbuecher.bundesfinanzministerium.de/ao/2024/Datenschutz-Grundverordnung/inhalt.html),
+[Gemini-Bedingungen](https://ai.google.dev/gemini-api/terms),
+[Google-Missbrauchsüberwachung](https://ai.google.dev/gemini-api/docs/usage-policies).

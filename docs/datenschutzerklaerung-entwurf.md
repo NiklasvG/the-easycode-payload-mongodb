@@ -2,9 +2,10 @@
 
 Stand: 3. Oktober 2026
 
-**Entwurf für die Hetzner-/Umami-Version der Website. Angaben in eckigen Klammern
-vor Veröffentlichung vervollständigen. Diese Fassung gilt erst für die Website,
-auf der die beschriebenen Änderungen tatsächlich bereitgestellt sind.**
+**Entwurf für die Hetzner-/Umami-Version der Website. Die verbleibenden
+markierten Stellen betreffen noch nicht bestätigte Angaben zur Speicherung
+und zum Google-API-Projekt. Vor Veröffentlichung müssen diese Angaben
+mit dem tatsächlichen Betrieb übereinstimmen.**
 
 ## 1. Verantwortlicher
 
@@ -24,10 +25,9 @@ geschieht und welche Rechte Ihnen zustehen.
 ## 2. Hosting und technische Bereitstellung
 
 Diese Website wird auf einer von mir betriebenen Serverinfrastruktur bei Hetzner
-bereitgestellt. Anbieter ist [genaue Hetzner-Vertragsgesellschaft und Anschrift
-laut Hosting-Vertrag eintragen; bei Hetzner Online GmbH: Industriestr. 25,
-91710 Gunzenhausen, Deutschland]. Der verwendete Server befindet sich in
-[tatsächlichen Serverstandort eintragen]. Zur Verwaltung der Bereitstellung wird
+bereitgestellt. Anbieter ist Hetzner Online GmbH, Industriestr. 25,
+91710 Gunzenhausen, Deutschland. Der verwendete Server befindet sich in
+Falkenstein, Deutschland. Zur Verwaltung der Bereitstellung wird
 die Software Coolify auf der Serverinfrastruktur verwendet.
 
 Beim Aufruf der Website werden technisch erforderliche Verbindungsdaten
@@ -40,15 +40,27 @@ vor missbräuchlichen Zugriffen verarbeitet. Rechtsgrundlage ist Art. 6 Abs. 1
 lit. f DSGVO. Mein berechtigtes Interesse liegt in der sicheren und zuverlässigen
 Bereitstellung meines Online-Angebots.
 
-Technische Protokolldaten werden [tatsächlich konfigurierte Speicherdauer und
-Löschung für Proxy-, Anwendungs- und sonstige Zugriffsprotokolle eintragen].
+Die Container-Protokolle auf dem Website-Server werden in einem begrenzten
+Speicherumfang vorgehalten. Ältere Protokolldateien werden automatisch entfernt,
+sobald neue Einträge die konfigurierte Speichergrenze erreichen. Der Zeitpunkt
+der Entfernung hängt damit vom Umfang der anfallenden Protokolldaten ab.
+[Aufbewahrungskriterien für gegebenenfalls zusätzliche personenbezogene
+Zugriffsprotokolle und die Mailserver-Protokolle ergänzen.]
 Soweit einzelne Daten zur Untersuchung konkreter Sicherheitsvorfälle erforderlich
 sind, werden sie zweckgebunden bis zum Abschluss der Untersuchung aufbewahrt.
 
-Hetzner kann im Rahmen der Bereitstellung und Betreuung der Infrastruktur als
-Auftragsverarbeiter Zugriff auf personenbezogene Daten erhalten. [Hier den
-tatsächlich abgeschlossenen Vertrag zur Auftragsverarbeitung nach Art. 28 DSGVO
-bestätigen und korrekt beschreiben.]
+Mit Hetzner besteht ein Vertrag zur Auftragsverarbeitung gemäß Art. 28 DSGVO
+vom 3. Oktober 2026. Hetzner verarbeitet personenbezogene Daten im Rahmen der
+vereinbarten Infrastrukturleistungen nach meinen Weisungen. Die Vereinbarung
+regelt insbesondere Vertraulichkeit, technische und organisatorische
+Schutzmaßnahmen sowie die Unterstützung bei Betroffenenanfragen und
+Datenschutzverletzungen.
+
+Für den gewählten Serverstandort in Deutschland werden die bei Hetzner
+gespeicherten Serverdaten nach der vertraglichen Zusicherung ausschließlich
+innerhalb der Europäischen Union verarbeitet. Auch die Supportleistungen
+erfolgen innerhalb der Europäischen Union. Die gesonderte Verarbeitung durch
+Google bei Nutzung des KI-Chats wird in Abschnitt 7 beschrieben.
 
 Weitere Informationen: [Datenschutzhinweise von Hetzner](https://www.hetzner.com/legal/privacy-policy/).
 
@@ -67,8 +79,8 @@ Bei einer Anmeldung im Administrationsbereich werden Anmeldedaten und ein
 Authentifizierungs-Cookie verarbeitet. Dies dient der Zugangskontrolle und dem
 Schutz der Inhalte; Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Die Speicherung
 des hierfür erforderlichen Cookies erfolgt auf Grundlage von § 25 Abs. 2 Nr. 2
-TDDDG. Das Cookie wird entsprechend seiner konfigurierten Gültigkeit gelöscht
-[tatsächliche Laufzeit ergänzen]. Für einen gewöhnlichen Besuch ist keine
+TDDDG. Das Authentifizierungs-Cookie hat eine Gültigkeit von zwei Stunden ab
+Ausstellung beziehungsweise Erneuerung. Für einen gewöhnlichen Besuch ist keine
 Anmeldung erforderlich.
 
 ## 4. Cookies und lokale Browserspeicherung
@@ -134,16 +146,15 @@ ausgelesen werden, § 25 Abs. 1 TDDDG.
 Sie können Ihre Auswahl im Banner über „Alle akzeptieren“, „Alle ablehnen“ oder
 über „Einstellungen“ und „Auswahl bestätigen“ treffen. Über den Link
 „Cookie-Einstellungen“ können Sie die Auswahl später ändern und die
-Nutzungsanalyse deaktivieren. [Vor Veröffentlichung sicherstellen, dass dieser
-Link auf jeder Seite erreichbar ist.]
+Nutzungsanalyse deaktivieren. Der Link ist im Footer auf jeder Seite erreichbar.
 
 Ein Widerruf stoppt weitere Analyseübertragungen. Die Rechtmäßigkeit der bis
 dahin erfolgten Verarbeitung bleibt unberührt. Bereits übertragene Daten werden
 durch die Änderung der Browsereinstellung nicht automatisch gelöscht.
 
 Die Analyse respektiert die Do-Not-Track-Einstellung Ihres Browsers.
-Analysedaten werden [tatsächlich eingerichtete Aufbewahrungsdauer sowie
-Lösch- oder Aggregationsverfahren eintragen].
+Für Analysedaten gilt folgende Aufbewahrung: [tatsächlich umgesetzte
+Speicherdauer oder konkrete Kriterien für die Löschung ergänzen].
 
 Weitere Informationen: [Umami-Dokumentation](https://docs.umami.is/docs/metric-definitions)
 und [Performance-Messungen](https://docs.umami.is/docs/performance).
@@ -156,10 +167,14 @@ und Nachricht, zur Bearbeitung und Beantwortung Ihrer Anfrage.
 
 Formularanfragen werden in Payload CMS auf meiner Hosting-Infrastruktur
 gespeichert. Je nach Formular-Konfiguration werden zusätzlich E-Mail-
-Benachrichtigungen versendet. Für den Versand und die Verarbeitung der
-Korrespondenz wird [E-Mail-/SMTP-Anbieter, Anschrift und gegebenenfalls Link
-zur Datenschutzerklärung sowie relevante Verarbeitung außerhalb des EWR ergänzen]
-eingesetzt.
+Benachrichtigungen versendet. Der Versand erfolgt über meinen selbst betriebenen
+Mailserver `mail.ec-host.de` auf einer Hetzner-Serverinfrastruktur in Falkenstein,
+Deutschland. Als Absenderadresse für diese Benachrichtigungen wird
+`no-reply@the-easycode.eu` verwendet. Infrastruktur-Anbieter ist die in Abschnitt 2
+genannte Hetzner Online GmbH; die dort beschriebene Auftragsverarbeitungsvereinbarung
+gilt auch für die Bereitstellung dieser Infrastruktur. Das Kontaktpostfach
+`info@the-easycode.eu` wird ebenfalls auf diesem Mailserver gespeichert.
+Für den Betrieb verwende ich die selbst gehostete Software mailcow.
 
 Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO, soweit Ihre Anfrage die Anbahnung
 oder Durchführung eines Vertrags betrifft. Bei sonstigen Anfragen ist
@@ -194,8 +209,12 @@ sich nach den für mein API-Projekt geltenden Vertragsbedingungen.
 Zur Missbrauchsbegrenzung verarbeitet meine Anwendung außerdem die durch den
 Server-Proxy übermittelte IP-Adresse und Anfragezähler im Arbeitsspeicher.
 Rechtsgrundlage hierfür ist Art. 6 Abs. 1 lit. f DSGVO und mein berechtigtes
-Interesse am Schutz der Chatfunktion vor automatisiertem Missbrauch. Diese
-Einträge werden [tatsächlich implementierte Löschfrist ergänzen].
+Interesse am Schutz der Chatfunktion vor automatisiertem Missbrauch. Die
+Anfragezähler werden nach Ablauf des Begrenzungsfensters bei einer weiteren
+Anfrage derselben IP-Adresse zurückgesetzt. Die zugehörigen IP-Einträge
+verbleiben im Arbeitsspeicher des jeweiligen Anwendungsprozesses, bis sie
+überschrieben oder mit Beendigung des Prozesses verworfen werden. Eine
+automatische zeitgesteuerte Löschung ist derzeit nicht eingerichtet.
 
 Rechtsgrundlage für die Bearbeitung allgemeiner Chat-Anfragen ist Art. 6 Abs. 1
 lit. f DSGVO. Mein berechtigtes Interesse liegt in der Bereitstellung einer
@@ -209,14 +228,19 @@ Anfrage erforderliche Maß. Der vor der ersten Nutzung angezeigte Hinweis dient
 der Information; seine Bestätigung ist keine pauschale Einwilligung in weitere
 Verarbeitungen oder eine Verwendung zu Trainingszwecken.
 
-[Vor Veröffentlichung die für das konkrete Google-Projekt geltenden Bedingungen
-bestätigen: Bei „Paid Services“ nutzt Google Eingaben und Antworten laut den
-Gemini-Bedingungen nicht zur Produktverbesserung. Inhalte können jedoch befristet
-zur Missbrauchserkennung verarbeitet werden. Verarbeitung außerhalb des EWR ist
-möglich; die tatsächlich vereinbarten Garantien für Drittlandübermittlungen und
-die einschlägigen Speicherfristen hier konkret ergänzen.]
+Nach der veröffentlichten Dokumentation von Google werden Eingaben, zusätzlicher
+Gesprächskontext und Antworten für die Missbrauchsüberwachung 55 Tage
+aufbewahrt. Bei entsprechend auffälligen Inhalten kann eine Prüfung durch
+autorisierte Mitarbeitende erfolgen. Weitere gesetzlich erforderliche
+Verarbeitungen richten sich nach den geltenden Bedingungen.
 
-Weitere Informationen: [Gemini-API-Bedingungen](https://ai.google.dev/gemini-api/terms)
+Bei der Verarbeitung durch Google können Daten auch außerhalb des Europäischen
+Wirtschaftsraums verarbeitet werden. [Für das tatsächlich verwendete API-Projekt
+anwendbare Datenschutzvereinbarung und Garantien für Drittlandübermittlungen
+bestätigen und benennen.]
+
+Weitere Informationen: [Gemini-API-Bedingungen](https://ai.google.dev/gemini-api/terms),
+[Missbrauchsüberwachung](https://ai.google.dev/gemini-api/docs/usage-policies)
 und [Google-Datenschutzerklärung](https://policies.google.com/privacy).
 
 ## 8. Lokal bereitgestellte Schriftarten und externe Links
@@ -236,10 +260,18 @@ Zwecke erforderlich ist oder gesetzliche Aufbewahrungspflichten bestehen.
 Spezifische Fristen ergeben sich aus den jeweiligen Abschnitten.
 
 Zugriff erhalten im erforderlichen Umfang der Verantwortliche, berechtigte
-Mitwirkende und die dort genannten Dienstleister. Soweit Dienstleister in meinem
-Auftrag verarbeiten, ist die Verarbeitung durch die erforderlichen
-Auftragsverarbeitungsvereinbarungen zu regeln. [Tatsächlich eingesetzte
-Backup-Dienstleister, Speicherorte und Backup-Löschfristen ergänzen.]
+Mitwirkende und die dort genannten Dienstleister. Die Auftragsverarbeitung durch
+Hetzner ist durch den in Abschnitt 2 beschriebenen Vertrag geregelt. Für weitere
+Dienstleister sind die jeweils erforderlichen Auftragsverarbeitungsvereinbarungen
+zu beachten. Zur Wiederherstellung nach Datenverlust oder technischen Störungen
+werden Sicherungskopien auf Servern bei Hetzner in Falkenstein, Deutschland,
+gespeichert. Sie umfassen insbesondere die Anwendungsdatenbanken, Maildaten
+und persistent gespeicherten Dateien. Rechtsgrundlage für die Verarbeitung
+personenbezogener Daten in diesen Sicherungen ist Art. 6 Abs. 1 lit. f DSGVO;
+mein berechtigtes Interesse liegt in der Sicherung und Wiederherstellbarkeit
+der betriebenen Systeme.
+Für Sicherungskopien gilt folgende Aufbewahrung: [tatsächliche Speicherdauer
+oder konkrete Kriterien für die Löschung alter Sicherungen ergänzen].
 
 ## 10. Ihre Rechte
 
