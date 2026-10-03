@@ -59,6 +59,19 @@ describe('controlled Gemini contract', () => {
       expect.objectContaining({ overrideAccess: false, draft: false }),
     )
   })
+  it('bounds request bytes and cancels the provider when the consumer leaves', async () => {
+    expect((await POST(request({ message: 'hello', padding: 'x'.repeat(65536) }))).status).toBe(413)
+    const finish = vi.fn(async () => ({ done: true as const, value: undefined }))
+    const iterator = { next: vi.fn(async () => ({ done: false as const, value: { text: 'First' } })), return: finish }
+    mocks.send.mockResolvedValue({ [Symbol.asyncIterator]: () => iterator })
+    const response = await POST(request({ message: 'hello' }))
+    const reader = response.body!.getReader()
+    await reader.read()
+    await reader.cancel()
+    const signal = mocks.create.mock.calls[0][0].config.abortSignal as AbortSignal
+    expect(signal.aborted).toBe(true)
+    expect(finish).toHaveBeenCalled()
+  })
   it('aborts a failed provider stream without closing an errored controller', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => {})
     mocks.send.mockResolvedValue(

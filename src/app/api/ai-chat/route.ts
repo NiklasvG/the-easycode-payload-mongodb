@@ -3,41 +3,24 @@ import { GoogleGenAI } from '@google/genai'
 import { generateSystemInstruction } from '@/constants/ai-systemprompt'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import { createRequestLimiter, hasAllowedOrigin, readLimitedJSON, RequestBodyError } from '@/utilities/publicRequestLimits'
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY!,
 })
 
-// Einfaches In-Memory Rate Limiting
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
-const RATE_LIMIT_COUNT = 5
-const RATE_LIMIT_WINDOW = 60 * 1000 // 1 Minute
+const allowChat = createRequestLimiter(30, 5)
 const MAX_MESSAGE_LENGTH = 1000
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now()
-  const record = rateLimitMap.get(ip)
-
-  if (!record || now > record.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW })
-    return false
-  }
-
-  if (record.count >= RATE_LIMIT_COUNT) {
-    return true
-  }
-
-  record.count++
-  return false
-}
 
 export async function POST(req: Request) {
   try {
+    if (!hasAllowedOrigin(req)) return Response.json({ error: 'Origin not allowed' }, { status: 403 })
+    if (!allowChat(req.headers)) return Response.json({ error: 'Too many requests' }, { status: 429, headers: { 'Retry-After': '60' } })
     let body: unknown
     try {
-      body = await req.json()
-    } catch {
-      return Response.json({ error: 'Invalid JSON' }, { status: 400 })
+      body = await readLimitedJSON(req)
+    } catch (error) {
+      return Response.json({ error: error instanceof RequestBodyError ? error.message : 'Invalid JSON' }, { status: error instanceof RequestBodyError ? error.status : 400 })
     }
     if (!body || typeof body !== 'object')
       return Response.json({ error: 'Invalid request' }, { status: 400 })
@@ -59,22 +42,8 @@ export async function POST(req: Request) {
       })
     }
 
-    // 2. Rate Limiting
-    const ip = req.headers.get('x-forwarded-for') || 'anonymous'
-    if (isRateLimited(ip)) {
-      return new Response(
-        JSON.stringify({
-          error: 'Zu viele Anfragen. Bitte versuche es in einer Minute erneut.',
-        }),
-        {
-          status: 429,
-          headers: { 'Content-Type': 'application/json' },
-        },
-      )
-    }
-
     // 3. Validierung der Nachricht
-    if (!message || typeof message !== 'string') {
+    if (!message || typeof message !== 'string' || !message.trim()) {
       return new Response(JSON.stringify({ error: 'Message is required' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -176,22 +145,31 @@ export async function POST(req: Request) {
         ],
       })) || []
 
+    const abort = new AbortController()
+    const signal = AbortSignal.any([req.signal, abort.signal, AbortSignal.timeout(60000)])
     const chat = ai.chats.create({
       model: 'gemini-3.1-flash-lite-preview',
       history: convertedHistory,
       config: {
         systemInstruction: generateSystemInstruction(finalProjectContext),
+        abortSignal: signal,
+        httpOptions: { timeout: 30000 },
+        maxOutputTokens: 2048,
       },
     })
 
     // 5. Streaming
     const geminiStream = await chat.sendMessageStream({ message })
-
+    const iterator = geminiStream[Symbol.asyncIterator]()
+    let cancelled = false
     const stream = new ReadableStream({
-      async start(controller) {
+      async pull(controller) {
         const encoder = new TextEncoder()
         try {
-          for await (const chunk of geminiStream) {
+          if (signal.aborted) { controller.close(); return }
+          const { value: chunk, done } = await iterator.next()
+          if (cancelled) return
+          if (done) { controller.close(); return }
             const text = chunk.text ?? ''
             if (text) {
               controller.enqueue(encoder.encode(text))
@@ -210,12 +188,16 @@ export async function POST(req: Request) {
                 encoder.encode(`\n__THOUGHT_SIG__:${thoughtPart.thoughtSignature}`),
               )
             }
-          }
-          controller.close()
         } catch (err) {
+          if (cancelled || signal.aborted) { if (!cancelled) controller.close(); return }
           console.error('AI Stream Error:', err)
           controller.error(err)
         }
+      },
+      cancel() {
+        cancelled = true
+        abort.abort()
+        void iterator.return?.(undefined).catch(() => {})
       },
     })
 
@@ -223,12 +205,12 @@ export async function POST(req: Request) {
       status: 200,
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
-        'Cache-Control': 'no-cache',
-        Connection: 'keep-alive',
-        'Transfer-Encoding': 'chunked',
+        'Cache-Control': 'no-store',
+        'X-Content-Type-Options': 'nosniff',
       },
     })
   } catch (error) {
+    if (req.signal.aborted) return new Response(null, { status: 499 })
     console.error('AI Route Error:', error)
     return new Response(JSON.stringify({ error: 'Interner Fehler beim AI-Endpoint' }), {
       status: 500,

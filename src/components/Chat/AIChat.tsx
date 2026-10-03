@@ -33,16 +33,22 @@ export const AIChat: React.FC = () => {
 
 	const messagesEndRef = useRef<HTMLDivElement>(null)
 	const inputRef = useRef<HTMLInputElement>(null) // ✅ NEW
+	const requestAbort = useRef<AbortController | null>(null)
+	useEffect(() => () => requestAbort.current?.abort(), [])
 
 	// Beim Mount aus sessionStorage/localStorage lesen
 	useEffect(() => {
 		if (typeof window === 'undefined') return
-		const storedOpened = window.sessionStorage.getItem(STORAGE_KEY)
+		let storedOpened: string | null = null
+		let storedDisclaimer: string | null = null
+		try {
+			storedOpened = window.sessionStorage.getItem(STORAGE_KEY)
+			storedDisclaimer = window.localStorage.getItem(DISCLAIMER_KEY)
+		} catch { /* Storage may be disabled; the chat still works for this session. */ }
 		if (storedOpened === 'true') {
 			setHasOpenedOnce(true)
 		}
 
-		const storedDisclaimer = window.localStorage.getItem(DISCLAIMER_KEY)
 		if (storedDisclaimer === 'true') {
 			setHasConfirmedDisclaimer(true)
 		}
@@ -65,12 +71,23 @@ export const AIChat: React.FC = () => {
 		})
 	}, [isOpen])
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		if (!inputValue.trim() || isLoading) return
 
 		setIsLoading(true) // ✅ Early locking
 		const userText = inputValue.trim()
+		const honeypot = new FormData(e.currentTarget).get('hp_field')
+		const abort = new AbortController()
+		requestAbort.current = abort
+		const history = messages.slice(-20)
+		let signatureIndex = -1
+		for (let index = history.length - 1; index >= 0; index--) {
+			if (history[index].role === 'model' && history[index].thoughtSignature) {
+				signatureIndex = index
+				break
+			}
+		}
 		setInputValue('')
 		setMessages((prev) => [...prev, { role: 'user', text: userText }])
 
@@ -82,17 +99,18 @@ export const AIChat: React.FC = () => {
 			])
 
 			const res = await fetch('/api/ai-chat', {
+				signal: abort.signal,
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
 					message: userText,
-					_hp: (e.target as any).elements?.hp_field?.value || '', // Honeypot
-					history: messages.slice(-20).map((m) => ({
+					_hp: typeof honeypot === 'string' ? honeypot : '',
+					history: history.map((m, index) => ({
 						role: m.role,
-						text: m.text,
-						thoughtSignature: m.thoughtSignature
+						text: m.text.slice(0, 1000),
+						thoughtSignature: index === signatureIndex ? m.thoughtSignature?.slice(0, 16384) : undefined,
 					}))
 				})
 			})
@@ -133,10 +151,7 @@ export const AIChat: React.FC = () => {
 					const newMessages = [...prev]
 					const last = newMessages[newMessages.length - 1]
 					if (last && last.role === 'model' && last.isStreaming) {
-						last.text = displayToUser
-						if (foundSig) {
-							last.thoughtSignature = foundSig.trim()
-						}
+						newMessages[newMessages.length - 1] = { ...last, text: displayToUser, thoughtSignature: foundSig ? foundSig.trim() : last.thoughtSignature }
 					}
 					return newMessages
 				})
@@ -147,11 +162,15 @@ export const AIChat: React.FC = () => {
 				const newMessages = [...prev]
 				const last = newMessages[newMessages.length - 1]
 				if (last && last.role === 'model') {
-					last.isStreaming = false
+					newMessages[newMessages.length - 1] = { ...last, isStreaming: false }
 				}
 				return newMessages
 			})
-		} catch (error: any) {
+		} catch (error) {
+			if (abort.signal.aborted) {
+				setMessages((previous) => previous.map((message) => message.isStreaming ? { ...message, isStreaming: false } : message))
+				return
+			}
 			console.error('Chat error:', error)
 			setMessages((prev) => {
 				// Alle trailing placeholders (falls vorhanden) entfernen
@@ -170,13 +189,14 @@ export const AIChat: React.FC = () => {
 					{
 						role: 'model',
 						text:
-							error.message ||
+							(error instanceof Error ? error.message : '') ||
 							'Sorry, ich habe einen Verbindungsfehler festgestellt. Bitte versuche es später erneut.',
 						isStreaming: false
 					}
 				]
 			})
 		} finally {
+			requestAbort.current = null
 			setIsLoading(false)
 			// optional: nach dem Senden wieder fokussieren
 			requestAnimationFrame(() => inputRef.current?.focus())
@@ -185,13 +205,14 @@ export const AIChat: React.FC = () => {
 
 	const handleToggleOpen = () => {
 		const next = !isOpen
+		if (!next) requestAbort.current?.abort()
 		setIsOpen(next)
 
 		// Wenn zum ersten Mal geöffnet → Flag setzen + sessionStorage
 		if (next && !hasOpenedOnce) {
 			setHasOpenedOnce(true)
 			if (typeof window !== 'undefined') {
-				window.sessionStorage.setItem(STORAGE_KEY, 'true')
+				try { window.sessionStorage.setItem(STORAGE_KEY, 'true') } catch { /* Keep the in-memory choice. */ }
 			}
 		}
 	}
@@ -199,7 +220,7 @@ export const AIChat: React.FC = () => {
 	const handleConfirmDisclaimer = () => {
 		setHasConfirmedDisclaimer(true)
 		if (typeof window !== 'undefined') {
-			window.localStorage.setItem(DISCLAIMER_KEY, 'true')
+			try { window.localStorage.setItem(DISCLAIMER_KEY, 'true') } catch { /* Keep the in-memory choice. */ }
 		}
 	}
 
@@ -216,7 +237,7 @@ export const AIChat: React.FC = () => {
 							</span>
 						</div>
 						<button
-							onClick={() => setIsOpen(false)}
+							onClick={() => { requestAbort.current?.abort(); setIsOpen(false) }}
 							className="text-white/80 hover:text-white transition-colors"
 						>
 							<X className="w-5 h-5" />
