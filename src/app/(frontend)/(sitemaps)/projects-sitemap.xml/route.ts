@@ -1,4 +1,4 @@
 import { getCachedSitemap, sitemapResponse } from '@/utilities/sitemaps'
 export async function GET() {
-  return sitemapResponse(await getCachedSitemap('posts'))
+  return sitemapResponse(await getCachedSitemap('projects'))
 }
