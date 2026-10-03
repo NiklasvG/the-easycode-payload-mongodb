@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { Lottie, type LottieHandle } from 'lottie-react'
+import { useEffect, useRef } from 'react'
+import { LottieSvg, type LottieHandle } from 'lottie-react'
+import { useReducedMotion } from 'framer-motion'
 
 import { LottieIconNames } from '@/fields/lottieIcon'
 
@@ -26,143 +27,146 @@ import MailAnimation from '@/Icons/Mail.json'
 
 // use LottieIconNames
 interface LottieIconProps {
-	icon: LottieIconNames
-	triggerPlay: boolean
+  icon: LottieIconNames
+  triggerPlay: boolean
 }
 
 const LottieIcon: React.FC<LottieIconProps> = ({ icon, triggerPlay }) => {
-	const lottieRef = useRef<LottieHandle>(null)
-	const containerRef = useRef<HTMLDivElement | null>(null)
+  const lottieRef = useRef<LottieHandle>(null)
+  const containerRef = useRef<HTMLDivElement | null>(null)
 
-	const [playedOnce, setPlayedOnce] = useState(false)
-	const [isPlaying, setIsPlaying] = useState(false)
+  const playedOnce = useRef(false)
+  const reducedMotion = useReducedMotion()
+  const isPlaying = useRef(false)
 
-	// Icon → Animation zuordnen
-	let animationData
-	switch (icon) {
-		case 'computer':
-			animationData = ComputerAnimation
-			break
-		case 'cloud':
-			animationData = CloudAnimation
-			break
-		case 'apple':
-			animationData = AppleAnimation
-			break
-		case 'cart':
-			animationData = CartAnimation
-			break
-		case 'pen':
-			animationData = PenAnimation
-			break
-		case 'engagement':
-			animationData = EngagementAnimation
-			break
-		case 'code':
-			animationData = CodeAnimation
-			break
-		case 'clock':
-			animationData = ClockAnimation
-			break
-		case 'applause':
-			animationData = ApplauseAnimation
-			break
-		case 'git':
-			animationData = GitAnimation
-			break
-		case 'book':
-			animationData = BookAnimation
-			break
-		case 'firework':
-			animationData = FireworkAnimation
-			break
-		case 'confetti':
-			animationData = ConfettiAnimation
-			break
-		case 'developer':
-			animationData = DeveloperAnimation
-			break
-		case 'school':
-			animationData = SchoolAnimation
-			break
-		case 'server':
-			animationData = ServerAnimation
-			break
-		case 'loadBalancer':
-			animationData = LoadBalancerAnimation
-			break
-		case 'mail':
-			animationData = MailAnimation
-			break
-		default:
-			animationData = ComputerAnimation
-			break
-	}
+  // Icon → Animation zuordnen
+  let animationData
+  switch (icon) {
+    case 'computer':
+      animationData = ComputerAnimation
+      break
+    case 'cloud':
+      animationData = CloudAnimation
+      break
+    case 'apple':
+      animationData = AppleAnimation
+      break
+    case 'cart':
+      animationData = CartAnimation
+      break
+    case 'pen':
+      animationData = PenAnimation
+      break
+    case 'engagement':
+      animationData = EngagementAnimation
+      break
+    case 'code':
+      animationData = CodeAnimation
+      break
+    case 'clock':
+      animationData = ClockAnimation
+      break
+    case 'applause':
+      animationData = ApplauseAnimation
+      break
+    case 'git':
+      animationData = GitAnimation
+      break
+    case 'book':
+      animationData = BookAnimation
+      break
+    case 'firework':
+      animationData = FireworkAnimation
+      break
+    case 'confetti':
+      animationData = ConfettiAnimation
+      break
+    case 'developer':
+      animationData = DeveloperAnimation
+      break
+    case 'school':
+      animationData = SchoolAnimation
+      break
+    case 'server':
+      animationData = ServerAnimation
+      break
+    case 'loadBalancer':
+      animationData = LoadBalancerAnimation
+      break
+    case 'mail':
+      animationData = MailAnimation
+      break
+    default:
+      animationData = ComputerAnimation
+      break
+  }
 
-	// Wenn von außen neu getriggert wird → Reset
-	useEffect(() => {
-		if (triggerPlay) {
-			setPlayedOnce(false)
-		}
-	}, [triggerPlay])
+  // Wenn von außen neu getriggert wird → Reset
+  useEffect(() => {
+    if (reducedMotion) lottieRef.current?.pause()
+    if (triggerPlay) {
+      playedOnce.current = false
+    }
+  }, [triggerPlay, reducedMotion])
 
-	// Normales Verhalten: über Prop triggerPlay steuern (z. B. Hover, Scroll, etc.)
-	useEffect(() => {
-		if (triggerPlay && !playedOnce && !isPlaying) {
-			setIsPlaying(true)
-			lottieRef.current?.seek({ frame: 0 })
-			lottieRef.current?.play()
-		}
-	}, [triggerPlay, playedOnce, isPlaying])
+  // Normales Verhalten: über Prop triggerPlay steuern (z. B. Hover, Scroll, etc.)
+  useEffect(() => {
+    if (triggerPlay && !playedOnce.current && !isPlaying.current && !reducedMotion) {
+      isPlaying.current = true
+      lottieRef.current?.seek({ frame: 0 })
+      lottieRef.current?.play()
+    }
+  }, [triggerPlay, reducedMotion])
 
-	// Zusatz: Auf mobilen Geräten einmal abspielen, wenn im Viewport
-	useEffect(() => {
-		if (typeof window === 'undefined') return
+  // Zusatz: Auf mobilen Geräten einmal abspielen, wenn im Viewport
+  useEffect(() => {
+    if (typeof window === 'undefined') return
 
-		const isMobile = window.matchMedia('(max-width: 767px)').matches
-		if (!isMobile) return
+    const isMobile = window.matchMedia('(max-width: 767px)').matches
+    if (!isMobile) return
 
-		const element = containerRef.current
-		if (!element) return
+    const element = containerRef.current
+    if (!element) return
 
-		const observer = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting && !playedOnce && !isPlaying) {
-						setIsPlaying(true)
-						lottieRef.current?.seek({ frame: 0 })
-						lottieRef.current?.play()
-					}
-				})
-			},
-			{
-				threshold: 1 // ~100% sichtbar
-			}
-		)
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !playedOnce.current && !isPlaying.current && !reducedMotion) {
+            isPlaying.current = true
+            lottieRef.current?.seek({ frame: 0 })
+            lottieRef.current?.play()
+          }
+        })
+      },
+      {
+        threshold: 1, // ~100% sichtbar
+      },
+    )
 
-		observer.observe(element)
+    observer.observe(element)
 
-		return () => {
-			observer.disconnect()
-		}
-	}, [playedOnce, isPlaying])
+    return () => {
+      observer.disconnect()
+    }
+  }, [reducedMotion])
 
-	return (
-		<div ref={containerRef} className="service-card--icon shrink-0">
-			<Lottie
-				lottieRef={lottieRef}
-				src={animationData}
-				loop={false}
-				autoplay={false}
-				subscriptions={{
-					complete: () => {
-						setPlayedOnce(true)
-						setIsPlaying(false)
-					}
-				}}
-			/>
-		</div>
-	)
+  return (
+    <div ref={containerRef} className="service-card--icon shrink-0">
+      <LottieSvg
+        lottieRef={lottieRef}
+        src={animationData}
+        loop={false}
+        autoplay={false}
+        subscriptions={{
+          complete: () => {
+            playedOnce.current = true
+            isPlaying.current = false
+          },
+        }}
+      />
+    </div>
+  )
 }
 
 export default LottieIcon
+
