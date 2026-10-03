@@ -89,7 +89,7 @@ export const AIChat: React.FC = () => {
 				body: JSON.stringify({
 					message: userText,
 					_hp: (e.target as any).elements?.hp_field?.value || '', // Honeypot
-					history: messages.map((m) => ({
+					history: messages.slice(-20).map((m) => ({
 						role: m.role,
 						text: m.text,
 						thoughtSignature: m.thoughtSignature
@@ -390,3 +390,4 @@ export const AIChat: React.FC = () => {
 		</div>
 	)
 }
+

@@ -5,7 +5,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
 const ai = new GoogleGenAI({
-	apiKey: process.env.GEMINI_API_KEY!
+  apiKey: process.env.GEMINI_API_KEY!,
 })
 
 // Einfaches In-Memory Rate Limiting
@@ -15,212 +15,224 @@ const RATE_LIMIT_WINDOW = 60 * 1000 // 1 Minute
 const MAX_MESSAGE_LENGTH = 1000
 
 function isRateLimited(ip: string): boolean {
-	const now = Date.now()
-	const record = rateLimitMap.get(ip)
+  const now = Date.now()
+  const record = rateLimitMap.get(ip)
 
-	if (!record || now > record.resetAt) {
-		rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW })
-		return false
-	}
+  if (!record || now > record.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW })
+    return false
+  }
 
-	if (record.count >= RATE_LIMIT_COUNT) {
-		return true
-	}
+  if (record.count >= RATE_LIMIT_COUNT) {
+    return true
+  }
 
-	record.count++
-	return false
+  record.count++
+  return false
 }
 
 export async function POST(req: Request) {
-	try {
-		const { message, history, _hp } = (await req.json()) as {
-			message?: string
-			history?: Array<{
-				role: 'user' | 'model'
-				text: string
-				thoughtSignature?: string
-			}>
-			_hp?: string // Honeypot
-		}
+  try {
+    let body: unknown
+    try {
+      body = await req.json()
+    } catch {
+      return Response.json({ error: 'Invalid JSON' }, { status: 400 })
+    }
+    if (!body || typeof body !== 'object')
+      return Response.json({ error: 'Invalid request' }, { status: 400 })
+    const { message, history, _hp } = body as {
+      message?: string
+      history?: Array<{
+        role: 'user' | 'model'
+        text: string
+        thoughtSignature?: string
+      }>
+      _hp?: string // Honeypot
+    }
 
-		// 1. Bot-Schutz (Honeypot)
-		if (_hp) {
-			return new Response(JSON.stringify({ error: 'Bot detected' }), {
-				status: 400,
-				headers: { 'Content-Type': 'application/json' }
-			})
-		}
+    // 1. Bot-Schutz (Honeypot)
+    if (_hp) {
+      return new Response(JSON.stringify({ error: 'Bot detected' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
 
-		// 2. Rate Limiting
-		const ip = req.headers.get('x-forwarded-for') || 'anonymous'
-		if (isRateLimited(ip)) {
-			return new Response(
-				JSON.stringify({
-					error: 'Zu viele Anfragen. Bitte versuche es in einer Minute erneut.'
-				}),
-				{
-					status: 429,
-					headers: { 'Content-Type': 'application/json' }
-				}
-			)
-		}
+    // 2. Rate Limiting
+    const ip = req.headers.get('x-forwarded-for') || 'anonymous'
+    if (isRateLimited(ip)) {
+      return new Response(
+        JSON.stringify({
+          error: 'Zu viele Anfragen. Bitte versuche es in einer Minute erneut.',
+        }),
+        {
+          status: 429,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
+    }
 
-		// 3. Validierung der Nachricht
-		if (!message || typeof message !== 'string') {
-			return new Response(JSON.stringify({ error: 'Message is required' }), {
-				status: 400,
-				headers: { 'Content-Type': 'application/json' }
-			})
-		}
+    // 3. Validierung der Nachricht
+    if (!message || typeof message !== 'string') {
+      return new Response(JSON.stringify({ error: 'Message is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
 
-		if (message.length > MAX_MESSAGE_LENGTH) {
-			return new Response(
-				JSON.stringify({ error: `Nachricht zu lang (max. ${MAX_MESSAGE_LENGTH} Zeichen)` }),
-				{
-					status: 400,
-					headers: { 'Content-Type': 'application/json' }
-				}
-			)
-		}
+    if (message.length > MAX_MESSAGE_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Nachricht zu lang (max. ${MAX_MESSAGE_LENGTH} Zeichen)` }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
+    }
 
-		// 1. Payload initialisieren
-		const payload = await getPayload({ config: configPromise })
+    if (
+      history !== undefined &&
+      (!Array.isArray(history) ||
+        history.length > 20 ||
+        history.some(
+          (item) =>
+            !item ||
+            !['user', 'model'].includes(item.role) ||
+            typeof item.text !== 'string' ||
+            item.text.length > MAX_MESSAGE_LENGTH ||
+            (item.thoughtSignature !== undefined &&
+              (typeof item.thoughtSignature !== 'string' || item.thoughtSignature.length > 16384)),
+        ))
+    ) {
+      return Response.json({ error: 'Invalid history' }, { status: 400 })
+    }
 
-		// 2. Projekte aus der DB holen
-		// Wir holen nur published Projekte und selektieren nur relevante Felder, um Token zu sparen
-		const { docs: projects } = await payload.find({
-			collection: 'projects',
-			where: {
-				_status: {
-					equals: 'published'
-				}
-			},
-			pagination: false,
-			limit: 20, // Limitierung für Kontext-Größe
-			depth: 1, // Damit wir Tech-Stack Namen bekommen
-			select: {
-				title: true,
-				shortDescription: true,
-				technologies: true,
-				slug: true,
-				client: true
-			}
-		})
+    // 1. Payload initialisieren
+    const payload = await getPayload({ config: configPromise })
 
-		// 3. Projekte als String formatieren
-		const projectsContext = projects
-			.map((p) => {
-				// Tech Stack auflösen (falls vorhanden)
-				const techStack =
-					p.technologies?.map((t: any) => t.name).join(', ') || 'N/A'
+    // 2. Projekte aus der DB holen
+    // Wir holen nur published Projekte und selektieren nur relevante Felder, um Token zu sparen
+    const { docs: projects } = await payload.find({
+      collection: 'projects',
+      overrideAccess: false,
+      draft: false,
+      where: {
+        _status: {
+          equals: 'published',
+        },
+      },
+      pagination: false,
+      limit: 20, // Limitierung für Kontext-Größe
+      depth: 1, // Damit wir Tech-Stack Namen bekommen
+      select: {
+        title: true,
+        shortDescription: true,
+        technologies: true,
+        slug: true,
+        client: true,
+      },
+    })
 
-				// Client Name auflösen
-				let clientName = 'Kunde'
-				if (
-					p.client &&
-					typeof p.client === 'object' &&
-					'companyName' in p.client
-				) {
-					clientName = p.client.companyName
-				}
+    // 3. Projekte als String formatieren
+    const projectsContext = projects
+      .map((p) => {
+        // Tech Stack auflösen (falls vorhanden)
+        const techStack = p.technologies?.map((t) => t.name).join(', ') || 'N/A'
 
-				// Optional: Link generieren, damit die KI drauf verweisen kann
-				// Hinweis: Hierfür müsste man den Client-Slug kennen, wenn deine URL so aufgebaut ist.
-				// Wenn client depth=1 ist, hast du Zugriff auf p.client.slug
-				let projectUrl = ''
-				if (p.client && typeof p.client === 'object' && 'slug' in p.client) {
-					projectUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/projekte/${p.client.slug}/${p.slug}`
-				}
+        // Client Name auflösen
+        let clientName = 'Kunde'
+        if (p.client && typeof p.client === 'object' && 'companyName' in p.client) {
+          clientName = p.client.companyName
+        }
 
-				return `- **${p.title}** (für ${clientName}):
+        // Optional: Link generieren, damit die KI drauf verweisen kann
+        // Hinweis: Hierfür müsste man den Client-Slug kennen, wenn deine URL so aufgebaut ist.
+        // Wenn client depth=1 ist, hast du Zugriff auf p.client.slug
+        let projectUrl = ''
+        if (p.client && typeof p.client === 'object' && 'slug' in p.client) {
+          projectUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/projekte/${p.client.slug}/${p.slug}`
+        }
+
+        return `- **${p.title}** (für ${clientName}):
   Beschreibung: ${p.shortDescription}
   Tech Stack: ${techStack}
   ${projectUrl ? `Link: ${projectUrl}` : ''}`
-			})
-			.join('\n\n')
+      })
+      .join('\n\n')
 
-		// Fallback, falls keine Projekte da sind
-		const finalProjectContext =
-			projectsContext.length > 0
-				? projectsContext
-				: 'Keine öffentlichen Projekte gelistet.'
+    // Fallback, falls keine Projekte da sind
+    const finalProjectContext =
+      projectsContext.length > 0 ? projectsContext : 'Keine öffentlichen Projekte gelistet.'
 
-		// 4. Chat Session mit dynamischem Prompt starten
-		// Konvertiere History für das SDK
-		const convertedHistory =
-			history?.map((h) => ({
-				role: h.role,
-				parts: [
-					{ text: h.text },
-					...(h.thoughtSignature
-						? [{ thoughtSignature: h.thoughtSignature } as any]
-						: [])
-				]
-			})) || []
+    // 4. Chat Session mit dynamischem Prompt starten
+    // Konvertiere History für das SDK
+    const convertedHistory =
+      history?.map((h) => ({
+        role: h.role,
+        parts: [
+          { text: h.text },
+          ...(h.thoughtSignature ? [{ thoughtSignature: h.thoughtSignature }] : []),
+        ],
+      })) || []
 
-		const chat = ai.chats.create({
-			model: 'gemini-3.1-flash-lite-preview',
-			history: convertedHistory,
-			config: {
-				systemInstruction: generateSystemInstruction(finalProjectContext)
-			}
-		})
+    const chat = ai.chats.create({
+      model: 'gemini-3.1-flash-lite-preview',
+      history: convertedHistory,
+      config: {
+        systemInstruction: generateSystemInstruction(finalProjectContext),
+      },
+    })
 
-		// 5. Streaming
-		const geminiStream = await chat.sendMessageStream({ message })
+    // 5. Streaming
+    const geminiStream = await chat.sendMessageStream({ message })
 
-		const stream = new ReadableStream({
-			async start(controller) {
-				const encoder = new TextEncoder()
-				try {
-					for await (const chunk of geminiStream) {
-						const text = chunk.text ?? ''
-						if (text) {
-							controller.enqueue(encoder.encode(text))
-						}
+    const stream = new ReadableStream({
+      async start(controller) {
+        const encoder = new TextEncoder()
+        try {
+          for await (const chunk of geminiStream) {
+            const text = chunk.text ?? ''
+            if (text) {
+              controller.enqueue(encoder.encode(text))
+            }
 
-						// Suche nach Thought Signature im Chunk
-						const thoughtPart = chunk.candidates?.[0]?.content?.parts?.find(
-							(p: any) => p.thoughtSignature
-						)
-						if (thoughtPart) {
-							// Wir senden die Signature als speziellen Kommentar am Ende oder Metadaten
-							// Da der Client einfach nur Text erwartet, hängen wir sie diskret an oder nutzen einen Delimiter
-							// Da wir aber "Circulation" brauchen, muss der Client sie speichern.
-							// Plan: Benutze einen Delimiter, den der Client erkennt.
-							controller.enqueue(
-								encoder.encode(
-									`\n__THOUGHT_SIG__:${thoughtPart.thoughtSignature}`
-								)
-							)
-						}
-					}
-				} catch (err) {
-					console.error('AI Stream Error:', err)
-					controller.error(err)
-				} finally {
-					controller.close()
-				}
-			}
-		})
+            // Suche nach Thought Signature im Chunk
+            const thoughtPart = chunk.candidates?.[0]?.content?.parts?.find(
+              (p) => p.thoughtSignature,
+            )
+            if (thoughtPart) {
+              // Wir senden die Signature als speziellen Kommentar am Ende oder Metadaten
+              // Da der Client einfach nur Text erwartet, hängen wir sie diskret an oder nutzen einen Delimiter
+              // Da wir aber "Circulation" brauchen, muss der Client sie speichern.
+              // Plan: Benutze einen Delimiter, den der Client erkennt.
+              controller.enqueue(
+                encoder.encode(`\n__THOUGHT_SIG__:${thoughtPart.thoughtSignature}`),
+              )
+            }
+          }
+          controller.close()
+        } catch (err) {
+          console.error('AI Stream Error:', err)
+          controller.error(err)
+        }
+      },
+    })
 
-		return new Response(stream, {
-			status: 200,
-			headers: {
-				'Content-Type': 'text/plain; charset=utf-8',
-				'Cache-Control': 'no-cache',
-				Connection: 'keep-alive',
-				'Transfer-Encoding': 'chunked'
-			}
-		})
-	} catch (error) {
-		console.error('AI Route Error:', error)
-		return new Response(
-			JSON.stringify({ error: 'Interner Fehler beim AI-Endpoint' }),
-			{
-				status: 500,
-				headers: { 'Content-Type': 'application/json' }
-			}
-		)
-	}
+    return new Response(stream, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive',
+        'Transfer-Encoding': 'chunked',
+      },
+    })
+  } catch (error) {
+    console.error('AI Route Error:', error)
+    return new Response(JSON.stringify({ error: 'Interner Fehler beim AI-Endpoint' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
 }
