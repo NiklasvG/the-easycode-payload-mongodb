@@ -2,6 +2,7 @@
 
 import { cn } from '@/utilities/ui'
 import React, { useEffect, useRef } from 'react'
+import { useReducedMotion } from 'framer-motion'
 
 import type { Props as MediaProps } from '../types'
 
@@ -11,33 +12,28 @@ export const VideoMedia: React.FC<MediaProps> = (props) => {
   const { onClick, resource, videoClassName } = props
 
   const videoRef = useRef<HTMLVideoElement>(null)
-  // const [showFallback] = useState<boolean>()
+  const reducedMotion = useReducedMotion()
 
   useEffect(() => {
     const { current: video } = videoRef
-    if (video) {
-      video.addEventListener('suspend', () => {
-        // setShowFallback(true);
-        // console.warn('Video was suspended, rendering fallback image.')
-      })
-    }
-  }, [])
+    if (video && reducedMotion) video.pause()
+  }, [reducedMotion])
 
   if (resource && typeof resource === 'object') {
-    const { filename } = resource
+    if (!resource.url) return null
 
     return (
       <video
-        autoPlay
+        autoPlay={reducedMotion === false}
         className={cn(videoClassName)}
-        controls={false}
+        controls={Boolean(reducedMotion)}
         loop
         muted
         onClick={onClick}
         playsInline
         ref={videoRef}
       >
-        <source src={getMediaUrl(`/media/${filename}`)} />
+        <source src={getMediaUrl(resource.url, resource.updatedAt)} type={resource.mimeType || undefined} />
       </video>
     )
   }
