@@ -5,7 +5,7 @@ import React, { useState, useRef, useEffect } from 'react'
 
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { MessageSquare, Send, Sparkles, X, ShieldCheck, Trash2, Square } from 'lucide-react'
+import { MessageSquare, Send, Sparkles, X, ShieldCheck, Trash2, LoaderCircle } from 'lucide-react'
 import Link from 'next/link'
 import {
   CHAT_MESSAGE_CHARS,
@@ -437,32 +437,24 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                     {inputValue.length}/1000
                   </div>
                 )}
-                {isLoading ? (
-                  <button
-                    type="button"
-                    aria-label="Antwort stoppen"
-                    onClick={() => requestAbort.current?.abort()}
-                    className="group absolute right-1 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-lg bg-accent text-white transition-colors hover:bg-accent-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                  >
-                    <Square className="size-3.5 fill-current" aria-hidden="true" />
-                    <span
+                <button
+                  type="submit"
+                  aria-label="Nachricht senden"
+                  title={isLoading ? 'Antwort wird erstellt' : 'Nachricht senden'}
+                  disabled={
+                    isLoading || cooldown > 0 || !inputValue.trim() || !hasConfirmedDisclaimer
+                  }
+                  className="absolute right-1 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-lg text-accent transition-colors hover:bg-accent/10 hover:text-accent-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <LoaderCircle
+                      className="size-4 animate-spin motion-reduce:animate-none"
                       aria-hidden="true"
-                      className="pointer-events-none absolute bottom-full right-0 z-30 mb-2 whitespace-nowrap rounded-lg border border-white/10 bg-secondary-background px-3 py-2 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
-                    >
-                      Antwort stoppen
-                    </span>
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    aria-label="Nachricht senden"
-                    title="Nachricht senden"
-                    disabled={cooldown > 0 || !inputValue.trim() || !hasConfirmedDisclaimer}
-                    className="absolute right-1 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-lg text-accent transition-colors hover:bg-accent/10 hover:text-accent-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-30 disabled:cursor-not-allowed"
-                  >
+                    />
+                  ) : (
                     <Send className="size-4" aria-hidden="true" />
-                  </button>
-                )}
+                  )}
+                </button>
               </div>
             </form>
           </div>

@@ -76,7 +76,7 @@ personenbezogen sein; ihre zulässige Verwendung als LLM-Kontext prüfen.
 - Ausgabe zusätzlich maximal 6.000 Zeichen. Fehlender Abschluss, Incomplete, Fehler
   oder Timeout wird als unterbrochene Antwort markiert, nicht als erfolgreiche Antwort.
 - Fehlgeschlagene/abgebrochene Gesprächspaare werden nicht erneut als Kontext gesendet.
-- Der Browser bietet Stoppen, Verlauf löschen, Retry-After-Warteanzeige und sichere
+- Der Browser bietet Abbruch beim Schließen, Verlauf löschen, Retry-After-Warteanzeige und sichere
   Markdown-Darstellung ohne Modellbilder oder beliebige externe Links.
 - Origin und Honeypot sind kein Schutz gegen direkte HTTP-Clients. Prompt-Regeln sind
   keine beweisbare Injection-Abwehr; die fehlenden Tools und privaten Daten begrenzen
@@ -147,7 +147,7 @@ entfernt. Nach Änderungen am Proxy oder Zugriffsweg erneut prüfen.
    In `.env.example` bleiben beide Schalter false. Keine NEXT_PUBLIC-API-Schlüssel,
    keine Build-Schlüssel. Vor Freigabe beide Schalter false lassen.
 6. Auf Staging ausschließlich synthetische Fragen testen: Erfolg, Folgefrage,
-   fachfremde Frage, fehlende Fakten, Injection-Versuch, Stoppen, Löschen, 429,
+   fachfremde Frage, fehlende Fakten, Injection-Versuch, Abbruch beim Schließen, Löschen, 429,
    Anbieterfehler und Ausfall. Kosten, Faktentreue und Latenz messen. Keine Aussage
    über Modellqualität aus Mocktests ableiten. Freigabekriterien: keine erfundenen
    Preise/Verfügbarkeiten; Links korrekt; Datenschutzgrenzen verständlich.

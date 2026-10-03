@@ -52,7 +52,7 @@ describe('AI chat privacy and interaction', () => {
     expect(screen.queryByText('Webentwicklung.')).toBeNull()
     expect(screen.queryByText('Welche Leistungen bietet Niklas?')).toBeNull()
   })
-  it('locks duplicate submission synchronously and aborts when stopped', async () => {
+  it('locks duplicate submission and aborts when the chat is closed', async () => {
     vi.mocked(fetch).mockImplementation(
       (_url, options) =>
         new Promise((_resolve, reject) => {
@@ -70,9 +70,15 @@ describe('AI chat privacy and interaction', () => {
         .closest('form')!,
     )
     expect(fetch).toHaveBeenCalledTimes(1)
-    fireEvent.click(screen.getByRole('button', { name: 'Antwort stoppen' }))
+    const sending = screen.getByRole('button', { name: 'Nachricht senden' }) as HTMLButtonElement
+    expect(sending.disabled).toBe(true)
+    fireEvent.click(sending)
+    expect(fetch).toHaveBeenCalledTimes(1)
+    fireEvent.click(screen.getByRole('button', { name: 'Chatfenster schließen' }))
+    fireEvent.click(screen.getByRole('button', { name: 'KI-Chat öffnen' }))
     await screen.findByText('Antwort abgebrochen. Du kannst deine Frage erneut senden.')
     expect((vi.mocked(fetch).mock.calls[0][1]?.signal as AbortSignal).aborted).toBe(true)
+    expect(fetch).toHaveBeenCalledTimes(1)
   })
   it('excludes interrupted replies from future context and displays a 429 cooldown', async () => {
     vi.mocked(fetch).mockResolvedValueOnce(new Response('{"type":"delta","text":"Partial"}\n'))
