@@ -2,7 +2,7 @@
 
 Die vier zuvor abgeschwächten Compiler-Korrektheitsregeln (set-state-in-effect, immutability, refs, static-components) sind wieder Fehler. Render-Mutationen in Block-Listen, State-Kopien in Header und Filtern, verschachtelte Card-Refs und dynamische Icon-Komponenten wurden bereinigt. Consent und Theme verwenden externe Stores mit stabilen Snapshots. Consent-UI-Regressionen prüfen Zustimmung, Widerruf und blockierte Storage-Schreibzugriffe.
 
-Nach Bereinigung: ESLint 0 Fehler, 32 verbleibende Warnungen (überwiegend any-Typen in Form-/Such-/Chat-Code); vorher 59 Warnungen im Package-Audit. Weitere Typbereinigung bleibt separat offen.
+Nach Bereinigung: ESLint 0 Fehler, 29 verbleibende Warnungen (überwiegend any-Typen in Form-/Such-/Chat-Code); vorher 59 Warnungen im Package-Audit. Weitere Typbereinigung bleibt separat offen.
 
 Erneuter pnpm audit am 3. Oktober 2026: 1 hoher braces-Befund, keine kritischen/mittleren/niedrigen Befunde; patched_versions weiterhin <0.0.0. Ohne Upstream-Fix keine pauschale Versionserzwingung.
 
