@@ -205,8 +205,9 @@ auch ohne KI-Chat über das Kontaktformular oder per E-Mail erreichen.
 Erst wenn Sie eine Nachricht absenden, übermittelt mein Server Ihre Nachricht,
 einen begrenzten bisherigen Gesprächsverlauf und ausgewählte öffentliche
 Portfolio-Inhalte an die OpenAI Responses API mit GPT-6 Luna. Vertragspartner
-für die Auftragsverarbeitung ist laut abgeschlossenem DPA OpenAI Ireland Ltd.
-[Aktuelle Anschrift für die veröffentlichte Fassung ergänzen.] Ein personalisierter
+für die Auftragsverarbeitung ist laut abgeschlossenem DPA OpenAI Ireland Ltd.,
+1st Floor, The Liffey Trust Centre, 117–126 Sheriff Street Upper, Dublin 1,
+D01 YC43, Irland. Ein personalisierter
 Auftragsverarbeitungsvertrag vom 3. Oktober 2026 liegt mit Abschlusszertifikat vor.
 Die Bestätigung des
 Chat-Hinweises dient der Information und ist keine Datenschutz-Einwilligung.
@@ -223,14 +224,25 @@ Ein sofortiger Abbruch der Verarbeitung beim Anbieter ist damit nicht garantiert
 Die Anwendung fordert keine Speicherung von Antworten als abrufbaren
 Antwortzustand bei OpenAI an (API-Einstellung store=false). Nach der
 OpenAI-Dokumentation werden API-Inhalte standardmäßig nicht zum Modelltraining
-verwendet, sofern keine entsprechende Freigabe erfolgt. [Für das endgültige
-Projekt deaktivierte Datenfreigabe und konkrete Regeln für Missbrauchsüberwachung,
-Prompt-Caching, menschliche Einsicht sowie gesetzliche Ausnahmen bestätigen.
-Ohne besondere Freigabe nennt OpenAI für Missbrauchsprotokolle grundsätzlich
-bis zu 30 Tage mit Ausnahmen. Nicht als bestehende ZDR-Zusage veröffentlichen.]
+verwendet, sofern keine entsprechende Freigabe erfolgt. Die freiwillige
+Datenfreigabe ist nach Betreiberbestätigung deaktiviert.
+
+OpenAI kann Eingaben und Antworten in Missbrauchsprotokollen grundsätzlich bis
+zu 30 Tage speichern. Eine längere Aufbewahrung ist nach den Anbieterregeln
+möglich, wenn sie gesetzlich erforderlich oder zum Schutz des Dienstes oder
+Dritter vor Schäden angemessen notwendig ist. Zusätzlich kann Prompt-Caching
+verschlüsselte Zwischenzustände der Modellverarbeitung auf GPU-Systemen
+vorhalten; OpenAI nennt dafür eine maximale Aufbewahrung von 24 Stunden.
+Eine besondere Freigabe für Zero Data Retention oder Modified Abuse Monitoring
+liegt derzeit nicht vor. Das deaktivierte API-Logging im Dashboard und
+`store=false` deaktivieren diese Anbieter-Speicherwege nicht insgesamt.
 
 Der aktuelle Staging-Test verwendet den globalen OpenAI-Endpunkt. Eine
 ausschließliche Verarbeitung in der EU wird für diesen Betrieb nicht zugesagt.
+Der abgeschlossene DPA sieht für Übermittlungen von EWR-Daten durch OpenAI
+Ireland an Empfänger außerhalb des EWR beziehungsweise der Schweiz
+Standardvertragsklauseln oder einen Angemessenheitsbeschluss der Europäischen
+Kommission vor.
 [Für die endgültige veröffentlichte Fassung den tatsächlichen Betriebsmodus,
 Verarbeitungsländer, Empfänger und Übermittlungsgarantien bei Drittlandverarbeitung
 aus den anwendbaren Verträgen übernehmen und prüfen. Falls später EU Data Residency
@@ -260,6 +272,8 @@ liefern und keine verbindlichen Angebote oder Zusagen machen.
 
 Weitere Informationen: [OpenAI-Datenkontrollen](https://developers.openai.com/api/docs/guides/your-data)
 und [OpenAI-Datenschutzvereinbarung](https://openai.com/policies/data-processing-addendum/).
+Die Anbieteranschrift ist in Abschnitt 16.5 des
+[OpenAI Services Agreement](https://openai.com/policies/services-agreement/) angegeben.
 
 ## 8. Lokal bereitgestellte Schriftarten und externe Links
 

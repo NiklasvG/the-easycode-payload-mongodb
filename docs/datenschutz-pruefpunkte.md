@@ -20,8 +20,11 @@ geprüft. Vertragsseite zeigt beide Unterschriften, Vertragspartner für EWR-Kun
 ist OpenAI Ireland Ltd. Originale privat archivieren, nicht im Repository.
 Keine eigenständige kryptografische Signaturvalidierung. EU/ZDR-/MAM-Anfrage
 läuft, wird für den aktuellen globalen Test aber nicht als Freigabe behauptet.
-Offen bleiben die veröffentlichte Anbieteranschrift, Rechtsgrundlage, tatsächliche Retention und
-Drittlandgarantien für den endgültigen Betrieb. Sharing und API-Logging sind
+Anbieteranschrift und dokumentierte Standardfristen (Missbrauchsprotokolle bis
+30 Tage mit Ausnahmen, verschlüsselte Cache-Zwischenzustände bis 24 Stunden)
+sind anhand offizieller OpenAI-Quellen ergänzt. Offen bleiben Rechtsgrundlage,
+eigene Infrastruktur-Speicherfristen und die konkrete Bewertung von Empfängern,
+Zielländern und Transfergarantien für den endgültigen Betrieb. Sharing und API-Logging sind
 nach Betreiberbestätigung deaktiviert; MFA/Passkey und alleiniger Owner-Zugriff
 sind bestätigt. Staging-Deployment ist bestätigt, eine rechtliche oder produktive
 Freigabe daraus nicht ableiten. Die Markdown-Änderungen veröffentlichen nichts im CMS.

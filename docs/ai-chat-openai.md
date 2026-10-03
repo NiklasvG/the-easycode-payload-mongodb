@@ -74,6 +74,30 @@ personenbezogen sein; ihre zulässige Verwendung als LLM-Kontext prüfen.
 
 ## Schutzmaßnahmen und Grenzen
 
+### Anbieterregeln für den aktuellen Standardbetrieb
+
+Am 3. Oktober 2026 anhand der offiziellen Quellen abgeglichen:
+
+- OpenAI Ireland Ltd.: 1st Floor, The Liffey Trust Centre, 117–126 Sheriff Street
+  Upper, Dublin 1, D01 YC43, Irland; Services Agreement, Abschnitt 16.5.
+- Keine ZDR-/MAM-Freigabe dokumentiert. Standard-Missbrauchsprotokolle bis zu
+  30 Tage, mit gesetzlich erforderlichen oder zum Schutz vor Schäden angemessen
+  notwendigen Verlängerungen. Die Dashboard-Logging-Einstellung hebt das nicht auf.
+- Prompt-Caching kann verschlüsselte GPU-Zwischenzustände bis zu 24 Stunden
+  behalten. Für GPT-5.6 und neuere Modelle steuert die Cache-TTL eine Mindestdauer,
+  nicht diese maximale Aufbewahrung. Keine eigene Cache-TTL wird gesetzt.
+- `store=false` betrifft den abrufbaren Response-Zustand. Keine Behauptung einer
+  vollständig speicherfreien Verarbeitung oder ausgeschlossener menschlicher Einsicht.
+- Der DPA enthält in Abschnitt 4.1 die Transfermechanismen für EWR-Daten.
+  Konkrete Unterauftragnehmer, Zielländer und die erforderliche eigene Bewertung
+  sind für den tatsächlichen globalen Betrieb gesondert zu dokumentieren.
+
+Quellen: [Datenkontrollen](https://developers.openai.com/api/docs/guides/your-data),
+[Prompt-Caching](https://developers.openai.com/api/docs/guides/prompt-caching),
+[Services Agreement](https://openai.com/policies/services-agreement/).
+
+### Anwendungsgrenzen
+
 - Eingabe höchstens 1.000 Zeichen; Request maximal 16 KiB, auch ohne Content-Length.
 - Pro IP fünf Anfragen pro Minute, insgesamt 30 pro Minute und 300 pro
   24-Stunden-Budgetfenster; höchstens vier parallele Anfragen pro Anwendungsprozess.

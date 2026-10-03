@@ -20,8 +20,11 @@ geprüft. Vertragsseite zeigt beide Unterschriften, Vertragspartner für EWR-Kun
 ist OpenAI Ireland Ltd. Originale privat archivieren, nicht im Repository.
 Keine eigenständige kryptografische Signaturvalidierung. EU/ZDR-/MAM-Anfrage
 läuft, wird für den aktuellen globalen Test aber nicht als Freigabe behauptet.
-Offen bleiben die veröffentlichte Anbieteranschrift, Rechtsgrundlage, tatsächliche Retention und
-Drittlandgarantien für den endgültigen Betrieb. Sharing und API-Logging sind
+Anbieteranschrift und dokumentierte Standardfristen (Missbrauchsprotokolle bis
+30 Tage mit Ausnahmen, verschlüsselte Cache-Zwischenzustände bis 24 Stunden)
+sind anhand offizieller OpenAI-Quellen ergänzt. Offen bleiben Rechtsgrundlage,
+eigene Infrastruktur-Speicherfristen und die konkrete Bewertung von Empfängern,
+Zielländern und Transfergarantien für den endgültigen Betrieb. Sharing und API-Logging sind
 nach Betreiberbestätigung deaktiviert; MFA/Passkey und alleiniger Owner-Zugriff
 sind bestätigt. Staging-Deployment ist bestätigt, eine rechtliche oder produktive
 Freigabe daraus nicht ableiten. Die Markdown-Änderungen veröffentlichen nichts im CMS.
@@ -90,7 +93,7 @@ Aufbewahrungskonzept einzubeziehen.
 | --- | --- | --- |
 | Abschnitt 2: technische Protokolle | Coolify: zugehöriger Server und Proxy-Konfiguration; auf dem Server Docker-Logging-Konfiguration, gegebenenfalls `logrotate` und `journald`; Logs der Website und Datenbanken | Welche Zugriffs-/Fehlerprotokolle tatsächlich entstehen, ob IP-Adressen enthalten sind und wann sie gelöscht werden. Eine Größenbegrenzung durch Logrotation ist keine feste Frist in Tagen. Hetzner-Fristen für Managed Webhosting lassen sich nicht auf selbst verwaltete Cloud-Server übertragen. |
 | Abschnitt 5: Umami-Aufbewahrung | Coolify → Umami/PostgreSQL-Service; konfigurierte geplante Jobs, Datenbank-Wartung und gegebenenfalls externe Cronjobs | Tatsächliches Lösch-/Aggregationsverfahren und Frist. Die Installationsanleitung `docs/umami-coolify.md` belegt keine eingerichtete automatische Datenlöschung. Falls kein Verfahren existiert, eine Frist festlegen und technisch umsetzen, bevor sie im Text zugesagt wird. |
-| Abschnitt 7: OpenAI-Vertragsgesellschaft | Personalisierter DPA v.010126 vom 3. Oktober 2026 und DocuSign-Abschlusszertifikat, privat archiviert | Vertragsabschluss und Zuordnung zur Organisation dokumentiert; Vertrag nennt für EWR-Kunden OpenAI Ireland Ltd. Aktuelle Anschrift für den öffentlichen Text ergänzen. Keine EU-/ZDR-Freigabe aus dem DPA ableiten. |
+| Abschnitt 7: OpenAI-Vertragsgesellschaft | Personalisierter DPA v.010126 vom 3. Oktober 2026 und DocuSign-Abschlusszertifikat, privat archiviert; Services Agreement Abschnitt 16.5 | Vertragsabschluss, Organisationszuordnung und Anschrift von OpenAI Ireland Ltd. dokumentiert. Keine EU-/ZDR-Freigabe aus dem DPA ableiten. |
 | Abschnitt 7: IP-/Anfragezähler | `src/utilities/chatLimits.ts` und tatsächlich bereitgestellte Version | Minutenfenster, HMAC-Identifier und regelmäßige Bereinigung sind implementiert und getestet. Abgelaufene Einträge werden alle 15 Sekunden entfernt, bei normal laufendem Event Loop spätestens nach etwa 75 Sekunden; verzögerte Ausführung ist möglich. Separate Infrastruktur-Logs unabhängig prüfen. |
 | Abschnitt 7: OpenAI-Verarbeitung, Speicherfristen und Drittlandgarantien | API-Projekt, anwendbarer DPA und [OpenAI-Datenkontrollen](https://developers.openai.com/api/docs/guides/your-data) | Aktuell globaler Staging-Endpunkt, Abrechnung eingerichtet. Vertragsgarantien, Missbrauchsprotokolle, Caching, menschliche Einsicht und Ausnahmen dokumentieren. `store=false` ist keine ZDR-Zusage. EU-Verarbeitung nur nach gesonderter bestätigter Konfiguration behaupten. |
 | Abschnitt 9: Backups | Hetzner Console → betreffender Server → Backups; zusätzlich Snapshots; Coolify → Datenbank-Backups und Speicherziele; eigene Cronjobs/Backup-Skripte und gegebenenfalls Storage Box oder S3-Anbieter | Laut Betreiber sind Backups eingerichtet und liegen bei Hetzner in Falkenstein. Der Umfang (Coolify, Datenbanken, Maildaten, Volumes und Images) ist bestätigt. Noch Sicherungsrhythmus, Aufbewahrung/Rotation und Löschung dokumentieren. Anbieter und Standort sind durch Betreiberangabe bestätigt. Snapshots und Datenbank-Backups können andere Aufbewahrungsregeln als Server-Backups haben. |
