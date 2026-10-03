@@ -5,7 +5,7 @@ import React, { useState, useRef, useEffect } from 'react'
 
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { MessageSquare, Send, Sparkles, X, ShieldCheck } from 'lucide-react'
+import { MessageSquare, Send, Sparkles, X, ShieldCheck, Trash2, Square } from 'lucide-react'
 import Link from 'next/link'
 import {
   CHAT_MESSAGE_CHARS,
@@ -240,28 +240,40 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
               <Sparkles className="w-5 h-5" />
               <span className="font-display font-bold tracking-wide">EasyCode AI</span>
             </div>
-            <button
-              type="button"
-              disabled={isLoading}
-              onClick={() => {
-                setMessages((previous) => previous.slice(0, 1))
-                setInputValue('')
-                setErrorMessage('')
-              }}
-              className="text-xs text-white disabled:opacity-50"
-            >
-              Verlauf löschen
-            </button>
-            <button
-              aria-label="Chatfenster schließen"
-              onClick={() => {
-                requestAbort.current?.abort()
-                setIsOpen(false)
-              }}
-              className="text-white/80 hover:text-white transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                aria-label="Verlauf löschen"
+                disabled={isLoading || messages.length <= 1}
+                onClick={() => {
+                  setMessages((previous) => previous.slice(0, 1))
+                  setInputValue('')
+                  setErrorMessage('')
+                  inputRef.current?.focus()
+                }}
+                className="group relative flex size-11 items-center justify-center rounded-xl text-white/80 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-30"
+              >
+                <Trash2 className="size-4" aria-hidden="true" />
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute right-0 top-full z-30 mt-2 whitespace-nowrap rounded-lg border border-white/10 bg-secondary-background px-3 py-2 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 group-disabled:invisible"
+                >
+                  Verlauf löschen
+                </span>
+              </button>
+              <button
+                type="button"
+                aria-label="Chatfenster schließen"
+                onClick={() => {
+                  requestAbort.current?.abort()
+                  setIsOpen(false)
+                }}
+                title="Chatfenster schließen"
+                className="flex size-11 items-center justify-center rounded-xl text-white/80 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                <X className="size-5" aria-hidden="true" />
+              </button>
+            </div>
           </div>
 
           <div className="flex-1 relative flex flex-col overflow-hidden">
@@ -397,15 +409,6 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                   Erneut senden in {cooldown} Sekunden.
                 </p>
               )}
-              {isLoading && (
-                <button
-                  type="button"
-                  onClick={() => requestAbort.current?.abort()}
-                  className="mb-2 text-sm text-accent"
-                >
-                  Antwort stoppen
-                </button>
-              )}
               {/* Honeypot Field */}
               <input
                 type="text"
@@ -434,16 +437,32 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                     {inputValue.length}/1000
                   </div>
                 )}
-                <button
-                  type="submit"
-                  aria-label="Nachricht senden"
-                  disabled={
-                    isLoading || cooldown > 0 || !inputValue.trim() || !hasConfirmedDisclaimer
-                  }
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-accent hover:text-accent-light disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  <Send className="w-4 h-4" />
-                </button>
+                {isLoading ? (
+                  <button
+                    type="button"
+                    aria-label="Antwort stoppen"
+                    onClick={() => requestAbort.current?.abort()}
+                    className="group absolute right-1 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-lg bg-accent text-white transition-colors hover:bg-accent-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  >
+                    <Square className="size-3.5 fill-current" aria-hidden="true" />
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute bottom-full right-0 z-30 mb-2 whitespace-nowrap rounded-lg border border-white/10 bg-secondary-background px-3 py-2 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
+                    >
+                      Antwort stoppen
+                    </span>
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    aria-label="Nachricht senden"
+                    title="Nachricht senden"
+                    disabled={cooldown > 0 || !inputValue.trim() || !hasConfirmedDisclaimer}
+                    className="absolute right-1 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-lg text-accent transition-colors hover:bg-accent/10 hover:text-accent-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    <Send className="size-4" aria-hidden="true" />
+                  </button>
+                )}
               </div>
             </form>
           </div>

@@ -64,7 +64,11 @@ describe('AI chat privacy and interaction', () => {
     render(React.createElement(AIChat, { initiallyOpen: true }))
     confirm()
     send()
-    fireEvent.submit(screen.getByRole('button', { name: 'Nachricht senden' }).closest('form')!)
+    fireEvent.submit(
+      screen
+        .getByRole('textbox', { name: 'Deine Nachricht an den KI-Assistenten' })
+        .closest('form')!,
+    )
     expect(fetch).toHaveBeenCalledTimes(1)
     fireEvent.click(screen.getByRole('button', { name: 'Antwort stoppen' }))
     await screen.findByText('Antwort abgebrochen. Du kannst deine Frage erneut senden.')
