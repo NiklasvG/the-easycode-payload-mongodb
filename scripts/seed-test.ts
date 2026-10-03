@@ -8,6 +8,9 @@ if (process.env.TEST_DATABASE !== 'true' || !['localhost', '127.0.0.1'].includes
 }
 const payload = await getPayload({ config })
 try {
+  // Complete collection/index creation before opening the first write transaction.
+  await Promise.all(Object.values(payload.db.collections).map((model) => model.init()))
+  await Promise.all(Object.values(payload.db.versions).map((model) => model.init()))
   if ((await payload.count({ collection: 'pages' })).totalDocs > 0) throw new Error('Seed requires an empty test database')
   const context = { disableRevalidate: true }
   const image = await sharp({ create: { width: 1600, height: 1000, channels: 3, background: '#43876b' } }).png().toBuffer()
