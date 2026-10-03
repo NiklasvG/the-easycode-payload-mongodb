@@ -1,6 +1,5 @@
 'use client'
 import type {
-	FormFieldBlock,
 	Form as FormType
 } from '@payloadcms/plugin-form-builder/types'
 
@@ -44,7 +43,13 @@ export const FormBlock: React.FC<
 	} = props
 
 	const formMethods = useForm({
-		defaultValues: formFromProps.fields
+		defaultValues: Object.fromEntries(
+			(formFromProps.fields || []).flatMap((field) =>
+				'name' in field && field.name
+					? [[field.name, 'defaultValue' in field ? field.defaultValue ?? '' : '']]
+					: [],
+			),
+		),
 	})
 	const {
 		control,
@@ -61,7 +66,7 @@ export const FormBlock: React.FC<
 	const router = useRouter()
 
 	const onSubmit = useCallback(
-		(data: FormFieldBlock[]) => {
+		(data: Record<string, unknown>) => {
 			const submitForm = async () => {
 				setError(undefined)
 				setIsLoading(true)
