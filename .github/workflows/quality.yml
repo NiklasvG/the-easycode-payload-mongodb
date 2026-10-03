@@ -23,7 +23,7 @@ jobs:
       EMAIL_TRANSPORT: json
       SMTP_PORT: '1025'
       GEMINI_API_KEY: ci-no-network-key
-      PAYLOAD_UPLOAD_DIR: ./test-results/media
+      PAYLOAD_UPLOAD_DIR: ./.test-media
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -70,3 +70,4 @@ jobs:
       - name: Container logs
         if: failure()
         run: docker logs mongo-test; docker logs app-test || true
+
