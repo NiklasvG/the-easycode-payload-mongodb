@@ -60,6 +60,15 @@ Enable **Use Docker Build Secrets** in Coolify for `MONGODB_URI` and
 accept credentials as ordinary build arguments. If BuildKit secrets are missing,
 the build fails instead of embedding credentials in the image.
 
+Enter bare values in Coolify's individual variable fields, without surrounding
+single or double quotes. Literal may stay enabled. Some Coolify versions wrap
+Literal values in single quotes when passing them as build secrets. The build
+removes exactly one such wrapper without evaluating or expanding the contents;
+embedded password characters remain intact. Remaining outer quotes are rejected.
+`NEXT_BUNDLER` is optional and defaults to `webpack`; missing optional secrets
+use separate temporary environment names so they cannot erase build-argument
+defaults. Configuration errors are reported without printing variable values.
+
 The public URL, environment, optional bundler and Umami settings can also be
 passed as BuildKit secrets. The Dockerfile explicitly mounts them because Coolify
 does not automatically extend RUN commands that already contain secret mounts.

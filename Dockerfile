@@ -23,13 +23,31 @@ ENV APP_ENV=${APP_ENV}
 # BuildKit secrets; they are not persisted as build arguments or image ENV.
 RUN --mount=type=secret,id=MONGODB_URI,env=MONGODB_URI,required=true \
     --mount=type=secret,id=PAYLOAD_SECRET,env=PAYLOAD_SECRET,required=true \
-    --mount=type=secret,id=NEXT_PUBLIC_SERVER_URL,env=NEXT_PUBLIC_SERVER_URL \
-    --mount=type=secret,id=APP_ENV,env=APP_ENV \
-    --mount=type=secret,id=NEXT_BUNDLER,env=NEXT_BUNDLER \
-    --mount=type=secret,id=UMAMI_SCRIPT_URL,env=UMAMI_SCRIPT_URL \
-    --mount=type=secret,id=UMAMI_WEBSITE_ID,env=UMAMI_WEBSITE_ID \
-    test -n "$NEXT_PUBLIC_SERVER_URL" \
-    && case "$NEXT_BUNDLER" in webpack|turbopack) ;; *) exit 1 ;; esac \
+    --mount=type=secret,id=NEXT_PUBLIC_SERVER_URL,env=BUILD_NEXT_PUBLIC_SERVER_URL \
+    --mount=type=secret,id=APP_ENV,env=BUILD_APP_ENV \
+    --mount=type=secret,id=NEXT_BUNDLER,env=BUILD_NEXT_BUNDLER \
+    --mount=type=secret,id=UMAMI_SCRIPT_URL,env=BUILD_UMAMI_SCRIPT_URL \
+    --mount=type=secret,id=UMAMI_WEBSITE_ID,env=BUILD_UMAMI_WEBSITE_ID \
+    normalize_secret() { \
+      case "$1" in \'*\') value="${1#\'}"; printf '%s' "${value%\'}" ;; *) printf '%s' "$1" ;; esac; \
+    } \
+    && export MONGODB_URI="$(normalize_secret "$MONGODB_URI")" \
+    PAYLOAD_SECRET="$(normalize_secret "$PAYLOAD_SECRET")" \
+    NEXT_PUBLIC_SERVER_URL="$(normalize_secret "${BUILD_NEXT_PUBLIC_SERVER_URL:-$NEXT_PUBLIC_SERVER_URL}")" \
+    APP_ENV="$(normalize_secret "${BUILD_APP_ENV:-$APP_ENV}")" \
+    NEXT_BUNDLER="$(normalize_secret "${BUILD_NEXT_BUNDLER:-$NEXT_BUNDLER}")" \
+    UMAMI_SCRIPT_URL="$(normalize_secret "${BUILD_UMAMI_SCRIPT_URL:-$UMAMI_SCRIPT_URL}")" \
+    UMAMI_WEBSITE_ID="$(normalize_secret "${BUILD_UMAMI_WEBSITE_ID:-$UMAMI_WEBSITE_ID}")" \
+    && if [ -z "$NEXT_PUBLIC_SERVER_URL" ]; then \
+      echo 'Missing NEXT_PUBLIC_SERVER_URL: set a build variable or build argument.' >&2; exit 1; \
+    fi \
+    && for value in "$NEXT_PUBLIC_SERVER_URL" "$APP_ENV" "$NEXT_BUNDLER" "$MONGODB_URI" "$PAYLOAD_SECRET" "$UMAMI_SCRIPT_URL" "$UMAMI_WEBSITE_ID"; do \
+      case "$value" in \"*|*\"|\'*|*\') \
+        echo 'A build variable contains surrounding quotes. Remove them in Coolify; enter bare values.' >&2; exit 1 ;; \
+      esac; \
+    done \
+    && case "$NEXT_BUNDLER" in webpack|turbopack) ;; *) \
+      echo 'Invalid NEXT_BUNDLER: use webpack or turbopack.' >&2; exit 1 ;; esac \
     && GEMINI_API_KEY=build-only-key-not-used-at-runtime \
     EMAIL_TRANSPORT=json \
     SMTP_PORT=587 \
