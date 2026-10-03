@@ -114,7 +114,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 					<MediaComponent
 						className=""
 						imgClassName="object-cover w-full h-full"
-						priority
+						size="(max-width: 767px) calc(100vw - 32px), (max-width: 1279px) 50vw, 33vw"
 						resource={image}
 					/>
 				</div>
@@ -172,3 +172,4 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 }
 
 export default ServiceCard
+

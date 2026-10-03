@@ -14,7 +14,7 @@ const nextConfig = {
 			: []
 	},
 	images: {
-		qualities: [75, 100],
+		qualities: [75, 85, 100],
 		localPatterns: [
 			{ pathname: '/api/media/file/**' },
 			{ pathname: '/media/**' },
@@ -47,3 +47,4 @@ const nextConfig = {
 export default withPayload(nextConfig, {
 	devBundleServerPackages: false
 })
+

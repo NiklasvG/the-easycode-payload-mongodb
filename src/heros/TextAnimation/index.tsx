@@ -69,7 +69,7 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
 						<Media
 							className=""
 							imgClassName="w-full h-auto sm:h-96 sm:w-auto"
-							priority
+							size="(max-width: 639px) calc(100vw - 32px), 384px" priority
 							resource={media}
 						/>
 
@@ -100,3 +100,4 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
 		</section>
 	)
 }
+

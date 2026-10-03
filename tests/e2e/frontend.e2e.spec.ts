@@ -3,6 +3,8 @@ import { test, expect } from '@playwright/test'
 test.describe('Frontend', () => {
 	test('can go on homepage', async ({ page }, testInfo) => {
 		const browserErrors: string[] = []
+        const imageErrors: string[] = []
+        page.on('response', response => { if (response.request().resourceType() === 'image' && response.status() >= 400) imageErrors.push(response.url()) })
 		page.on('pageerror', (error) => browserErrors.push(error.message))
 		await page.goto('http://localhost:3000')
 
@@ -22,5 +24,7 @@ test.describe('Frontend', () => {
 		await expect(heading).toBeVisible()
 		await page.screenshot({ path: testInfo.outputPath('mobile.png') })
 		expect(browserErrors).toEqual([])
+        expect(imageErrors).toEqual([])
 	})
 })
+

@@ -1,3 +1,4 @@
+import { cn } from '@/utilities/ui'
 import React, { Fragment } from 'react'
 
 import type { Props } from './types'
@@ -15,7 +16,7 @@ export const Media: React.FC<Props> = (props) => {
     <Tag
       {...(htmlElement !== null
         ? {
-            className,
+            className: cn(props.fill && 'absolute inset-0', className),
           }
         : {})}
     >
@@ -23,3 +24,4 @@ export const Media: React.FC<Props> = (props) => {
     </Tag>
   )
 }
+
