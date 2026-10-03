@@ -5,6 +5,11 @@ test.use({ reducedMotion: 'reduce' })
 test('public homepage has landmarks, legal slider roles and correctly sized priority images', async ({ page }) => {
   const errors: string[] = []
   page.on('pageerror', (error) => errors.push(error.message))
+  // Exercise the chat UI independently of runtime provider configuration and credentials.
+  await page.route('**/api/ai-chat', async (route) => {
+    expect(route.request().method()).toBe('GET')
+    await route.fulfill({ json: { available: true } })
+  })
   await page.goto('/')
   await expect(page.getByRole('main')).toHaveCount(1)
   await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toBeVisible()
@@ -31,6 +36,26 @@ test('public homepage has landmarks, legal slider roles and correctly sized prio
   await page.getByRole('button', { name: 'KI-Chat öffnen', exact: true }).click()
   await expect(page.getByRole('region', { name: 'EasyCode AI Chat', exact: true })).toBeVisible()
   expect(errors).toEqual([])
+})
+
+test('unavailable chat shows a contact fallback without opening the chat', async ({ page }) => {
+  await page.route('**/api/ai-chat', async (route) => {
+    expect(route.request().method()).toBe('GET')
+    await route.fulfill({ json: { available: false } })
+  })
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Alle ablehnen', exact: true }).click()
+  await page.getByRole('button', { name: 'KI-Chat öffnen', exact: true }).click()
+  const notice = page.getByRole('status').filter({ hasText: 'Der KI-Chat ist momentan nicht verfügbar.' })
+  await expect(notice).toBeVisible()
+  await expect(notice.getByRole('link', { name: 'E-Mail', exact: true })).toHaveAttribute(
+    'href',
+    'mailto:info@the-easycode.eu',
+  )
+  await expect(page.getByRole('region', { name: 'EasyCode AI Chat', exact: true })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Hinweis schließen', exact: true }).click()
+  await expect(notice).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'KI-Chat öffnen', exact: true })).toBeEnabled()
 })
 
 test('quote navigation updates the active quote without duplicate slides', async ({ page }) => {
