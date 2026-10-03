@@ -41,9 +41,9 @@ const getPostsSitemap = unstable_cache(
 
 		return sitemap
 	},
-	['posts-sitemap'],
+	['posts-sitemap', process.env.NEXT_PUBLIC_SERVER_URL || 'https://the-easycode.eu'],
 	{
-		tags: ['posts-sitemap']
+		tags: ['public-cms', 'posts-sitemap']
 	}
 )
 
@@ -52,3 +52,4 @@ export async function GET() {
 
 	return getServerSideSitemap(sitemap)
 }
+

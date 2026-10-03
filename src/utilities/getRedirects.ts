@@ -8,6 +8,7 @@ export async function getRedirects(depth = 1) {
   const { docs: redirects } = await payload.find({
     collection: 'redirects',
     depth,
+    overrideAccess: false,
     limit: 0,
     pagination: false,
   })
@@ -20,7 +21,7 @@ export async function getRedirects(depth = 1) {
  *
  * Cache all redirects together to avoid multiple fetches.
  */
-export const getCachedRedirects = () =>
-  unstable_cache(async () => getRedirects(), ['redirects'], {
-    tags: ['redirects'],
+export const getCachedRedirects = (depth = 1) =>
+  unstable_cache(async () => getRedirects(depth), ['redirects', String(depth)], {
+    tags: ['public-cms', 'redirects'],
   })
