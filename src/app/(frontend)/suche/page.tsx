@@ -6,41 +6,13 @@ import configPromise from '@payload-config'
 import { getPayload, type Where } from 'payload'
 
 import { Search } from '@/search/Component'
+import type { Media } from '@/payload-types'
 import PageClient from './page.client'
 
 import MasonryGrid from '@/components/layout/MasonryGrid'
 import { ArrowUpRight } from 'lucide-react'
 
-// Mapping von Value -> Label wie im Select-Feld
-const projectTypeLabelMap: Record<string, string> = {
-	'brand-webseite': 'Brand Webseite',
-	individualsoftware: 'Individualsoftware',
-	'e-commerce': 'E-Commerce',
-	'app-entwicklung': 'App-Entwicklung',
-	hosting: 'Hosting'
-}
-
-function getProjectTypeLabel(value?: string | null): string | null {
-	if (!value) return null
-	return projectTypeLabelMap[value] ?? null
-}
-
-function formatProjectDateRange(
-	startDate?: string | null,
-	endDate?: string | null
-): string | null {
-	if (!startDate) return null
-
-	const dateFormatter = new Intl.DateTimeFormat('de-DE', {
-		month: 'short',
-		year: 'numeric'
-	})
-
-	const start = dateFormatter.format(new Date(startDate))
-	const end = endDate ? dateFormatter.format(new Date(endDate)) : 'laufend'
-
-	return start === end ? start : `${start} - ${end}`
-}
+import { getProjectTypeLabel, formatProjectDateRange } from '@/utilities/projectPresentation'
 
 type Args = {
 	searchParams: Promise<{
@@ -56,7 +28,7 @@ type SearchDoc = {
 	meta?: {
 		title?: string | null
 		description?: string | null
-		image?: any
+		image?: Media | string | null
 	} | null
 	doc?: {
 		relationTo: 'projects' | 'pages' | 'posts' | 'clients' | string
@@ -69,7 +41,7 @@ type SearchDoc = {
 	imageHint?: string | null
 	startDate?: string | null
 	endDate?: string | null
-	image?: any
+	image?: Media | string | null
 	tags?: { tag?: string | null }[] | null
 }
 
