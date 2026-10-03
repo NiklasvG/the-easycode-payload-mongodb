@@ -1391,7 +1391,7 @@ export interface Project {
 export interface Redirect {
   id: string;
   /**
-   * You will need to rebuild the website when changing this field.
+   * Änderungen werden beim nächsten Seitenaufruf berücksichtigt.
    */
   from: string;
   to?: {
