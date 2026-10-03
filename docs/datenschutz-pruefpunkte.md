@@ -14,9 +14,13 @@ Account-Bestätigungen, Datenfluss, VVT- und Interessenabwägungsentwurf stehen 
 API-Key und Abrechnung (10 USD Guthaben) sind eingerichtet. Traefik mit
 Cloudflare DNS only, nicht veröffentlichtem Anwendungsport und `x-real-ip`
 wurde in den dokumentierten Testfällen geprüft. Die temporäre Diagnose ist entfernt.
-DPA-PDF heruntergeladen; wirksame Einbeziehung noch nicht belegt. EU/ZDR-/MAM-Anfrage
+Personalisierter OpenAI-DPA v.010126 vom 3. Oktober 2026 mit passendem Kundennamen
+und Organisations-ID sowie DocuSign-Abschlusszertifikat (Status „Abgeschlossen“)
+geprüft. Vertragsseite zeigt beide Unterschriften, Vertragspartner für EWR-Kunden
+ist OpenAI Ireland Ltd. Originale privat archivieren, nicht im Repository.
+Keine eigenständige kryptografische Signaturvalidierung. EU/ZDR-/MAM-Anfrage
 läuft, wird für den aktuellen globalen Test aber nicht als Freigabe behauptet.
-Offen bleiben Vertragsnachweise, Rechtsgrundlage, tatsächliche Retention und
+Offen bleiben die veröffentlichte Anbieteranschrift, Rechtsgrundlage, tatsächliche Retention und
 Drittlandgarantien für den endgültigen Betrieb. Sharing und API-Logging sind
 nach Betreiberbestätigung deaktiviert; MFA/Passkey und alleiniger Owner-Zugriff
 sind bestätigt. Staging-Deployment ist bestätigt, eine rechtliche oder produktive

@@ -204,9 +204,11 @@ auch ohne KI-Chat über das Kontaktformular oder per E-Mail erreichen.
 
 Erst wenn Sie eine Nachricht absenden, übermittelt mein Server Ihre Nachricht,
 einen begrenzten bisherigen Gesprächsverlauf und ausgewählte öffentliche
-Portfolio-Inhalte an die OpenAI Responses API mit GPT-6 Luna. Anbieter ist
-[für die Organisation geltenden OpenAI-Vertragspartner mit Anschrift und
-wirksam einbezogene Datenschutzvereinbarung bestätigen]. Die Bestätigung des
+Portfolio-Inhalte an die OpenAI Responses API mit GPT-6 Luna. Vertragspartner
+für die Auftragsverarbeitung ist laut abgeschlossenem DPA OpenAI Ireland Ltd.
+[Aktuelle Anschrift für die veröffentlichte Fassung ergänzen.] Ein personalisierter
+Auftragsverarbeitungsvertrag vom 3. Oktober 2026 liegt mit Abschlusszertifikat vor.
+Die Bestätigung des
 Chat-Hinweises dient der Information und ist keine Datenschutz-Einwilligung.
 
 Im Anwendungscode erfolgt keine dauerhafte Speicherung der Gesprächsinhalte

@@ -16,7 +16,15 @@ Betreiberbestätigungen aus diesem Chat:
 
 - Organisation: The-Easycode; API-Konto und API-Key eingerichtet, 10 USD Guthaben aufgeladen.
 - Globaler Staging-Chat deployed und Antworten vom Betreiber erfolgreich getestet.
-- DPA-PDF heruntergeladen; wirksame Vertragseinbeziehung noch nicht durch Unterlagen bestätigt.
+- Personalisierter DPA v.010126 vom 3. Oktober 2026 samt DocuSign-Abschlusszertifikat
+  geprüft: Status „Abgeschlossen“, Kundenname und Organisations-ID passen;
+  beide Unterschriften sind auf der Vertragsseite sichtbar. Für den Kunden im EWR
+  nennt der Vertrag OpenAI Ireland Ltd. Keine eigenständige kryptografische
+  Signaturvalidierung durchgeführt. Originale privat aufbewahren.
+- Staging-Funktionstests durch Betreiber bestätigt: Antworten, Folgefragen,
+  Projekt-/Kontaktlinks, Verlauf löschen, Anfragebegrenzung und Abbruch beim Schließen.
+- Kostenkontrolle laut Betreiber: 10 USD Enforced/Hard Limit und automatische
+  Aufladung mit maximal 10 USD. Den jeweiligen Limitzeitraum intern dokumentieren.
 - Proxy: Traefik, Cloudflare DNS only, kein Host-Port-Mapping der Anwendung;
   `x-real-ip` in den dokumentierten normalen und manipulierten Testanfragen geprüft.
 - Sales-Anfrage zu EU-Verarbeitung/ZDR beziehungsweise MAM versendet; Antwort ausstehend.
@@ -25,8 +33,9 @@ Betreiberbestätigungen aus diesem Chat:
 - Nur der Betreiber ist Owner, keine offenen Einladungen.
 - MFA, SMS und Passkey sind nach Betreiberangabe eingerichtet.
 
-Diese Account-Einstellungen belegen weder EU-Freigabe noch ZDR/MAM oder wirksame
-Einbeziehung des DPA. Vertragsunterlagen und Account-Screenshots außerhalb des
+Die Account-Einstellungen allein belegen weder EU-Freigabe noch ZDR/MAM.
+Der DPA-Abschluss ist separat durch die vorgelegten Unterlagen dokumentiert.
+Vertragsunterlagen und Account-Screenshots außerhalb des
 öffentlichen Repositorys aufbewahren.
 
 ## Technischer Datenfluss
