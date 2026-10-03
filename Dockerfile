@@ -15,15 +15,22 @@ FROM build-input AS builder
 ARG NEXT_PUBLIC_SERVER_URL
 ARG APP_ENV=production
 ARG NEXT_BUNDLER=webpack
+ARG UMAMI_SCRIPT_URL
+ARG UMAMI_WEBSITE_ID
 ENV NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
 ENV APP_ENV=${APP_ENV}
-# Runtime boundaries prevent CMS database queries during prerendering.
-# Production credentials are supplied to the runtime container by Coolify.
-RUN --network=none test -n "$NEXT_PUBLIC_SERVER_URL" \
+# Read published CMS content during static generation. Supply credentials as
+# BuildKit secrets; they are not persisted as build arguments or image ENV.
+RUN --mount=type=secret,id=MONGODB_URI,env=MONGODB_URI,required=true \
+    --mount=type=secret,id=PAYLOAD_SECRET,env=PAYLOAD_SECRET,required=true \
+    --mount=type=secret,id=NEXT_PUBLIC_SERVER_URL,env=NEXT_PUBLIC_SERVER_URL \
+    --mount=type=secret,id=APP_ENV,env=APP_ENV \
+    --mount=type=secret,id=NEXT_BUNDLER,env=NEXT_BUNDLER \
+    --mount=type=secret,id=UMAMI_SCRIPT_URL,env=UMAMI_SCRIPT_URL \
+    --mount=type=secret,id=UMAMI_WEBSITE_ID,env=UMAMI_WEBSITE_ID \
+    test -n "$NEXT_PUBLIC_SERVER_URL" \
     && case "$NEXT_BUNDLER" in webpack|turbopack) ;; *) exit 1 ;; esac \
-    && MONGODB_URI=mongodb://127.0.0.1:27017/build-only \
-    PAYLOAD_SECRET=build-only-secret-not-used-at-runtime \
-    GEMINI_API_KEY=build-only-key-not-used-at-runtime \
+    && GEMINI_API_KEY=build-only-key-not-used-at-runtime \
     EMAIL_TRANSPORT=json \
     SMTP_PORT=587 \
     pnpm exec next build --${NEXT_BUNDLER}

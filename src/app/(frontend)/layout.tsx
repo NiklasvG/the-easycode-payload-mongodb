@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 
-import { cn } from '@/utilities/ui'
 import localFont from 'next/font/local'
-import React, { Suspense } from 'react'
+import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
 import { Footer } from '@/Footer/Component'
@@ -18,15 +17,8 @@ import { AIChat } from '@/components/Chat/AIChat'
 import { UmamiAnalytics } from '@/components/UmamiAnalytics'
 import { CookieBanner } from '@/components/CookieBanner'
 
-// Read CMS content at request time; Docker builds need no database connection.
-// Runtime CMS boundaries below preserve builds without a database.
-
-const geistSans = localFont({
-	src: '../../fonts/Gabarito-variable.woff2',
-	weight: '400 900',
-	display: 'swap',
-	variable: '--font-geist-sans',
-})
+// Published CMS pages are prerendered during the build and refreshed by CMS hooks.
+export const revalidate = 3600
 
 const geistMono = localFont({
 	src: '../../fonts/GeistMono-variable.woff2',
@@ -36,14 +28,14 @@ const geistMono = localFont({
 	variable: '--font-geist-mono',
 })
 
-export default function RootLayout({
+export default async function RootLayout({
 	children
 }: {
 	children: React.ReactNode
 }) {
 	return (
 		<html
-			className={cn(geistSans.variable, geistMono.variable)}
+			className={geistMono.variable}
 			lang="de"
 			suppressHydrationWarning
 		>
@@ -58,10 +50,10 @@ export default function RootLayout({
 					<div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/10 rounded-full blur-[120px]" />
 				</div>
 				<Providers>
-					<Suspense fallback={null}><PreviewBar /></Suspense>
-					<Suspense fallback={<div className="h-18 md:h-22 lg:h-30" aria-hidden="true" />}><Header /></Suspense>
+					<PreviewBar />
+					<Header />
 					{children}
-					<Suspense fallback={null}><Footer /></Suspense>
+					<Footer />
 					<AIChat />
 					<UmamiAnalytics
 						scriptUrl={process.env.UMAMI_SCRIPT_URL}

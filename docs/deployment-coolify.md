@@ -32,13 +32,15 @@ Set these as **build and runtime** variables:
 ```dotenv
 NEXT_PUBLIC_SERVER_URL=https://staging.the-easycode.eu
 APP_ENV=staging
+MONGODB_URI=mongodb://easycode_app:APP_PASSWORD@BUILD_REACHABLE_HOST:27017/easycode?authSource=easycode&replicaSet=rs0&directConnection=true
+PAYLOAD_SECRET=YOUR_SECRET
+UMAMI_SCRIPT_URL=https://YOUR_UMAMI_HOST/script.js
+UMAMI_WEBSITE_ID=YOUR_UMAMI_WEBSITE_ID
 ```
 
 Set these as **runtime only**, using actual credentials in Coolify:
 
 ```dotenv
-MONGODB_URI=mongodb://easycode_app:APP_PASSWORD@enywqhaqp7jekutyzcanpjqv:27017/easycode?authSource=easycode&replicaSet=rs0&directConnection=true
-PAYLOAD_SECRET=YOUR_SECRET
 PAYLOAD_UPLOAD_DIR=/app/media
 PREVIEW_SECRET=YOUR_PREVIEW_SECRET
 CRON_SECRET=YOUR_CRON_SECRET
@@ -53,10 +55,33 @@ Keep the existing `PAYLOAD_SECRET` when transferring the current installation.
 Configure staging SMTP so test submissions cannot send unintended customer
 emails. Vercel Blob credentials are no longer required by this branch.
 
-The Docker build uses explicit non-production placeholders for required runtime
-secrets. It does not require MongoDB access. Next.js frontend routes render at
-request time; existing explicit CMS cache helpers remain in place. This changes
-static prerendering behavior and should be checked under realistic traffic.
+Enable **Use Docker Build Secrets** in Coolify for `MONGODB_URI` and
+`PAYLOAD_SECRET`. The Dockerfile requires these BuildKit secret IDs and does not
+accept credentials as ordinary build arguments. If BuildKit secrets are missing,
+the build fails instead of embedding credentials in the image.
+
+The public URL, environment, optional bundler and Umami settings can also be
+passed as BuildKit secrets. The Dockerfile explicitly mounts them because Coolify
+does not automatically extend RUN commands that already contain secret mounts.
+Both Umami variables need build and runtime scope: their values are included in
+the prerendered page. The tracker still loads only after analytics consent.
+
+MongoDB must be reachable from the build container, not just the runtime network.
+Use a private address reachable by the builder; a runtime-only Docker service name
+may not resolve during image builds. If build and runtime need different database
+addresses, pass the builder address through the `MONGODB_URI` build secret and
+keep the runtime URI for the application container. Both must target the same CMS.
+
+The build reads published CMS content and prerenders complete pages with ISR.
+Existing CMS hooks invalidate pages after publication, withdrawal, deletion and
+changes to related content. Draft previews bypass the public page cache.
+SMTP and Gemini still use non-delivering build placeholders.
+
+Force the builder stage to run on each deployment that must reread CMS content.
+For a custom Docker command use `--no-cache-filter builder` with `docker buildx
+build`, or `--no-cache` with `docker build`; in Coolify use **Disable Build Cache**
+or **Force deploy (without cache)**. Changed secret values and external database
+content alone do not invalidate Docker layers.
 
 `APP_ENV=staging` adds `X-Robots-Tag: noindex, nofollow` and blocks crawling in
 robots.txt. This is not access control: protect staging separately if it contains

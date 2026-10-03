@@ -84,8 +84,7 @@ const config = {
 				accent: '0px 4px 30px rgba(0, 173, 178, 0.25)'
 			},
 			fontFamily: {
-				mono: ['var(--font-geist-mono)'],
-				sans: ['var(--font-geist-sans)']
+				mono: ['var(--font-geist-mono)']
 			},
 			keyframes: {
 				'accordion-down': {

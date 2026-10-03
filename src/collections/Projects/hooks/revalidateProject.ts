@@ -34,6 +34,10 @@ export const revalidateProject: CollectionAfterChangeHook<Project> = async ({
 }) => {
   if (!context.disableRevalidate) {
     revalidateTag('public-cms', { expire: 0 })
+    if (doc._status === 'published' || previousDoc?._status === 'published') {
+      // Project grids can appear on the homepage or any CMS page.
+      revalidatePath('/', 'layout')
+    }
     // 1. Revalidate Current Doc (wenn published)
     if (doc._status === 'published') {
       const path = await getProjectPath(doc, payload)
@@ -73,6 +77,7 @@ export const revalidateDelete: CollectionAfterDeleteHook<Project> = async ({
   if (!context.disableRevalidate) {
     revalidateTag('public-cms', { expire: 0 })
     const path = await getProjectPath(doc, payload)
+    revalidatePath('/', 'layout')
     if (path) {
       revalidatePath(path)
     }

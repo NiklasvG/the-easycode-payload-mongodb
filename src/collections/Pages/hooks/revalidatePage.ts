@@ -12,6 +12,10 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
 }) => {
   if (!context.disableRevalidate) {
     revalidateTag('public-cms', { expire: 0 })
+    if (doc._status === 'published' || previousDoc?._status === 'published') {
+      // Other prerendered pages can link to or embed this document.
+      revalidatePath('/', 'layout')
+    }
     if (doc._status === 'published') {
       const path = getPagePath(doc)
 

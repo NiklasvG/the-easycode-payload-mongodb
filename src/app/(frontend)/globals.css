@@ -254,7 +254,6 @@
 	h6,
 	.h6 {
 		@apply text-foreground font-bold;
-		font-family: Gabarito, Arial, sans-serif;
 		hyphens: auto;
 		letter-spacing: 0;
 		margin-top: 0;

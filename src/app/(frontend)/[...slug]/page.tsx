@@ -1,5 +1,3 @@
-import LoadingContent from '../loading'
-import { connection } from 'next/server'
 // src/app/(frontend)/[...slug]/page.tsx
 import type { Metadata } from 'next'
 
@@ -16,6 +14,7 @@ import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { getPreviewAccess } from '@/utilities/getPreviewAccess'
+import { getPagePath } from '@/utilities/contentPaths'
 
 // Helper um Params korrekt zu typisieren
 type Args = {
@@ -25,11 +24,7 @@ type Args = {
 }
 
 
-export default function Page(props: Args) {
-  return <React.Suspense fallback={<LoadingContent />}><PageContent {...props} /></React.Suspense>
-}
-
-async function PageContent({ params: paramsPromise }: Args) {
+export default async function Page({ params: paramsPromise }: Args) {
 	const { isEnabled: draft } = await draftMode()
 	const { slug = ['home'] } = await paramsPromise
 
@@ -45,7 +40,7 @@ async function PageContent({ params: paramsPromise }: Args) {
 	})
 
 	if (!page) {
-		return <React.Suspense fallback={<LoadingContent />}><PayloadRedirects url={urlPath} /></React.Suspense>
+		return <PayloadRedirects url={urlPath} />
 	}
 
 	// Wir prüfen, ob die Seite Breadcrumbs hat und ob die URL übereinstimmt.
@@ -64,12 +59,12 @@ async function PageContent({ params: paramsPromise }: Args) {
 	return (
 		<article>
 			<PageClient />
-			<React.Suspense fallback={null}><PayloadRedirects disableNotFound url={urlPath} /></React.Suspense>
+			<PayloadRedirects disableNotFound url={urlPath} />
 
 			{draft && <LivePreviewListener />}
 
 			<RenderHero {...hero} />
-			<React.Suspense fallback={<LoadingContent />}><RenderBlocks blocks={layout} /></React.Suspense>
+			<RenderBlocks blocks={layout} />
 		</article>
 	)
 }
@@ -88,8 +83,24 @@ export async function generateMetadata({
 	return generateMeta({ doc: page })
 }
 
+export async function generateStaticParams() {
+	const payload = await getPayload({ config: configPromise })
+	const { docs } = await payload.find({
+		collection: 'pages',
+		draft: false,
+		overrideAccess: false,
+		pagination: false,
+		depth: 0,
+		where: { _status: { equals: 'published' } },
+		select: { slug: true, breadcrumbs: true },
+	})
+
+	return docs.filter((page) => page.slug !== 'home').map((page) => ({
+		slug: getPagePath(page).split('/').filter(Boolean).map(decodeURIComponent),
+	}))
+}
+
 const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
-	await connection()
 	const payload = await getPayload({ config: configPromise })
 	const draft = await getPreviewAccess(payload)
 

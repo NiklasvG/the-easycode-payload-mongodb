@@ -10,9 +10,6 @@ import { connection } from 'next/server'
 import { importMap } from './admin/importMap.js'
 import './custom.scss'
 
-// The private Admin is intentionally request-bound, not an instant public route.
-export const instant = false
-
 type Args = {
   children: React.ReactNode
 }

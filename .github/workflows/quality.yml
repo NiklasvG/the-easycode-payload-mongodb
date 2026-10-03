@@ -15,7 +15,6 @@ jobs:
     env:
       CI: 'true'
       TEST_DATABASE: 'true'
-      NEXT_INSTANT_TEST: 'true'
       TEST_MAILPIT: 'true'
       MONGODB_URI: mongodb://127.0.0.1:27017/easycode_test?replicaSet=rs0&directConnection=true
       PAYLOAD_SECRET: ci-only-secret-never-use-in-production
@@ -58,7 +57,7 @@ jobs:
       - run: pnpm test:e2e
       - name: Docker build and runtime smoke test
         run: |
-          docker build --build-arg NEXT_PUBLIC_SERVER_URL=http://localhost:3000 --build-arg APP_ENV=staging -t easycode-test .
+          docker build --network=host --no-cache --secret id=MONGODB_URI,env=MONGODB_URI --secret id=PAYLOAD_SECRET,env=PAYLOAD_SECRET --build-arg NEXT_PUBLIC_SERVER_URL=http://localhost:3000 --build-arg APP_ENV=staging -t easycode-test .
           docker run -d --name app-test --network host --volume "$PWD/.test-media:/app/media:ro" --env MONGODB_URI --env PAYLOAD_SECRET --env PREVIEW_SECRET --env NEXT_PUBLIC_SERVER_URL --env APP_ENV --env EMAIL_TRANSPORT --env SMTP_HOST --env SMTP_USER --env SMTP_PASS --env SMTP_PORT --env GEMINI_API_KEY easycode-test
           ready=false
           for attempt in $(seq 1 60); do
@@ -66,7 +65,7 @@ jobs:
             sleep 1
           done
           if [ "$ready" != true ]; then docker logs app-test; exit 1; fi
-          PLAYWRIGHT_EXTERNAL_SERVER=true NEXT_INSTANT_TEST=false pnpm test:e2e
+          PLAYWRIGHT_EXTERNAL_SERVER=true pnpm test:e2e
       - uses: actions/upload-artifact@v4
         if: always()
         with:

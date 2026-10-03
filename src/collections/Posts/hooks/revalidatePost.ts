@@ -11,6 +11,9 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
 }) => {
   if (!context.disableRevalidate) {
     revalidateTag('public-cms', { expire: 0 })
+    if (doc._status === 'published' || previousDoc?._status === 'published') {
+      revalidatePath('/', 'layout')
+    }
     if (doc._status === 'published') {
       const path = `/posts/${doc.slug}`
 
@@ -40,6 +43,7 @@ export const revalidateDelete: CollectionAfterDeleteHook<Post> = ({ doc, req: { 
   if (!context.disableRevalidate) {
     revalidateTag('public-cms', { expire: 0 })
     const path = `/posts/${doc?.slug}`
+    revalidatePath('/', 'layout')
 
     revalidatePath(path)
     revalidateTag('posts-sitemap', { expire: 0 })

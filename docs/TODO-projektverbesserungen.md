@@ -202,14 +202,14 @@ Quellen: [Payload 3.84](https://github.com/payloadcms/payload/releases/tag/v3.84
 
 ## Umsetzungsstand und weitere Optimierungen
 
-58 Integrationstests und 17 Produktions-Browserfälle sind geprüft; ESLint meldet 0 Fehler und 0 Warnungen. Webpack-Produktionsbuild erfolgreich. Turbopack-Entwicklung: Admin, alle Lottie-Icons und CSS-Hot-Reload ohne Seitenneuladung geprüft. Docker kompiliert ohne Netzwerk und ohne Datenbank. Einzelheiten und Grenzen stehen in den verlinkten Prüfberichten. Alle Commits bleiben lokal; kein Push oder Deployment.
+Historischer Prüfumfang vor der Prerendering-Umstellung: 58 Integrationstests und 17 Produktions-Browserfälle; ESLint ohne Fehler und Warnungen; Webpack-Produktionsbuild sowie Turbopack-Entwicklung mit Admin, Lottie-Icons und CSS-Hot-Reload geprüft. Der aktuelle Build liest CMS-Daten aus MongoDB und erzeugt vollständige Seiten; die aktuelle Prüfung steht in [testing.md](testing.md). Kein Push oder Deployment.
 
 | Bereich | Ergebnis |
 | --- | --- |
 | Sicherheit | Authentifizierte CMS-Schreibzugriffe, Globals/Plugins/Jobs geschützt, öffentliche Erstregistrierung gesperrt, Login-/Reset-Budgets und Sperre, private Form-Maildaten verborgen. Anonyme Manipulation per REST/GraphQL getestet. [Endpunkte](endpoint-security.md). |
 | Öffentliche Formulare und KI | Strenge Feld-/Body-/Origin-Prüfung, begrenzte History und Rate-Limit-Speicher, Provider-Timeout, Backpressure/Abbruch, vollständige Streaming-Texte. Öffentliche Einsendungen sind ausdrücklich beabsichtigt. |
 | CMS-Korrektheit | Client-Änderungen aktualisieren den Suchindex; Nested Pages, Header/Footer, Redirects, Medien und Projekt-Lifecycle werden als Systemtests geprüft. Draft-Cookies nach Logout geben keinen Zugriff. |
-| Navigation | Cache Components, explizite Laufzeitgrenzen und Partial Prefetching aktiviert. Zwei instant()-Tests bestätigen sofortige Lade-UI. [Cache](cache-components.md), [Navigation](instant-navigation.md). |
+| Navigation | CMS-Inhalte werden beim Build vollständig vorgerendert und durch CMS-Hooks aktualisiert. Browserfälle prüfen die erste Anzeige ohne JavaScript und ohne Ladehülle. [Cache](cache-components.md), [Navigation](instant-navigation.md). |
 | Komponenten | Formular-/Block-/Suchtypen bereinigt, gemeinsame Projektformatierung, korrekte Video-URLs, deutsche Sprache/konsistente SEO-URLs, fehlende Inhalte mit Noindex. Suche bewahrt Query-Parameter und kodiert Sonderzeichen. |
 | Ressourcen | Mobile Hero-Layoutverschiebung von CLS 0,126 auf 0 in der Nachprüfung reduziert; verzögerte Bildantwort als Regression geprüft. Lizenzkonforme lokale Fonts; Mono ohne erzwungenes Preload. Lottie lädt nur gewählte sichtbare Icons. Alle 18 Icons mobil/Desktop und reduzierte Bewegung geprüft. [Animationen](animations.md). |
 | Werkzeuge | Reproduzierbare Compiler- und Buildexperimente, kalte/warme Performance-Messung, ressourcenschonende Integrationstests, Produktions- und Standalone-Browserprüfung in CI. [Tests](testing.md), [Performance](performance.md). |

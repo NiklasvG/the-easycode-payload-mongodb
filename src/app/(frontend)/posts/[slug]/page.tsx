@@ -1,7 +1,5 @@
-import { connection } from 'next/server'
 import type { Metadata } from 'next'
-import { cache, Suspense } from 'react'
-import LoadingContent from '../../loading'
+import { cache } from 'react'
 import { draftMode } from 'next/headers'
 import { getPayload } from 'payload'
 import config from '@payload-config'
@@ -14,23 +12,19 @@ import { getPreviewAccess } from '@/utilities/getPreviewAccess'
 
 type Args = { params: Promise<{ slug: string }> }
 const getPost = cache(async (slug: string) => {
-  await connection()
 	const payload = await getPayload({ config })
   const draft = await getPreviewAccess(payload)
   const result = await payload.find({ collection: 'posts', draft, overrideAccess: draft, limit: 1, pagination: false, where: { slug: { equals: slug } } })
   return result.docs[0] || null
 })
 
-export default function PostPage(props: Args) {
-  return <Suspense fallback={<LoadingContent />}><PostContent {...props} /></Suspense>
-}
-async function PostContent({ params }: Args) {
+export default async function PostPage({ params }: Args) {
   const { slug } = await params
   const post = await getPost(slug)
-  if (!post) return <Suspense fallback={<LoadingContent />}><PayloadRedirects url={`/posts/${slug}`} /></Suspense>
+  if (!post) return <PayloadRedirects url={`/posts/${slug}`} />
   const { isEnabled: draft } = await draftMode()
   return <article>
-    <Suspense fallback={null}><PayloadRedirects disableNotFound url={`/posts/${slug}`} /></Suspense>
+    <PayloadRedirects disableNotFound url={`/posts/${slug}`} />
     {draft && <LivePreviewListener />}
     <PostHero post={post} />
     <RichText className="container py-12" data={post.content} />
@@ -40,4 +34,14 @@ async function PostContent({ params }: Args) {
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug } = await params
   return generateMeta({ doc: await getPost(slug), collection: 'posts' })
+}
+
+export async function generateStaticParams() {
+  const payload = await getPayload({ config })
+  const { docs } = await payload.find({
+    collection: 'posts', draft: false, overrideAccess: false,
+    pagination: false, depth: 0, select: { slug: true },
+    where: { _status: { equals: 'published' } },
+  })
+  return docs.map(({ slug }) => ({ slug }))
 }

@@ -8,10 +8,10 @@ const NEXT_PUBLIC_SERVER_URL =
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	output: 'standalone',
+	distDir: process.env.NEXT_BUILD_DIR || '.next',
 	outputFileTracingExcludes: { '/*': ['./test-results/**/*', './playwright-report/**/*', './tests/**/*', './experiments/**/*', './docs/**/*', './.quality-*'] },
-	cacheComponents: true,
-	partialPrefetching: true,
-	experimental: { exposeTestingApiInProductionBuild: process.env.NEXT_INSTANT_TEST === 'true' },
+	// Use static generation and ISR without streaming a partially rendered loading shell.
+	cacheComponents: false,
 	async headers() {
 		return [{ source: '/:path*', headers: [
 			{ key: 'X-Content-Type-Options', value: 'nosniff' },

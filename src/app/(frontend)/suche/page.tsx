@@ -1,4 +1,3 @@
-import LoadingContent from '../loading'
 import { connection } from 'next/server'
 import type { Metadata } from 'next/types'
 import React from 'react'
@@ -81,10 +80,7 @@ function PageTiles({ pages }: { pages: SearchDoc[] }) {
 	)
 }
 
-export default function Page(props: Args) {
-  return <React.Suspense fallback={<LoadingContent />}><SearchResults {...props} /></React.Suspense>
-}
-async function SearchResults({
+export default async function Page({
 	searchParams: searchParamsPromise
 }: Args) {
 	const { q } = await searchParamsPromise

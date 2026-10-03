@@ -1,5 +1,3 @@
-import LoadingProject from './loading'
-import { connection } from 'next/server'
 import { generateMeta } from '@/utilities/generateMeta'
 import React, { cache } from 'react'
 import type { Metadata } from 'next'
@@ -40,10 +38,7 @@ type Args = {
   params: Promise<Params>
 }
 
-export default function ProjectDetailPage(props: Args) {
-  return <React.Suspense fallback={<LoadingProject />}><ProjectContent {...props} /></React.Suspense>
-}
-async function ProjectContent({ params: paramsPromise }: Args) {
+export default async function ProjectDetailPage({ params: paramsPromise }: Args) {
   // 1. Draft Mode Status abrufen
   const { isEnabled: draft } = await draftMode()
   const { projectSlug, clientSlug } = await paramsPromise
@@ -409,8 +404,21 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
 // -------- Helpers --------
 
+export async function generateStaticParams() {
+  const payload = await getPayload({ config: configPromise })
+  const { docs } = await payload.find({
+    collection: 'projects', draft: false, overrideAccess: false,
+    pagination: false, depth: 1, select: { slug: true, client: true },
+    where: { _status: { equals: 'published' } },
+  })
+  return docs.flatMap(({ slug, client }) =>
+    client && typeof client === 'object' && client.slug
+      ? [{ clientSlug: client.slug, projectSlug: slug }]
+      : [],
+  )
+}
+
 const queryProjectBySlug = cache(async ({ slug, clientSlug }: { slug: string; clientSlug: string }) => {
-  await connection()
 	const payload = await getPayload({ config: configPromise })
   const draft = await getPreviewAccess(payload)
 
