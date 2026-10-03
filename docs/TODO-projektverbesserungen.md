@@ -33,8 +33,8 @@ Empfohlener Ablauf: P1 erledigen und Performance-Ausgangswerte erfassen. Danach 
 
 - [x] Eine Zuordnung von Datenquelle, Cache-Tag, betroffenen Seiten und auslösendem CMS-Hook erstellen.
 - [x] Erstellen, Veröffentlichen, Bearbeiten, Zurückziehen und Löschen für Seiten, Posts und Projekte prüfen.
-- [ ] Bei Slug-Änderungen alte und neue URL berücksichtigen; Änderungen an verknüpften Clients und Medien ebenfalls prüfen.
-- [ ] Header, Footer, Weiterleitungen und Sitemaps nach Änderungen kontrollieren.
+- [x] Bei Slug-Änderungen alte und neue URL berücksichtigen; Änderungen an verknüpften Clients und Medien ebenfalls prüfen.
+- [x] Header, Footer, Weiterleitungen und Sitemaps nach Änderungen kontrollieren.
 - [x] Sofortige Invalidierung dort erhalten, wo Inhaltskorrektheit entscheidend ist. Hintergrundaktualisierung nur mit bewusst akzeptierter kurzzeitiger Veraltung einsetzen.
 - [x] Draft Mode und Live Preview unabhängig vom öffentlichen Cache prüfen.
 
@@ -73,8 +73,9 @@ Quelle: [Payload 3.90 – geänderte Sicherheitsregeln](https://github.com/paylo
 
 ### 5. Performance messen und Betriebsprüfung vervollständigen
 
-- [ ] Startseite, Projektübersicht und eine bildreiche Projektseite mobil und am Desktop messen; LCP, INP, CLS, übertragene Daten und Serverantwortzeit festhalten.
-- [ ] Kalte und warme Abrufe sowie kalte und wiederholte Builds getrennt vergleichen; mehrere Läufe unter gleichen Bedingungen durchführen.
+- [x] Startseite, Projektübersicht und synthetische Projektseite mobil/Desktop je dreimal messen: LCP, CLS, Bytes, TTFB, vollständige Antwortzeit und kontrollierte Interaktionen.
+- [ ] Repräsentative echte Bilder und Real-User-INP nach Consent in der tatsächlichen Installation auswerten.
+- [x] Frische Browser, neue Serverprozesse und Wiederholungen getrennt messen; reproduzierbaren Docker-Buildvergleich mit erhaltenem Cache bereitstellen.
 - [ ] Bestehende Umami-Anbindung anhand von `umami-coolify.md` überprüfen und Performance-Erfassung mit der Consent-Logik abstimmen.
 - [ ] Verfügbarkeit und Fehlererkennung anhand von `monitoring-coolify.md` einrichten oder vorhandene Einrichtung verifizieren.
 - [ ] MongoDB- und Medien-Backups gemeinsam in einer isolierten Umgebung wiederherstellen; Datenbank-Backups enthalten keine Upload-Dateien.
@@ -103,10 +104,10 @@ Quelle: [Next.js – Image](https://nextjs.org/docs/app/api-reference/components
 **Ursprüngliche Ausgangslage:** `dev` und `build` verwenden `--webpack`; `next.config.js` setzt eine eigene `webpack.resolve.extensionAlias`-Konfiguration.
 
 - [x] Zweck der Extension-Aliase und Anforderungen von `withPayload` prüfen; benötigte Auflösung anhand der installierten Next-Dokumentation übertragen oder überflüssige Sonderkonfiguration entfernen.
-- [ ] Zunächst Entwicklung ohne `--webpack` testen: Admin, Live Preview, SCSS/CSS, lokale Icons, Lottie und Hot Reload.
-- [ ] Anschließend Produktionsbuild und Docker-Image mit Turbopack prüfen.
-- [ ] Build-Dauer und Speicherbedarf unter gleichen Bedingungen mit Webpack vergleichen; Cache-Erhalt im Build-System berücksichtigen.
-- [ ] Die Scripts erst umstellen, wenn die benötigten Abläufe funktionieren; Webpack als dokumentierten Rückweg erhalten.
+- [x] Zunächst Entwicklung ohne `--webpack` testen: Admin, Live Preview, SCSS/CSS, lokale Icons, Lottie und Hot Reload.
+- [x] Anschließend Produktionsbuild und Docker-Image mit Turbopack prüfen.
+- [x] Build-Dauer und Speicherbedarf unter gleichen Bedingungen mit Webpack vergleichen; Cache-Erhalt im Build-System berücksichtigen.
+- [x] Geprüfte Turbopack-Scripts und Docker-Schalter ergänzen; wegen höherem Speicherbedarf und zwei sporadischen Standalone-Testfehlern Webpack als Standard erhalten.
 
 **Fertig, wenn:** Entwicklung und Docker-Deployment mit Turbopack zuverlässig laufen und der Vergleich einen praktischen Nutzen zeigt.
 
@@ -117,13 +118,13 @@ Quelle: [Next.js – Turbopack-Konfiguration](https://nextjs.org/docs/app/api-re
 **Ursprüngliche Ausgangslage:** `cacheComponents` ist nicht aktiviert. Es bestehen explizite `unstable_cache`-Hilfen und dynamische Frontend-Routen für das Deployment ohne Datenbankzugriff beim Build.
 
 - [x] Öffentliche CMS-Daten, nutzerabhängige Daten und Preview-Daten getrennt erfassen; Laufzeitvoraussetzungen der vorhandenen Routen prüfen.
-- [ ] Payload-Kompatibilität sowie Route-Konfiguration, Draft Mode und Streaming unter dem neuen Modell prüfen.
+- [x] Payload-Kompatibilität sowie Route-Konfiguration, Draft Mode und Streaming unter dem neuen Modell prüfen.
 - [x] Einen begrenzten Prototyp für öffentliche Projektdaten erstellen; Cache-Lebensdauer und Tags ausdrücklich definieren.
-- [ ] Dynamische Teile mit sinnvollen Suspense-Grenzen versehen und Admin-/Preview-Daten aus gemeinsam genutzten öffentlichen Caches heraushalten.
-- [ ] Prüfen, ob Prerendering Datenbankzugriff beim Build voraussetzt; die bestehende Docker-Build-Strategie bewusst erhalten oder anpassen.
-- [ ] Die Revalidierungsprüfungen aus Punkt 2 wiederholen; erst dann weitere Cache-Hilfen migrieren.
+- [x] Dynamische Teile mit sinnvollen Suspense-Grenzen versehen und Admin-/Preview-Daten aus gemeinsam genutzten öffentlichen Caches heraushalten.
+- [x] Prüfen, ob Prerendering Datenbankzugriff beim Build voraussetzt; die bestehende Docker-Build-Strategie bewusst erhalten oder anpassen.
+- [x] Die Revalidierungsprüfungen aus Punkt 2 wiederholen; erst dann weitere Cache-Hilfen migrieren.
 
-**Fertig, wenn:** Öffentliche Seiten messbar profitieren, Änderungen korrekt sichtbar werden und Build, Vorschau und Berechtigungen weiterhin funktionieren.
+**Fertig, wenn:** Öffentliche Seiten sinnvolle Hüllen sofort zeigen, Änderungen korrekt sichtbar werden und Build, Vorschau und Berechtigungen weiterhin funktionieren. Der optionale use-cache-Datencache bleibt nach dem gescheiterten Invalidierungstest deaktiviert.
 
 Quelle: [Next.js – Migration zu Cache Components](https://nextjs.org/docs/app/guides/migrating-to-cache-components).
 
@@ -132,11 +133,11 @@ Quelle: [Next.js – Migration zu Cache Components](https://nextjs.org/docs/app/
 **Voraussetzung:** Das neue Cache-Modell aus Punkt 8 funktioniert zuverlässig.
 
 - [x] Projektübersicht → Detailseite als ersten Anwendungsfall wählen.
-- [ ] `partialPrefetching` zusammen mit Cache Components nach der passenden Versionsdokumentation prüfen.
-- [ ] Sofort sichtbare Seitenteile und passende Ladezustände definieren; gezielte Suspense-Grenzen setzen.
-- [ ] Instant Insights beziehungsweise Navigation Inspector verwenden, um blockierende Teile zu erkennen.
+- [x] `partialPrefetching` zusammen mit Cache Components nach der passenden Versionsdokumentation prüfen.
+- [x] Sofort sichtbare Seitenteile und passende Ladezustände definieren; gezielte Suspense-Grenzen setzen.
+- [x] Instant Insights beziehungsweise Navigation Inspector verwenden, um blockierende Teile zu erkennen.
 - [ ] Netzwerkverkehr und Server-/Datenbanklast durch Prefetching vergleichen; nicht unnötig vollständige Inhalte aller Karten vorladen.
-- [ ] Mit dem versionskompatiblen `instant()`-Playwright-Helfer prüfen, welche Teile unmittelbar bei einem Seitenwechsel sichtbar sein müssen.
+- [x] Mit dem versionskompatiblen `instant()`-Playwright-Helfer prüfen, welche Teile unmittelbar bei einem Seitenwechsel sichtbar sein müssen.
 
 **Fertig, wenn:** Die geprüften Seitenwechsel sofort sinnvolle UI zeigen, ohne übermäßige zusätzliche Requests oder veraltete Inhalte.
 
@@ -147,8 +148,8 @@ Quelle: [Next.js – Partial Prefetching](https://nextjs.org/docs/app/guides/ado
 **Ursprüngliche Ausgangslage:** Der TextAnimation-Hero verwendet AOS und `react-just-parallax`; Motion ist bereits zusätzlich im Projekt vorhanden.
 
 - [x] Scroll- und Viewport-Animationen aus AOS und Parallax mit der vorhandenen Motion-Bibliothek prototypisch nachbauen.
-- [ ] `prefers-reduced-motion`, Tastaturbedienung, mobile Darstellung und Scroll-Verhalten prüfen.
-- [ ] Nicht sofort benötigte Animationen bei Bedarf verzögert laden und Client-Grenzen kleiner halten.
+- [x] `prefers-reduced-motion`, Tastaturbedienung, mobile Darstellung und Scroll-Verhalten prüfen.
+- [x] Nicht sofort benötigte Animationen bei Bedarf verzögert laden und Client-Grenzen kleiner halten.
 - [x] AOS, Parallax und zugehörige Typ-Pakete erst entfernen, wenn alle Verwendungen ersetzt sind.
 - [x] Bei Lottie prüfen, ob ein kleinerer Renderer die vorhandenen JSON-Animationen vollständig unterstützt.
 
@@ -171,9 +172,9 @@ Hintergrund: [Package-Audit und geprüfte Alternativen](package-audit-2026-10-03
 
 ### 12. React Compiler gezielt evaluieren
 
-- [ ] Nach Bereinigung der einschlägigen Lint-Warnungen den Compiler in einer separaten Änderung testen.
-- [ ] Interaktive Komponenten mit React Profiler vor und nach Aktivierung vergleichen.
-- [ ] Bestehende Memoisierung nur nach Prüfung vereinfachen; nicht pauschal entfernen.
+- [x] Nach Bereinigung der einschlägigen Lint-Warnungen den Compiler in einer separaten Änderung testen.
+- [x] Interaktive Komponenten mit React Profiler vor und nach Aktivierung vergleichen.
+- [x] Bestehende Memoisierung nur nach Prüfung vereinfachen; nicht pauschal entfernen.
 
 **Fertig, wenn:** Relevante Komponenten messbar profitieren und Interaktion sowie Tests unverändert funktionieren. Ohne nachweisbaren Nutzen zurückstellen.
 
@@ -199,39 +200,38 @@ Quelle: [Next.js 16 – React Compiler](https://nextjs.org/blog/next-16).
 
 Quellen: [Payload 3.84](https://github.com/payloadcms/payload/releases/tag/v3.84.0), [Payload 3.86](https://github.com/payloadcms/payload/releases/tag/v3.86.0).
 
-## Umsetzungsstand nach den lokalen Feature-Commits
+## Umsetzungsstand und weitere Optimierungen
 
-Validierung: Typprüfung erfolgreich; ESLint ohne Fehler und mit 29 Warnungen; 37 Integrationstests einschließlich isolierter MongoDB und SMTP bestanden; neun Browserfälle bestanden, der ergänzte Admin-UI-Veröffentlichungsschritt zusätzlich gezielt geprüft. Produktionsbuild und Docker-Build ohne erreichbare Datenbank erfolgreich; finaler Container lieferte Startseite, Projekt-Sitemap und Staging-Robots-Regeln korrekt aus. Die Testcontainer wurden anschließend entfernt. Kein Push und kein Deployment ausgeführt.
+58 Integrationstests und 17 Produktions-Browserfälle sind geprüft; ESLint meldet 0 Fehler und 0 Warnungen. Webpack-Produktionsbuild erfolgreich. Turbopack-Entwicklung: Admin, alle Lottie-Icons und CSS-Hot-Reload ohne Seitenneuladung geprüft. Docker kompiliert ohne Netzwerk und ohne Datenbank. Einzelheiten und Grenzen stehen in den verlinkten Prüfberichten. Alle Commits bleiben lokal; kein Push oder Deployment.
 
-| Punkt | Ergebnis und verbleibender Nachweis |
+| Bereich | Ergebnis |
 | --- | --- |
-| 1 | Vollständige öffentliche Cache-Schlüssel einschließlich Tiefe und Sitemap-Ursprung; Regressionstests. [Cache-Matrix](cms-cache.md). |
-| 2 | Alte/neue Slugs, globale öffentliche Tags und Beziehungsinvalidierung umgesetzt. Seiten-, Post- und Projekt-Lifecycle mit Produktionsserver; authentifizierter Draft Mode und Live-Preview-Iframe geprüft. Header-/Footer-/Redirect-Änderungen und Medien-/Client-Mutationen als vollständige HTTP-Systemtests ergänzen. |
-| 3 | Workflow mit isolierter MongoDB, Mailpit, Seed, Produktions-E2E und Docker-Smoke-Test vorhanden. Docker-Build ohne erreichbare MongoDB und lokaler Containerstart geprüft. GitHub-Ausführung und verpflichtende Branch-Prüfungen erst nach einem ausdrücklich angeforderten Push verifizierbar. [CI](ci.md). |
-| 4 | Besucherflüsse, Consent, Admin-Login, Vorschau, Upload/Ersetzung, Formular bis Mailpit und kontrolliertes Gemini-Streaming getestet. Bearbeiten des Hero-Titels und Veröffentlichen zusätzlich direkt in der Admin-Oberfläche geprüft; weitere Feldtypen können die Abdeckung ergänzen. [Testabdeckung](testing.md). |
-| 5 | Wiederholbare LCP-/CLS-/TTFB-/Byte-Messung mit synthetischen Daten vorhanden. Repräsentatives INP, kalte Server-/Build-Vergleiche, externes Monitoring und Wiederherstellung echter Backups noch offen. Dafür werden Coolify-/Monitoring-Zugang und zusammengehörige DB-/Medienbackups benötigt. [Messungen](performance.md). |
-| 6 | Responsive Größen, Qualität 75 als Standard, optional 85/100, stabile Fill-Container, dekorative Alt-Texte und Lazy Loading umgesetzt. Qualitätsvergleich mit echten Originalen und Varianten noch offen; synthetische Bilder belegen keine visuelle Gleichwertigkeit. [Bilder](images.md). |
-| 7 | Sass-Import der Admin-Leiste durch CSS ersetzt, Turbopack-Produktionsbuild erfolgreich. Scripts bleiben Webpack bis Admin-/HMR-/Docker-Prüfung unter Turbopack und kontrollierter Zeit-/Speichervergleich abgeschlossen sind. [Turbopack](turbopack.md). |
-| 8 | Öffentliche/Preview-Daten getrennt dokumentiert und begrenzter use-cache-Prototyp erstellt. Nicht in produktive Routen integriert: Migration von force-dynamic, Suspense, Metadaten und Build ohne DB steht aus. [Cache Components](cache-components.md). |
-| 9 | Projekt-Ladezustand umgesetzt. Partial Prefetching, Inspector, Request-/DB-Vergleich und instant()-Prüfung bleiben von Punkt 8 abhängig und sind noch nicht aktiviert. [Navigation](instant-navigation.md). |
-| 10 | Motion ersetzt AOS/Parallax; Pakete entfernt. Reduzierte Bewegung berücksichtigt; expressionsfähiger SVG-Lottie-Renderer. Alle Animationen visuell und mit kontrolliertem Bundlevergleich noch prüfen. [Animationen](animations.md). |
-| 11 | Fehleranfällige Effects/Refs bereinigt und Compiler-Regeln wieder als Fehler aktiviert. Lint: 0 Fehler, 29 verbleibende Warnungen. Audit-Ausnahmen erneut geprüft; kein ungeprüftes Peer-Upgrade. [Codequalität](code-quality.md). |
-| 12 | Gemäß ursprünglichem Nutzenkriterium zurückgestellt: belastbarer Profilervergleich mit repräsentativen Daten fehlt. Compiler ist nicht aktiviert. [Entscheidung](react-compiler.md). |
-| 13 | Native Sitemap-/Robots-Routen, veröffentlichte Inhalte, Pagination, Nested-URLs, Projekt-URLs und kompatible XML-Endpunkte; next-sitemap entfernt. Fehlende Post-Detailroute ergänzt. [Sitemaps](sitemaps.md). |
-| 14 | Live Preview automatisch geöffnet; Bulk Delete für fünf wichtige Collections gesperrt. Eigenes Dashboard und Formularanhänge ohne konkreten Redaktionsbedarf zurückgestellt. [Admin](admin-improvements.md). |
+| Sicherheit | Authentifizierte CMS-Schreibzugriffe, Globals/Plugins/Jobs geschützt, öffentliche Erstregistrierung gesperrt, Login-/Reset-Budgets und Sperre, private Form-Maildaten verborgen. Anonyme Manipulation per REST/GraphQL getestet. [Endpunkte](endpoint-security.md). |
+| Öffentliche Formulare und KI | Strenge Feld-/Body-/Origin-Prüfung, begrenzte History und Rate-Limit-Speicher, Provider-Timeout, Backpressure/Abbruch, vollständige Streaming-Texte. Öffentliche Einsendungen sind ausdrücklich beabsichtigt. |
+| CMS-Korrektheit | Client-Änderungen aktualisieren den Suchindex; Nested Pages, Header/Footer, Redirects, Medien und Projekt-Lifecycle werden als Systemtests geprüft. Draft-Cookies nach Logout geben keinen Zugriff. |
+| Navigation | Cache Components, explizite Laufzeitgrenzen und Partial Prefetching aktiviert. Zwei instant()-Tests bestätigen sofortige Lade-UI. [Cache](cache-components.md), [Navigation](instant-navigation.md). |
+| Komponenten | Formular-/Block-/Suchtypen bereinigt, gemeinsame Projektformatierung, korrekte Video-URLs, deutsche Sprache/konsistente SEO-URLs, fehlende Inhalte mit Noindex. Suche bewahrt Query-Parameter und kodiert Sonderzeichen. |
+| Ressourcen | Mobile Hero-Layoutverschiebung von CLS 0,126 auf 0 in der Nachprüfung reduziert; verzögerte Bildantwort als Regression geprüft. Lizenzkonforme lokale Fonts; Mono ohne erzwungenes Preload. Lottie lädt nur gewählte sichtbare Icons. Alle 18 Icons mobil/Desktop und reduzierte Bewegung geprüft. [Animationen](animations.md). |
+| Werkzeuge | Reproduzierbare Compiler- und Buildexperimente, kalte/warme Performance-Messung, ressourcenschonende Integrationstests, Produktions- und Standalone-Browserprüfung in CI. [Tests](testing.md), [Performance](performance.md). |
 
-## Weitere Optimierungen aus der anschließenden Codeprüfung
+### Bewusst nicht aktiviert
 
-Diese neuen Punkte sind Folgeaufgaben, keine bereits umgesetzten Features.
+- **React Compiler:** Profilervergleich durchgeführt, kein belastbarer Nutzen; gemäß ursprünglichem Fertig-Kriterium zurückgestellt. [Messungen](react-compiler.md).
+- **Zusätzlicher use-cache-Datencache:** Der integrierte Versuch scheiterte im Turbopack-Standalone-Image am Slug-Invalidierungstest und wurde aus Projektdetails entfernt. Bestehende öffentliche Caches und aktuelle Payload-Abfragen bleiben. Cache Components/Streaming funktionieren unabhängig davon. [Befund](cache-components.md).
 
-- [ ] **P1 – Job-Authentifizierung:** In `src/payload.config.ts` muss ein nichtleerer `CRON_SECRET` Voraussetzung für den Bearer-Vergleich sein. Aktuell passt bei fehlender Konfiguration der wörtliche Header `Bearer undefined`. Fehlerfall mit Test absichern.
-- [ ] **P1 – Suchindex nach Client-Änderung:** `src/search/beforeSync.ts` speichert Beziehungsdaten denormalisiert. Client-Slug-/Namensänderungen müssen auch die zugehörigen Projekt-Suchdokumente aktualisieren; Tag-Invalidierung allein aktualisiert den gespeicherten Index nicht.
-- [ ] **P1 – Nested-Pages-Invalidierung:** Seiten-Hooks bauen Pfade aus dem letzten Slug. Vollständige Breadcrumb-URLs und Änderungen am Elternpfad samt Kindseiten gezielt revalidieren und als HTTP-Test prüfen.
-- [ ] **P1 – KI-Ressourcenbegrenzung:** Die prozesslokale Rate-Limit-Map in `src/app/api/ai-chat/route.ts` benötigt Bereinigung, verbindliche Proxy-IP-Vertrauensregeln, Request-Byte-Limit und Provider-Abbruch bei getrenntem Client. Skalierung über mehrere Instanzen berücksichtigen.
-- [ ] **P2 – Videoauslieferung:** `src/components/Media/VideoMedia/index.tsx` verwendet `/media/${filename}` statt der konfigurierten Payload-URL. Ressourcen-URL mit `getMediaUrl` nutzen, wirkungslosen Event-Listener entfernen und Autoplay bei reduzierter Bewegung prüfen.
-- [ ] **P2 – Sprach- und SEO-Metadaten:** Deutsches Frontend verwendet noch `lang="en"`. Sprache berichtigen; kanonische URLs und OpenGraph-Pfade in `generateMeta.ts` und SEO-Plugin auch für Nested Pages, Posts und Projekte vereinheitlichen.
-- [ ] **P2 – Gemeinsame Projektformatierung:** Projekt-Typen und Datumsdarstellung in Grid, Suche und Detailseite zentralisieren; ungültige Datumswerte abfangen.
-- [ ] **P2 – Animationen nach Bedarf:** Offscreen-Lottie-JSONs und den Renderer erst bei Sichtbarkeit laden. Vorher/nachher übertragene JS-Bytes und alle Expressions visuell prüfen.
-- [ ] **P2 – Verbleibende Typwarnungen:** Die 29 Lint-Warnungen vor allem an Formularfeldern, Plugins und dynamischen Block-Komponenten durch passende Payload-Typen ersetzen; Fehlerpfade statt rein mechanischer Tests prüfen.
-- [ ] **P2 – Reproduzierbare Schrift-Builds:** Google-Fonts-Buildabrufe auf lokal versionierte, lizenzkonforme Schriftdateien umstellen und Offline-Docker-Build prüfen.
-- [ ] **P2 – Streaming-Abbrüche:** Browsernavigation kann Next-Meldungen „destination stream closed early“ auslösen. Abbruchpfade unter Last prüfen; erwartete Client-Abbrüche von Serverfehlern in Monitoring unterscheiden.
+### Offen: mit deinen Angaben oder Zugängen
+
+- **Echte Bilder:** Originale samt Payload-Varianten für einen aussagekräftigen Qualitätsvergleich 75/85/100 und eine repräsentative Bild-Performance-Prüfung.
+- **Betrieb:** Zugriff auf tatsächliches Coolify/Umami/Monitoring sowie zusammengehörige MongoDB- und Medienbackups für Alarmtest und isolierte Wiederherstellung. Lokale Testdaten ersetzen diese Nachweise nicht.
+- **Redaktionsbedarf:** Anforderungen für eigenes Admin-Dashboard oder Datei-Anhänge einschließlich Typen, Größe, Zugriff und Aufbewahrung. Ohne Bedarf keine zusätzlichen Funktionen.
+- **Deployment:** Verifizierte Proxy-IP-/Body-Limits und instanzübergreifende Drosselung an der tatsächlichen Infrastruktur. Die Anwendung vertraut standardmäßig keinem frei gesetzten X-Forwarded-For-Header.
+- **CI auf GitHub:** Workflow/Branch-Prüfungen nach einem ausdrücklich freigegebenen Push tatsächlich ausführen. Aktuell kein Push.
+
+### Weitere technische Experimente und bekannte Grenzen
+
+- [ ] Turbopack-Preview-/Sitemap-Sporadik isolieren; erst nach wiederholt erfolgreichen Tests und verifiziertem Speicherbudget als Deployment-Standard freigeben.
+- [ ] Den reproduzierten use-cache-Invalidierungsfehler mit der installierten Next-/Payload-Kombination isolieren; erst nach bestandenem Standalone-Lifecycle-Test integrieren. Aktuell kein Sicherheits- oder Korrektheitskompromiss zugunsten dieses optionalen Caches.
+- [ ] Netzwerk-/Datenbanklast bei langen Projektlisten und gezieltem Prefetch vergleichen; vorhandene Karten laden nicht pauschal vollständige dynamische Details vor.
+- [ ] Animationstransfer mit einem identischen alten Build vergleichen; das verzögerte Laden ist geprüft, eine genaue pauschale Byte-Ersparnis nicht belegt.
+- [ ] Abbruchfehler unter Parallel-Last gegenüber normalen Browserabbrüchen getrennt untersuchen; lokale kontrollierte Abbrüche sind getestet.
+- [ ] Dependency-Ausnahmen nach einem geeigneten Upstream-Fix erneut prüfen; den weiterhin ungepatchten braces-Befund nicht durch ungeprüfte Versionserzwingung verschieben.
