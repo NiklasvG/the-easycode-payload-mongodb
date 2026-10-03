@@ -1,7 +1,9 @@
-# Instant Navigation: Voraussetzungen und Umsetzungskandidat
+# Partial Prefetching und Instant Navigation
 
-Die installierte Next-16.3.8-Dokumentation verlangt Cache Components für `partialPrefetching`. Diese Migration ist noch nicht für Build ohne Datenbank, Admin und Preview validiert (siehe cache-components.md). Deshalb bleibt das Flag deaktiviert.
+partialPrefetching und Cache Components sind aktiviert. Projekt-, Post-, CMS- und Suchseiten besitzen explizite Suspense-Grenzen mit passenden Ladezuständen. Navigation lädt die vorgerenderte Hülle; CMS-Inhalt folgt zur Laufzeit. Karten erhalten kein pauschales prefetch=true für vollständige dynamische Inhalte.
 
-Erster Ablauf: /projekte → /projekte/[clientSlug]/[projectSlug]. Ein gemeinsamer Ladezustand ist in der Projektroute vorhanden; er enthält eine sichtbare Statusmeldung und stabile Platzhalter. Er verbessert Feedback auch im bestehenden Modell, garantiert aber keine Instant Navigation.
+Das zur installierten Next-Version passende @next/playwright 16.3.8 prüft mit instant() sowohl direkten Projekteinstieg als auch Übersicht → Detail. Während dynamische Inhalte zurückgehalten werden, muss „Projekt wird geladen“ sichtbar sein; nach Freigabe erscheint der echte Titel. Beide Produktionsfälle bestehen. Der Test hat zuvor fehlende innere Suspense-Grenzen sichtbar gemacht.
 
-Nach Cache-Components-Adoption: öffentliche Projektdaten unter use cache, requestbezogene Vorschau außerhalb davon; Suspense für dynamische Details. Default-Link-Prefetch nutzen, keine pauschalen vollständigen Prefetches für sämtliche Karten. Production-Baseline mit Nexts versionspassendem instant()-Helfer, Navigation Inspector und Request-/DB-Zählung erfassen. Erst nach erfolgreichen Revalidierungstests partialPrefetching aktivieren und dieselben UI-/Lastprüfungen wiederholen.
+NEXT_INSTANT_TEST=true exponiert Nexts interne Test-API ausschließlich für isolierte Testbuilds. Docker-Produktion setzt diese Variable nicht. Deshalb werden die zwei Instant-Testfälle dort übersprungen, alle übrigen Browserfälle laufen auch gegen das Standalone-Image. Admin ist von der experimentellen Instant-Validierung ausgenommen; Login und Veröffentlichung werden regulär geprüft.
+
+Ein vollständiger Vergleich von Netzwerk- und Datenbanklast bei langen realen Projektlisten bleibt eine weitere Messaufgabe. Die aktuellen Tests belegen die sofortige Lade-UI und korrekte Inhalte, keine pauschale Einsparung bei jedem Prefetch.

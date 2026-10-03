@@ -9,6 +9,8 @@ const NEXT_PUBLIC_SERVER_URL =
 const nextConfig = {
 	output: 'standalone',
 	cacheComponents: true,
+	partialPrefetching: true,
+	experimental: { exposeTestingApiInProductionBuild: process.env.NEXT_INSTANT_TEST === 'true' },
 	async headers() {
 		return [{ source: '/:path*', headers: [
 			{ key: 'X-Content-Type-Options', value: 'nosniff' },
