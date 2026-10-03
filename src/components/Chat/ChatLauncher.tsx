@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic'
 import { MessageSquare } from 'lucide-react'
 import { useState } from 'react'
+import Link from 'next/link'
 
 const DeferredChat = dynamic(() => import('./AIChat').then((module) => module.AIChat), {
   ssr: false,
@@ -29,9 +30,56 @@ function LauncherButton({ onClick, loading = false }: { onClick?: () => void; lo
 
 export function ChatLauncher() {
   const [activated, setActivated] = useState(false)
+  const [checking, setChecking] = useState(false)
+  const [unavailable, setUnavailable] = useState(false)
+  const open = async () => {
+    if (checking) return
+    setChecking(true)
+    try {
+      const response = await fetch('/api/ai-chat', {
+        cache: 'no-store',
+        credentials: 'omit',
+        signal: AbortSignal.timeout(5000),
+      })
+      const status = await response.json()
+      if (response.ok && status.available === true) setActivated(true)
+      else setUnavailable(true)
+    } catch {
+      setUnavailable(true)
+    } finally {
+      setChecking(false)
+    }
+  }
   return activated ? (
     <DeferredChat initiallyOpen />
   ) : (
-    <LauncherButton onClick={() => setActivated(true)} />
+    <>
+      {unavailable && (
+        <div
+          role="status"
+          className="fixed bottom-24 right-6 z-50 max-w-xs rounded-xl border border-white/10 bg-black p-4 text-sm text-white"
+        >
+          Der KI-Chat ist momentan nicht verfügbar. Du erreichst mich per{' '}
+          <Link href="mailto:info@the-easycode.eu" className="text-accent underline">
+            E-Mail
+          </Link>
+          .
+          <button
+            type="button"
+            aria-label="Hinweis schließen"
+            onClick={() => setUnavailable(false)}
+            className="ml-3 text-accent"
+          >
+            Schließen
+          </button>
+        </div>
+      )}
+      <LauncherButton
+        onClick={() => {
+          void open()
+        }}
+        loading={checking}
+      />
+    </>
   )
 }

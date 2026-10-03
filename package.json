@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "@fluejs/noscroll": "^1.0.0",
-    "@google/genai": "^2.27.0",
     "@payloadcms/admin-bar": "3.90.2",
     "@payloadcms/db-mongodb": "3.90.2",
     "@payloadcms/email-nodemailer": "3.90.2",
@@ -104,10 +103,6 @@
       "sharp",
       "esbuild",
       "unrs-resolver"
-    ],
-    "ignoredBuiltDependencies": [
-      "@google/genai",
-      "protobufjs"
     ],
     "overrides": {
       "dompurify@3.2.7": "3.4.16",

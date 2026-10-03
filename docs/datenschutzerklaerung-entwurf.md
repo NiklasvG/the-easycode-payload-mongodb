@@ -4,7 +4,7 @@ Stand: 3. Oktober 2026
 
 **Entwurf für die Hetzner-/Umami-Version der Website. Die verbleibenden
 markierten Stellen betreffen noch nicht bestätigte Angaben zur Speicherung
-und zum Google-API-Projekt. Vor Veröffentlichung müssen diese Angaben
+und zum OpenAI-API-Projekt. Vor Veröffentlichung müssen diese Angaben
 mit dem tatsächlichen Betrieb übereinstimmen.**
 
 ## 1. Verantwortlicher
@@ -60,7 +60,7 @@ Für den gewählten Serverstandort in Deutschland werden die bei Hetzner
 gespeicherten Serverdaten nach der vertraglichen Zusicherung ausschließlich
 innerhalb der Europäischen Union verarbeitet. Auch die Supportleistungen
 erfolgen innerhalb der Europäischen Union. Die gesonderte Verarbeitung durch
-Google bei Nutzung des KI-Chats wird in Abschnitt 7 beschrieben.
+OpenAI bei Nutzung des KI-Chats wird in Abschnitt 7 beschrieben.
 
 Weitere Informationen: [Datenschutzhinweise von Hetzner](https://www.hetzner.com/legal/privacy-policy/).
 
@@ -191,57 +191,71 @@ erforderlichen Kontaktangaben kann ich Ihre Anfrage gegebenenfalls nicht bearbei
 
 ## 7. KI-gestützter Chat „EasyCode AI“
 
-Auf der Website können Sie einen KI-gestützten Chat nutzen, um Informationen
-über meine Leistungen, Projekte und Kontaktmöglichkeiten zu erhalten.
+**[Dieser Abschnitt beschreibt den lokal vorbereiteten OpenAI-Betrieb. Er ist
+noch nicht aktiviert oder als produktiver Betrieb bestätigt. Vor Veröffentlichung
+Verträge, EU-Konfiguration, Rechtsgrundlage und Speicherregeln nachweisen und
+diesen Bearbeitungshinweis entfernen. Bei weiterbetriebenem Gemini-Chat muss
+stattdessen dessen tatsächliche Verarbeitung beschrieben werden.]**
 
-Wenn Sie eine Nachricht absenden, werden Ihre Eingabe und der bisherige
-Gesprächskontext über meinen Server an die Gemini API von Google übermittelt,
-um eine Antwort zu erzeugen. Anbieter ist [die für Ihr API-Projekt geltende
-Google-Vertragsgesellschaft mit Anschrift ergänzen]. Die Nutzung des Chats ist
-freiwillig und unabhängig von Ihrer Zustimmung zur Umami-Nutzungsanalyse.
+Auf der Website können Sie freiwillig einen KI-Assistenten nutzen, um Informationen
+über meine Leistungen, öffentliche Projekte und Kontaktmöglichkeiten zu erhalten.
+Die Nutzung ist unabhängig von der optionalen Nutzungsanalyse. Sie können mich
+auch ohne KI-Chat über das Kontaktformular oder per E-Mail erreichen.
 
-Im Anwendungscode ist keine dauerhafte Speicherung der Gesprächsinhalte in
-meiner CMS-Datenbank vorgesehen. Der Gesprächsverlauf wird während der Nutzung
-im Arbeitsspeicher der Website im Browser gehalten und mit weiteren Nachrichten
-erneut als Kontext übertragen. Verarbeitung und Speicherung bei Google richten
-sich nach den für mein API-Projekt geltenden Vertragsbedingungen.
+Erst wenn Sie eine Nachricht absenden, übermittelt mein Server Ihre Nachricht,
+einen begrenzten bisherigen Gesprächsverlauf und ausgewählte öffentliche
+Portfolio-Inhalte an die OpenAI Responses API mit GPT-6 Luna. Anbieter ist
+[für die Organisation geltenden OpenAI-Vertragspartner mit Anschrift und
+wirksam einbezogene Datenschutzvereinbarung bestätigen]. Die Bestätigung des
+Chat-Hinweises dient der Information und ist keine Datenschutz-Einwilligung.
 
-Zur Missbrauchsbegrenzung verarbeitet meine Anwendung außerdem die durch den
-Server-Proxy übermittelte IP-Adresse und Anfragezähler im Arbeitsspeicher.
-Rechtsgrundlage hierfür ist Art. 6 Abs. 1 lit. f DSGVO und mein berechtigtes
-Interesse am Schutz der Chatfunktion vor automatisiertem Missbrauch. Die
-Anfragezähler werden nach Ablauf des Begrenzungsfensters bei einer weiteren
-Anfrage derselben IP-Adresse zurückgesetzt. Die zugehörigen IP-Einträge
-verbleiben im Arbeitsspeicher des jeweiligen Anwendungsprozesses, bis sie
-überschrieben oder mit Beendigung des Prozesses verworfen werden. Eine
-automatische zeitgesteuerte Löschung ist derzeit nicht eingerichtet.
+Im Anwendungscode erfolgt keine dauerhafte Speicherung der Gesprächsinhalte
+in meiner CMS-Datenbank. Der Verlauf wird im Browser-Arbeitsspeicher gehalten
+und bei Folgefragen begrenzt erneut übertragen. „Verlauf löschen“ oder das
+Neuladen der Seite verwirft den Verlauf dort. Das Schließen des Chats beendet
+eine laufende Antworterzeugung, behält den sichtbaren Verlauf aber für das
+Wiederöffnen innerhalb derselben Seite. Die Löschung im Browser löscht keine
+bereits beim Anbieter verarbeiteten Daten.
 
-Rechtsgrundlage für die Bearbeitung allgemeiner Chat-Anfragen ist Art. 6 Abs. 1
-lit. f DSGVO. Mein berechtigtes Interesse liegt in der Bereitstellung einer
-freiwillig nutzbaren Informationsfunktion. Soweit die Verarbeitung zur
-Beantwortung einer konkreten vorvertraglichen Anfrage erforderlich ist, kommt
-Art. 6 Abs. 1 lit. b DSGVO zur Anwendung.
+Die Anwendung fordert keine Speicherung von Antworten als abrufbaren
+Antwortzustand bei OpenAI an (API-Einstellung store=false). Nach der
+OpenAI-Dokumentation werden API-Inhalte standardmäßig nicht zum Modelltraining
+verwendet, sofern keine entsprechende Freigabe erfolgt. [Für das endgültige
+Projekt deaktivierte Datenfreigabe und konkrete Regeln für Missbrauchsüberwachung,
+Prompt-Caching, menschliche Einsicht sowie gesetzliche Ausnahmen bestätigen.
+Ohne besondere Freigabe nennt OpenAI für Missbrauchsprotokolle grundsätzlich
+bis zu 30 Tage mit Ausnahmen. Nicht als bestehende ZDR-Zusage veröffentlichen.]
 
-Bitte übermitteln Sie keine Gesundheitsdaten, Zugangsdaten oder vertraulichen
-Informationen und beschränken Sie personenbezogene Angaben auf das für Ihre
-Anfrage erforderliche Maß. Der vor der ersten Nutzung angezeigte Hinweis dient
-der Information; seine Bestätigung ist keine pauschale Einwilligung in weitere
-Verarbeitungen oder eine Verwendung zu Trainingszwecken.
+[Die freigegebene regionale Verarbeitung von Kundeninhalten im EWR und der
+Schweiz, verwendete Endpunkte sowie Ausnahmen für System-, Konto- und
+Abrechnungsdaten bestätigen. Etwaige Drittlandverarbeitung, Empfänger und
+anwendbare Übermittlungsgarantien einschließlich möglicher erforderlicher
+Zusatzprüfung konkret dokumentieren. Keine uneingeschränkte EU-only-Zusage.]
 
-Nach der veröffentlichten Dokumentation von Google werden Eingaben, zusätzlicher
-Gesprächskontext und Antworten für die Missbrauchsüberwachung 55 Tage
-aufbewahrt. Bei entsprechend auffälligen Inhalten kann eine Prüfung durch
-autorisierte Mitarbeitende erfolgen. Weitere gesetzlich erforderliche
-Verarbeitungen richten sich nach den geltenden Bedingungen.
+Zur Missbrauchsbegrenzung verarbeitet meine Anwendung die vom vertrauenswürdigen
+Server-Proxy übermittelte IP-Adresse und daraus gebildete pseudonymisierte
+Anfragezähler. Die IP-Adresse wird in diesen Zählern nicht im Klartext gespeichert.
+Der nur im Arbeitsspeicher gehaltene Zufallsschlüssel und die Zähler werden bei
+Prozessende verworfen. Zähler verfallen nach einer Minute; eine regelmäßige
+Bereinigung alle 15 Sekunden entfernt abgelaufene Einträge auch ohne weitere
+Chat-Anfrage. Bei verzögerter Programmausführung kann die Bereinigung später
+erfolgen. Getrennte Serverprotokolle richten sich nach Abschnitt 2.
+Rechtsgrundlage des Missbrauchsschutzes ist Art. 6 Abs. 1 lit. f DSGVO.
 
-Bei der Verarbeitung durch Google können Daten auch außerhalb des Europäischen
-Wirtschaftsraums verarbeitet werden. [Für das tatsächlich verwendete API-Projekt
-anwendbare Datenschutzvereinbarung und Garantien für Drittlandübermittlungen
-bestätigen und benennen.]
+[Rechtsgrundlage für die Inhaltsverarbeitung nach dokumentierter Prüfung
+festlegen. Der bisherige Ansatz für allgemeine Auskünfte ist Art. 6 Abs. 1
+lit. f DSGVO mit dem Interesse an einer freiwilligen Informationsfunktion.
+Interesse, Erforderlichkeit und Abwägung müssen für diesen Betrieb belegt sein.
+Art. 6 Abs. 1 lit. b DSGVO kommt nur bei tatsächlich erforderlicher Verarbeitung
+zur konkreten vorvertraglichen Anfrage in Betracht.]
 
-Weitere Informationen: [Gemini-API-Bedingungen](https://ai.google.dev/gemini-api/terms),
-[Missbrauchsüberwachung](https://ai.google.dev/gemini-api/docs/usage-policies)
-und [Google-Datenschutzerklärung](https://policies.google.com/privacy).
+Bitte geben Sie keine Gesundheitsdaten, Zugangsdaten, vertraulichen Informationen
+oder personenbezogenen Daten Dritter ein. Beschränken Sie Ihre Angaben auf das
+für die Frage erforderliche Maß. Der KI-Assistent kann fehlerhafte Antworten
+liefern und keine verbindlichen Angebote oder Zusagen machen.
+
+Weitere Informationen: [OpenAI-Datenkontrollen](https://developers.openai.com/api/docs/guides/your-data)
+und [OpenAI-Datenschutzvereinbarung](https://openai.com/policies/data-processing-addendum/).
 
 ## 8. Lokal bereitgestellte Schriftarten und externe Links
 

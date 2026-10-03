@@ -1,219 +1,238 @@
-// app/api/ai-chat/route.ts
-import { GoogleGenAI } from '@google/genai'
-import { generateSystemInstruction } from '@/constants/ai-systemprompt'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import { createRequestLimiter, hasAllowedOrigin, readLimitedJSON, RequestBodyError } from '@/utilities/publicRequestLimits'
+import { generateSystemInstruction } from '@/constants/ai-systemprompt'
+import { readLimitedJSON, RequestBodyError } from '@/utilities/publicRequestLimits'
+import { validateChatInput, type ChatEvent } from '@/utilities/chatProtocol'
+import { createChatLimiter } from '@/utilities/chatLimits'
+import { readOpenAIText } from '@/utilities/openAIChatStream'
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY!,
-})
+const limiter = createChatLimiter()
+const headers = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }
+const chatConfigured = () =>
+  process.env.AI_CHAT_ENABLED === 'true' &&
+  process.env.OPENAI_EU_APPROVED === 'true' &&
+  Boolean(process.env.OPENAI_API_KEY) &&
+  Boolean(process.env.PUBLIC_TRUSTED_CLIENT_IP_HEADER)
 
-const allowChat = createRequestLimiter(30, 5)
-const MAX_MESSAGE_LENGTH = 1000
+export function GET() {
+  let validOrigin = false
+  try {
+    validOrigin = Boolean(new URL(process.env.NEXT_PUBLIC_SERVER_URL!).origin)
+  } catch {
+    /* Unconfigured. */
+  }
+  return Response.json({ available: validOrigin && chatConfigured() }, { headers })
+}
+const fail = (error: string, status: number, retryAfter?: number) =>
+  Response.json(
+    { error },
+    {
+      status,
+      headers: { ...headers, ...(retryAfter ? { 'Retry-After': String(retryAfter) } : {}) },
+    },
+  )
+
+async function untilAbort<T>(operation: Promise<T>, signal: AbortSignal): Promise<T> {
+  if (signal.aborted) throw new Error('Aborted')
+  let onAbort: () => void = () => {}
+  try {
+    return await Promise.race([
+      operation,
+      new Promise<never>((_, reject) => {
+        onAbort = () => reject(new Error('Aborted'))
+        signal.addEventListener('abort', onAbort, { once: true })
+      }),
+    ])
+  } finally {
+    signal.removeEventListener('abort', onAbort)
+  }
+}
 
 export async function POST(req: Request) {
+  let expectedOrigin: string
   try {
-    if (!hasAllowedOrigin(req)) return Response.json({ error: 'Origin not allowed' }, { status: 403 })
-    if (!allowChat(req.headers)) return Response.json({ error: 'Too many requests' }, { status: 429, headers: { 'Retry-After': '60' } })
-    let body: unknown
+    expectedOrigin = new URL(process.env.NEXT_PUBLIC_SERVER_URL!).origin
+  } catch {
+    return fail('Der KI-Chat ist vorübergehend nicht verfügbar.', 503)
+  }
+  if (
+    req.headers.get('origin') !== expectedOrigin ||
+    req.headers.get('sec-fetch-site') === 'cross-site'
+  )
+    return fail('Diese Anfrage ist nicht erlaubt.', 403)
+  // Operational switches are not proof of contractual approval.
+  if (!chatConfigured())
+    return fail('Der KI-Chat ist noch nicht verfügbar. Bitte nutze das Kontaktformular.', 503)
+  if (req.headers.get('content-type')?.split(';')[0].trim().toLowerCase() !== 'application/json')
+    return fail('Bitte JSON senden.', 415)
+  const slot = limiter.acquire(req.headers)
+  if ('retryAfter' in slot)
+    return fail('Zu viele Anfragen. Bitte warte und versuche es erneut.', 429, slot.retryAfter)
+  const abort = new AbortController()
+  let timedOut = false
+  const timeout = setTimeout(() => {
+    timedOut = true
+    abort.abort()
+    slot.release()
+  }, 45000)
+  const signal = AbortSignal.any([req.signal, abort.signal])
+  const cleanup = () => {
+    clearTimeout(timeout)
+    slot.release()
+    signal.removeEventListener('abort', cleanup)
+  }
+  signal.addEventListener('abort', cleanup, { once: true })
+  try {
+    let input: ReturnType<typeof validateChatInput>
     try {
-      body = await readLimitedJSON(req)
+      input = validateChatInput(await readLimitedJSON(new Request(req, { signal }), 16384))
     } catch (error) {
-      return Response.json({ error: error instanceof RequestBodyError ? error.message : 'Invalid JSON' }, { status: error instanceof RequestBodyError ? error.status : 400 })
-    }
-    if (!body || typeof body !== 'object')
-      return Response.json({ error: 'Invalid request' }, { status: 400 })
-    const { message, history, _hp } = body as {
-      message?: string
-      history?: Array<{
-        role: 'user' | 'model'
-        text: string
-        thoughtSignature?: string
-      }>
-      _hp?: string // Honeypot
-    }
-
-    // 1. Bot-Schutz (Honeypot)
-    if (_hp) {
-      return new Response(JSON.stringify({ error: 'Bot detected' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    }
-
-    // 3. Validierung der Nachricht
-    if (!message || typeof message !== 'string' || !message.trim()) {
-      return new Response(JSON.stringify({ error: 'Message is required' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    }
-
-    if (message.length > MAX_MESSAGE_LENGTH) {
-      return new Response(
-        JSON.stringify({ error: `Nachricht zu lang (max. ${MAX_MESSAGE_LENGTH} Zeichen)` }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        },
+      cleanup()
+      return fail(
+        error instanceof RequestBodyError
+          ? error.message
+          : timedOut
+            ? 'Die Anfrage hat zu lange gedauert.'
+            : error instanceof Error
+              ? error.message
+              : 'Ungültige Anfrage.',
+        timedOut ? 408 : error instanceof RequestBodyError ? error.status : 400,
       )
     }
-
-    if (
-      history !== undefined &&
-      (!Array.isArray(history) ||
-        history.length > 20 ||
-        history.some(
-          (item) =>
-            !item ||
-            !['user', 'model'].includes(item.role) ||
-            typeof item.text !== 'string' ||
-            item.text.length > MAX_MESSAGE_LENGTH ||
-            (item.thoughtSignature !== undefined &&
-              (typeof item.thoughtSignature !== 'string' || item.thoughtSignature.length > 16384)),
-        ))
-    ) {
-      return Response.json({ error: 'Invalid history' }, { status: 400 })
-    }
-
-    // 1. Payload initialisieren
-    const payload = await getPayload({ config: configPromise })
-
-    // 2. Projekte aus der DB holen
-    // Wir holen nur published Projekte und selektieren nur relevante Felder, um Token zu sparen
-    const { docs: projects } = await payload.find({
-      collection: 'projects',
-      overrideAccess: false,
-      draft: false,
-      where: {
-        _status: {
-          equals: 'published',
+    const payload = await untilAbort(getPayload({ config: configPromise }), signal)
+    const { docs: projects } = await untilAbort(
+      payload.find({
+        collection: 'projects',
+        overrideAccess: false,
+        draft: false,
+        where: { _status: { equals: 'published' } },
+        // pagination:false ignores limit in Payload; bound the actual database query.
+        pagination: true,
+        limit: 12,
+        sort: '-updatedAt',
+        depth: 1,
+        select: {
+          title: true,
+          shortDescription: true,
+          technologies: true,
+          slug: true,
+          client: true,
         },
-      },
-      pagination: false,
-      limit: 20, // Limitierung für Kontext-Größe
-      depth: 1, // Damit wir Tech-Stack Namen bekommen
-      select: {
-        title: true,
-        shortDescription: true,
-        technologies: true,
-        slug: true,
-        client: true,
-      },
-    })
-
-    // 3. Projekte als String formatieren
-    const projectsContext = projects
-      .map((p) => {
-        // Tech Stack auflösen (falls vorhanden)
-        const techStack = p.technologies?.map((t) => t.name).join(', ') || 'N/A'
-
-        // Client Name auflösen
-        let clientName = 'Kunde'
-        if (p.client && typeof p.client === 'object' && 'companyName' in p.client) {
-          clientName = p.client.companyName
-        }
-
-        // Optional: Link generieren, damit die KI drauf verweisen kann
-        // Hinweis: Hierfür müsste man den Client-Slug kennen, wenn deine URL so aufgebaut ist.
-        // Wenn client depth=1 ist, hast du Zugriff auf p.client.slug
-        let projectUrl = ''
-        if (p.client && typeof p.client === 'object' && 'slug' in p.client) {
-          projectUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/projekte/${p.client.slug}/${p.slug}`
-        }
-
-        return `- **${p.title}** (für ${clientName}):
-  Beschreibung: ${p.shortDescription}
-  Tech Stack: ${techStack}
-  ${projectUrl ? `Link: ${projectUrl}` : ''}`
+      }),
+      signal,
+    )
+    let contextSize = 0
+    const projectContext = projects
+      .flatMap((project) => {
+        const client =
+          project.client && typeof project.client === 'object' ? project.client : undefined
+        const slug = project.slug
+        if (!client?.slug || !slug) return []
+        const row = JSON.stringify({
+          title: project.title?.slice(0, 150),
+          description: project.shortDescription?.slice(0, 400),
+          technologies: project.technologies?.slice(0, 8).map((tech) => tech.name?.slice(0, 60)),
+          url: `${expectedOrigin}/projekte/${encodeURIComponent(client.slug)}/${encodeURIComponent(slug)}`,
+        })
+        if (contextSize + row.length > 6000) return []
+        contextSize += row.length
+        return [row]
       })
-      .join('\n\n')
-
-    // Fallback, falls keine Projekte da sind
-    const finalProjectContext =
-      projectsContext.length > 0 ? projectsContext : 'Keine öffentlichen Projekte gelistet.'
-
-    // 4. Chat Session mit dynamischem Prompt starten
-    // Konvertiere History für das SDK
-    const convertedHistory =
-      history?.map((h) => ({
-        role: h.role,
-        parts: [
-          { text: h.text },
-          ...(h.thoughtSignature ? [{ thoughtSignature: h.thoughtSignature }] : []),
-        ],
-      })) || []
-
-    const abort = new AbortController()
-    const signal = AbortSignal.any([req.signal, abort.signal, AbortSignal.timeout(60000)])
-    const chat = ai.chats.create({
-      model: 'gemini-3.1-flash-lite-preview',
-      history: convertedHistory,
-      config: {
-        systemInstruction: generateSystemInstruction(finalProjectContext),
-        abortSignal: signal,
-        httpOptions: { timeout: 30000 },
-        maxOutputTokens: 2048,
+      .join('\n')
+    if (signal.aborted) throw new Error('Aborted')
+    const upstream = await fetch('https://eu.api.openai.com/v1/responses', {
+      method: 'POST',
+      signal,
+      cache: 'no-store',
+      redirect: 'error',
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        model: 'gpt-6-luna',
+        store: false,
+        stream: true,
+        reasoning: { effort: 'none' },
+        text: { verbosity: 'low' },
+        max_output_tokens: 800,
+        instructions: generateSystemInstruction(projectContext),
+        input: [
+          ...input.history.map((turn) => ({
+            role: turn.role === 'model' ? 'assistant' : 'user',
+            content: turn.text,
+          })),
+          { role: 'user', content: input.message },
+        ],
+      }),
     })
-
-    // 5. Streaming
-    const geminiStream = await chat.sendMessageStream({ message })
-    const iterator = geminiStream[Symbol.asyncIterator]()
+    if (
+      !upstream.ok ||
+      !upstream.body ||
+      !upstream.headers.get('content-type')?.includes('text/event-stream')
+    ) {
+      await upstream.body?.cancel()
+      abort.abort()
+      cleanup()
+      // Never log provider response bodies, prompts, exception objects or headers.
+      return fail(
+        'Der KI-Dienst ist vorübergehend nicht verfügbar. Bitte versuche es später erneut.',
+        upstream.status === 429 ? 429 : 502,
+        upstream.status === 429 ? 60 : undefined,
+      )
+    }
+    const iterator = readOpenAIText(upstream.body)
+    const encoder = new TextEncoder()
     let cancelled = false
-    let thoughtSignature = ''
-    const stream = new ReadableStream({
+    let finished = false
+    const stream = new ReadableStream<Uint8Array>({
       async pull(controller) {
-        const encoder = new TextEncoder()
+        if (finished) return
+        const emit = (event: ChatEvent) =>
+          controller.enqueue(encoder.encode(`${JSON.stringify(event)}\n`))
         try {
-          if (signal.aborted) { controller.close(); return }
-          const { value: chunk, done } = await iterator.next()
+          const next = await iterator.next()
           if (cancelled) return
-          if (done) {
-            if (thoughtSignature) controller.enqueue(encoder.encode(`\n__THOUGHT_SIG__:${thoughtSignature}`))
+          if (next.done) {
+            finished = true
+            emit({ type: 'done' })
             controller.close()
-            return
+            cleanup()
+          } else emit({ type: 'delta', text: next.value })
+        } catch {
+          if (!cancelled) {
+            emit({
+              type: 'error',
+              message: 'Die Antwort wurde unterbrochen. Bitte versuche es erneut.',
+            })
+            controller.close()
           }
-            const text = chunk.text ?? ''
-            if (text) {
-              controller.enqueue(encoder.encode(text))
-            }
-
-            // Suche nach Thought Signature im Chunk
-            const thoughtPart = chunk.candidates?.[0]?.content?.parts?.find(
-              (p) => p.thoughtSignature,
-            )
-            if (thoughtPart) {
-              thoughtSignature = thoughtPart.thoughtSignature?.slice(0, 16384) || ''
-            }
-        } catch (err) {
-          if (cancelled || signal.aborted) { if (!cancelled) controller.close(); return }
-          console.error('AI Stream Error:', err)
-          controller.error(err)
+          finished = true
+          abort.abort()
+          cleanup()
         }
       },
       cancel() {
         cancelled = true
+        finished = true
         abort.abort()
-        void iterator.return?.(undefined).catch(() => {})
+        cleanup()
+        void iterator.return(undefined).catch(() => {})
       },
     })
-
     return new Response(stream, {
-      status: 200,
       headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Cache-Control': 'no-store',
-        'X-Content-Type-Options': 'nosniff',
+        ...headers,
+        'Content-Type': 'application/x-ndjson; charset=utf-8',
+        'X-Accel-Buffering': 'no',
       },
     })
-  } catch (error) {
-    if (req.signal.aborted) return new Response(null, { status: 499 })
-    console.error('AI Route Error:', error)
-    return new Response(JSON.stringify({ error: 'Interner Fehler beim AI-Endpoint' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    })
+  } catch {
+    abort.abort()
+    cleanup()
+    return fail(
+      'Der KI-Chat ist vorübergehend nicht verfügbar. Bitte versuche es später erneut.',
+      timedOut ? 504 : 502,
+    )
   }
 }

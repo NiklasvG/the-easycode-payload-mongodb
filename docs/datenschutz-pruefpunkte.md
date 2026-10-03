@@ -1,6 +1,26 @@
 # Prüfpunkte zum Datenschutzerklärungsentwurf
 
-Stand: 3. Oktober 2026. Belege und Fundstellen für die verbleibenden Angaben
+Stand: 3. Oktober 2026.
+
+## Aktualisierung: geplanter Wechsel auf OpenAI
+
+Die bisherigen Gemini-Angaben unten sind historische Prüfergebnisse zum vorherigen
+Code und kein Nachweis für den neuen Betrieb. Abschnitt 7 des Website-Entwurfs
+wurde auf den noch deaktivierten OpenAI-Betrieb umgestellt. Neue Prüfpunkte,
+Account-Bestätigungen, Datenfluss, VVT- und Interessenabwägungsentwurf stehen in
+[ai-chat-openai.md](ai-chat-openai.md).
+
+Sales-Freigabe für EU/ZDR oder MAM, DPA, Retention-Zusatz, endgültiges API-Projekt,
+Abrechnung und Proxy-IP-Konfiguration stehen aus. Sharing und API-Logging sind
+nach Betreiberbestätigung deaktiviert; MFA/Passkey und alleiniger Owner-Zugriff
+sind bestätigt. Keine rechtliche Freigabe oder erfolgtes Deployment behaupten.
+
+Die alte Beschreibung einer nicht bereinigten Chat-IP-Map gilt für den neuen
+Chat nicht: Er verwendet pseudonymisierte IP-Zähler mit Ablauf und regelmäßigem
+Sweep. Separate Protokolle und deren Löschregeln bleiben zu klären.
+
+## Bisheriger Prüfstand
+ Belege und Fundstellen für die verbleibenden Angaben
 stehen in [datenschutz-offene-angaben.md](datenschutz-offene-angaben.md).
 
 Der Entwurf beschreibt den vorbereiteten `staging`-Stand auf Hetzner mit Umami.

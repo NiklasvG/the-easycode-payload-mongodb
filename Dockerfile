@@ -48,7 +48,7 @@ RUN --mount=type=secret,id=MONGODB_URI,env=MONGODB_URI,required=true \
     done \
     && case "$NEXT_BUNDLER" in webpack|turbopack) ;; *) \
       echo 'Invalid NEXT_BUNDLER: use webpack or turbopack.' >&2; exit 1 ;; esac \
-    && GEMINI_API_KEY=build-only-key-not-used-at-runtime \
+    && AI_CHAT_ENABLED=false \
     EMAIL_TRANSPORT=json \
     SMTP_PORT=587 \
     pnpm exec next build --${NEXT_BUNDLER}

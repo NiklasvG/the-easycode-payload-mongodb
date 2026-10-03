@@ -15,7 +15,7 @@ for (const bundler of ['webpack', 'turbopack']) {
       const name = `${volume}-${run}`
       docker('create', '--name', name, '--network', 'none', '--mount', `type=volume,src=${volume},dst=/app/.next/cache`,
         '-e', 'MONGODB_URI=mongodb://127.0.0.1:27017/build-only', '-e', 'PAYLOAD_SECRET=build-only-secret-not-used-at-runtime',
-        '-e', 'GEMINI_API_KEY=build-only-key', '-e', 'EMAIL_TRANSPORT=json', '-e', 'SMTP_PORT=587',
+        '-e', 'AI_CHAT_ENABLED=false', '-e', 'EMAIL_TRANSPORT=json', '-e', 'SMTP_PORT=587',
         '-e', 'NEXT_PUBLIC_SERVER_URL=http://localhost:3000', '-e', 'APP_ENV=staging', image,
         'pnpm', 'exec', 'next', 'build', `--${bundler}`)
       let peakMemoryMiB = 0

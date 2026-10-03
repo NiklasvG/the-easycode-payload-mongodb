@@ -48,7 +48,10 @@ SMTP_HOST=YOUR_SMTP_HOST
 SMTP_PORT=587
 SMTP_USER=YOUR_SMTP_USER
 SMTP_PASS=YOUR_SMTP_PASSWORD
-GEMINI_API_KEY=YOUR_GEMINI_KEY
+AI_CHAT_ENABLED=false
+OPENAI_EU_APPROVED=false
+OPENAI_API_KEY=
+PUBLIC_TRUSTED_CLIENT_IP_HEADER=
 ```
 
 Keep the existing `PAYLOAD_SECRET` when transferring the current installation.
@@ -84,7 +87,7 @@ keep the runtime URI for the application container. Both must target the same CM
 The build reads published CMS content and prerenders complete pages with ISR.
 Existing CMS hooks invalidate pages after publication, withdrawal, deletion and
 changes to related content. Draft previews bypass the public page cache.
-SMTP and Gemini still use non-delivering build placeholders.
+SMTP uses non-delivering build placeholders. OpenAI is initialized only for enabled runtime requests; no build key is needed. See [AI chat setup](ai-chat-openai.md) before enabling the chat.
 
 Force the builder stage to run on each deployment that must reread CMS content.
 For a custom Docker command use `--no-cache-filter builder` with `docker buildx
