@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { expect, it } from 'vitest'
 import { generateMeta } from '@/utilities/generateMeta'
 import { formatProjectDateRange } from '@/utilities/projectPresentation'

@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { PayloadRequest } from 'payload'
 import type { Page, Post } from '@/payload-types'

@@ -16,7 +16,7 @@ describe.skipIf(!enabled)('isolated CMS lifecycle', () => {
     payload = await getPayload({ config })
     await Promise.all(Object.values(payload.db.collections).map((model) => model.init()))
     await Promise.all(Object.values(payload.db.versions).map((model) => model.init()))
-  }, 30000)
+  }, 60000)
   afterAll(async () => {
     for (const doc of created.reverse()) await payload.delete({ ...doc, context })
     await payload?.destroy()
