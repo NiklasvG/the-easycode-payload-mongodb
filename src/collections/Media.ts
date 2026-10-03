@@ -1,3 +1,4 @@
+import { validateMediaUpload } from '@/hooks/validateMediaUpload'
 import { revalidateRelatedContent } from '@/hooks/revalidateRelatedContent'
 import type { CollectionConfig } from 'payload'
 
@@ -20,7 +21,7 @@ export const Media: CollectionConfig = {
     read: anyone,
     update: authenticated,
   },
-  hooks: { afterChange: [revalidateRelatedContent], afterDelete: [revalidateRelatedContent] },
+  hooks: { beforeOperation: [validateMediaUpload], afterChange: [revalidateRelatedContent], afterDelete: [revalidateRelatedContent] },
   fields: [
     {
       name: 'alt',
@@ -38,6 +39,8 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
+    allowRestrictedFileTypes: false,
+    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif', 'video/mp4', 'video/webm', 'application/pdf'],
     // Payload serves these files through /api/media/file/<filename>.
     // Mount persistent storage at this path in Coolify.
     staticDir: path.resolve(process.cwd(), process.env.PAYLOAD_UPLOAD_DIR || 'media'),
@@ -78,3 +81,4 @@ export const Media: CollectionConfig = {
     ],
   },
 }
+

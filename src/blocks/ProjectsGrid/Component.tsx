@@ -1,6 +1,6 @@
 import React from 'react'
 import configPromise from '@payload-config'
-import { getPayload } from 'payload'
+import { getPayload, type Where } from 'payload'
 
 import type { ProjectsGridBlock, Project } from '@/payload-types'
 import MasonryGrid from '@/components/layout/MasonryGrid'
@@ -56,20 +56,15 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 }) => {
 	const payload = await getPayload({ config: configPromise })
 
-	const query: any = {
-		collection: 'projects',
+	const where: Where = projectTypes?.length ? { projectType: { in: projectTypes } } : {}
+	const query = {
+		collection: 'projects' as const,
+        overrideAccess: false,
+        draft: false,
+        where,
 		limit: projectsLimit ?? 4,
 		sort: '-startDate',
 		depth: 1
-	}
-
-	// 🔽 Wenn im Block Kategorien ausgewählt sind -> nach projectType filtern
-	if (projectTypes && Array.isArray(projectTypes) && projectTypes.length > 0) {
-		query.where = {
-			projectType: {
-				in: projectTypes
-			}
-		}
 	}
 
 	const { docs } = await payload.find(query)
@@ -160,3 +155,4 @@ export const ProjectsGridBlockComponent: React.FC<Props> = async ({
 		</section>
 	)
 }
+

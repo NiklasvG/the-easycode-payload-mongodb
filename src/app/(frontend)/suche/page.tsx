@@ -145,6 +145,7 @@ export default async function Page({
 	// ─────────────────────────────────────────────────────────────
 	const projectsSearch = await payload.find({
 		collection: 'search',
+        overrideAccess: false,
 		depth: 2,
 		limit: 4,
 		pagination: false,
@@ -202,6 +203,7 @@ export default async function Page({
 	// ─────────────────────────────────────────────────────────────
 	const pagesSearch = await payload.find({
 		collection: 'search',
+        overrideAccess: false,
 		depth: 0,
 		limit: 6,
 		pagination: false,
@@ -214,7 +216,7 @@ export default async function Page({
 		where: pagesWhere
 	})
 
-	console.log('pagesSearch', pagesSearch)
+
 
 	const pageDocs = (pagesSearch.docs ?? []) as SearchDoc[]
 
@@ -266,3 +268,4 @@ export function generateMetadata(): Metadata {
 		title: `The-EasyCode | Suche`
 	}
 }
+

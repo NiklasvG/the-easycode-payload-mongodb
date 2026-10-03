@@ -1,3 +1,4 @@
+import { authenticated } from '@/access/authenticated'
 import { revalidateRelatedContent } from '@/hooks/revalidateRelatedContent'
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
@@ -10,9 +11,9 @@ export const Clients: CollectionConfig<'clients'> = {
   },
   access: {
     read: () => true,
-    create: () => true,
-    update: () => true,
-    delete: () => true,
+    create: authenticated,
+    update: authenticated,
+    delete: authenticated,
   },
   hooks: { afterChange: [revalidateRelatedContent], afterDelete: [revalidateRelatedContent] },
   fields: [
@@ -78,3 +79,4 @@ export const Clients: CollectionConfig<'clients'> = {
     contacts: true,
   },
 }
+

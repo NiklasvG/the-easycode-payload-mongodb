@@ -131,6 +131,8 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
 			<Button
 				className="ml-auto lg:hidden px-3 relative"
 				onClick={toggleNavigation}
+                aria-label={openNavigation ? 'Menü schließen' : 'Menü öffnen'}
+                aria-expanded={openNavigation}
 				variant="ghost"
 			>
 				<MenuSvg openNavigation={openNavigationDelay} />
@@ -170,6 +172,8 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
 					<Button
 						className="ml-auto lg:hidden px-3 relative"
 						onClick={toggleNavigation}
+                aria-label={openNavigation ? 'Menü schließen' : 'Menü öffnen'}
+                aria-expanded={openNavigation}
 						variant="ghost"
 					>
 						<MenuSvg openNavigation={openNavigationDelay} />
@@ -253,3 +257,4 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
 		</>
 	)
 }
+
