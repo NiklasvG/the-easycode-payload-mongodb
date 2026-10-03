@@ -113,22 +113,15 @@ Zugangsschutz vorgeschaltet ist. Für Tests keine vertraulichen Inhalte eingeben
 In Produktion wird `global` abgewiesen. Nach der EU-Freigabe ausdrücklich
 `OPENAI_CHAT_REGION=eu` und `OPENAI_EU_APPROVED=true` setzen. Es gibt keinen Fallback.
 
-### Temporärer Proxy-Test auf Staging
+### Abgeschlossene Proxy-Prüfung
 
-`GET /api/ai-chat/proxy-check` ist standardmäßig deaktiviert (404). Nur bei
-`APP_ENV=staging`, einem separaten `CHAT_PROXY_DIAGNOSTIC_TOKEN` mit mindestens
-32 Zeichen und `CHAT_PROXY_DIAGNOSTIC_UNTIL` als zukünftiger ISO-Zeitpunkt innerhalb
-der nächsten Stunde ist die Diagnose erreichbar. Authentifizierung erfolgt über
-`X-Proxy-Diagnostic-Token`. Keine OpenAI-/CMS-Aufrufe, keine IP-Inhaltslogs, keine
-Ausgabe der Roh-IP. Rückgabe: konfigurierter Header, gültige IP vorhanden und ob
-eine der Testadressen `192.0.2.123` / `2001:db8::123` übernommen wurde.
-
-Zunächst normal, danach mit gefälschten `X-Real-IP`, `X-Forwarded-For` und
-`CF-Connecting-IP` testen. Erwartet: `validClientIp=true`,
-`testAddressAccepted=false`. Das prüft diese Testfälle, keine beliebige
-Proxy-/Middleware-Konfiguration. Host-Portfreigaben und weitere Zugriffswege
-separat prüfen. Danach beide Diagnosevariablen entfernen und neu deployen.
-Keine Diagnose-Header in Proxy-/APM-Logs erfassen. Flags für den Chat bleiben false.
+Am 3. Oktober 2026 wurden nach Betreiberangabe auf Staging eine normale Anfrage
+und eine Anfrage mit gefälschten IP-Headern vom Server-Terminal aus geprüft.
+Beide lieferten eine gültige IP über `x-real-ip`; die Testadresse wurde nicht
+übernommen. Docker veröffentlichte den Anwendungsport 3000 nicht am Host.
+Dies bestätigt die getesteten Fälle, keine beliebige Proxy-Konfiguration.
+Die temporäre Diagnoseroute und ihre Variablen wurden anschließend aus dem Code
+entfernt. Nach Änderungen am Proxy oder Zugriffsweg erneut prüfen.
 
 ### Freigabe und Live-Test
 

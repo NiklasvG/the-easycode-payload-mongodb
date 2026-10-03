@@ -30,7 +30,11 @@ export class RequestBodyError extends Error {
   }
 }
 
-export async function readLimitedJSON(request: Request, maxBytes = 65536): Promise<unknown> {
+export async function readLimitedJSON(
+  request: Request,
+  maxBytes = 65536,
+  signal: AbortSignal = request.signal,
+): Promise<unknown> {
   const length = request.headers.get('content-length')
   if (length && (!/^\d+$/.test(length) || Number(length) > maxBytes))
     throw new RequestBodyError(413, 'Request too large')
@@ -39,13 +43,17 @@ export async function readLimitedJSON(request: Request, maxBytes = 65536): Promi
   const cancel = () => {
     void reader.cancel().catch(() => {})
   }
-  request.signal.addEventListener('abort', cancel, { once: true })
+  signal.addEventListener('abort', cancel, { once: true })
   const chunks: Uint8Array[] = []
   let size = 0
   try {
-    if (request.signal.aborted) throw new RequestBodyError(408, 'Request aborted')
+    if (signal.aborted) {
+      cancel()
+      throw new RequestBodyError(408, 'Request aborted')
+    }
     while (true) {
       const { value, done } = await reader.read()
+      if (signal.aborted) throw new RequestBodyError(408, 'Request aborted')
       if (done) break
       size += value.byteLength
       if (size > maxBytes) {
@@ -59,7 +67,7 @@ export async function readLimitedJSON(request: Request, maxBytes = 65536): Promi
     if (error instanceof RequestBodyError) throw error
     throw new RequestBodyError(400, 'Invalid JSON')
   } finally {
-    request.signal.removeEventListener('abort', cancel)
+    signal.removeEventListener('abort', cancel)
     reader.releaseLock()
   }
 }

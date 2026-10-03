@@ -93,7 +93,8 @@ export async function POST(req: Request) {
   try {
     let input: ReturnType<typeof validateChatInput>
     try {
-      input = validateChatInput(await readLimitedJSON(new Request(req, { signal }), 16384))
+      // Next wraps requests in a Proxy; reconstructing them breaks native private-state checks.
+      input = validateChatInput(await readLimitedJSON(req, 16384, signal))
     } catch (error) {
       cleanup()
       return fail(

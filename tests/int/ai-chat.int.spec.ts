@@ -90,6 +90,17 @@ describe('OpenAI chat region and request contract', () => {
     expect((await POST(request(input, { 'content-type': 'text/plain' }))).status).toBe(415)
     expect(fetch).not.toHaveBeenCalled()
   })
+  it('reads framework-wrapped requests without reconstructing their private state', async () => {
+    const original = request(input)
+    const wrapped = new Proxy(original, {
+      get(target, property) {
+        return Reflect.get(target, property, target)
+      },
+    })
+    const response = await POST(wrapped)
+    expect(response.status).toBe(200)
+    expect(await response.text()).toContain('Hallo Welt')
+  })
   it('validates message, notice, roles and total history before querying CMS or provider', async () => {
     for (const data of [
       { message: 'hello' },
