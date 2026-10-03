@@ -8,9 +8,17 @@ import { readOpenAIText } from '@/utilities/openAIChatStream'
 
 const limiter = createChatLimiter()
 const headers = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }
+const providerEndpoint = () => {
+  const region = process.env.OPENAI_CHAT_REGION || 'eu'
+  if (region === 'global' && process.env.APP_ENV === 'staging')
+    return 'https://api.openai.com/v1/responses'
+  if (region === 'eu' && process.env.OPENAI_EU_APPROVED === 'true')
+    return 'https://eu.api.openai.com/v1/responses'
+  return null
+}
 const chatConfigured = () =>
   process.env.AI_CHAT_ENABLED === 'true' &&
-  process.env.OPENAI_EU_APPROVED === 'true' &&
+  Boolean(providerEndpoint()) &&
   Boolean(process.env.OPENAI_API_KEY) &&
   Boolean(process.env.PUBLIC_TRUSTED_CLIENT_IP_HEADER)
 
@@ -140,7 +148,9 @@ export async function POST(req: Request) {
       })
       .join('\n')
     if (signal.aborted) throw new Error('Aborted')
-    const upstream = await fetch('https://eu.api.openai.com/v1/responses', {
+    const endpoint = providerEndpoint()
+    if (!endpoint) throw new Error('Provider unavailable')
+    const upstream = await fetch(endpoint, {
       method: 'POST',
       signal,
       cache: 'no-store',

@@ -6,7 +6,8 @@ Stand: 3. Oktober 2026. Lokale Vorbereitung, nicht deployed und keine rechtliche
 
 Der Chat wurde von Gemini auf GPT-6 Luna über die OpenAI Responses API vorbereitet.
 Es erfolgt kein automatischer Rückfall auf Gemini oder einen globalen OpenAI-Endpunkt.
-Ohne explizite Aktivierung, bestätigte EU-Voraussetzungen, API-Key und Proxy-IP-Header
+Der explizite globale Staging-Modus ist unten beschrieben.
+Ohne explizite Aktivierung, passende Region-Konfiguration, API-Key und Proxy-IP-Header
 antwortet die Route mit 503, ohne CMS-Inhalte abzurufen oder OpenAI aufzurufen.
 
 Betreiberbestätigungen aus diesem Chat:
@@ -87,6 +88,30 @@ personenbezogen sein; ihre zulässige Verwendung als LLM-Kontext prüfen.
   Diese externen Einstellungen werden durch lokale Codeprüfung nicht bestätigt.
 
 ## Aktivierung nach Freigabe
+
+### Globaler Staging-Test ohne EU-Freigabe
+
+Auf Betreiberwunsch kann der reguläre Website-Chat auf Staging über den globalen
+OpenAI-Endpunkt getestet werden. Nur zur Laufzeit setzen:
+
+```dotenv
+APP_ENV=staging
+OPENAI_CHAT_REGION=global
+AI_CHAT_ENABLED=true
+OPENAI_EU_APPROVED=false
+OPENAI_API_KEY=YOUR_PROJECT_KEY
+PUBLIC_TRUSTED_CLIENT_IP_HEADER=x-real-ip
+```
+
+`NEXT_PUBLIC_SERVER_URL` muss weiterhin die Stage-URL sein (Build und Runtime).
+Dieser Modus verwendet `https://api.openai.com/v1/responses` und benötigt keine
+EU-Freigabe. Er überträgt den normalen Systemprompt, öffentlichen Projektkontext
+und eingegebenen Gesprächsverlauf; alle Größen-, Rate- und Speicherbegrenzungen
+gelten weiter. Die globale Verarbeitung ist keine EU-Verarbeitungszusage.
+Staging ist über eine Domain ebenfalls öffentlich erreichbar, solange kein
+Zugangsschutz vorgeschaltet ist. Für Tests keine vertraulichen Inhalte eingeben.
+In Produktion wird `global` abgewiesen. Nach der EU-Freigabe ausdrücklich
+`OPENAI_CHAT_REGION=eu` und `OPENAI_EU_APPROVED=true` setzen. Es gibt keinen Fallback.
 
 ### Temporärer Proxy-Test auf Staging
 

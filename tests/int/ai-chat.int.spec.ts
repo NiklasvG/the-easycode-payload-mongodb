@@ -28,12 +28,14 @@ const successful = () =>
     { type: 'response.completed', response: { status: 'completed' } },
   ])
 
-describe('EU-only OpenAI chat contract', () => {
+describe('OpenAI chat region and request contract', () => {
   beforeEach(async () => {
     vi.resetModules()
     vi.clearAllMocks()
     for (const [key, value] of Object.entries({
       AI_CHAT_ENABLED: 'true',
+      OPENAI_CHAT_REGION: 'eu',
+      APP_ENV: 'production',
       OPENAI_EU_APPROVED: 'true',
       OPENAI_API_KEY: 'test-placeholder',
       PUBLIC_TRUSTED_CLIENT_IP_HEADER: 'x-real-ip',
@@ -54,6 +56,24 @@ describe('EU-only OpenAI chat contract', () => {
     expect((await POST(request(input))).status).toBe(503)
     expect(fetch).not.toHaveBeenCalled()
     expect(mocks.find).not.toHaveBeenCalled()
+  })
+  it('allows explicit global staging tests without EU approval', async () => {
+    vi.stubEnv('APP_ENV', 'staging')
+    vi.stubEnv('OPENAI_CHAT_REGION', 'global')
+    vi.stubEnv('OPENAI_EU_APPROVED', 'false')
+    expect(await GET().json()).toEqual({ available: true })
+    const response = await POST(request(input))
+    expect(response.status).toBe(200)
+    expect(await response.text()).toContain('Hallo Welt')
+    expect(fetch).toHaveBeenCalledWith('https://api.openai.com/v1/responses', expect.any(Object))
+  })
+  it('rejects global processing outside staging and unknown regions', async () => {
+    for (const region of ['global', 'invalid']) {
+      vi.stubEnv('OPENAI_CHAT_REGION', region)
+      expect((await POST(request(input))).status).toBe(503)
+      expect(await GET().json()).toEqual({ available: false })
+    }
+    expect(fetch).not.toHaveBeenCalled()
   })
   it('reports availability without querying CMS or provider and disables caching', async () => {
     const available = GET()
