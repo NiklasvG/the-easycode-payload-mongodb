@@ -29,10 +29,19 @@ try {
     throw new Error('Erlaubte Aktionen: start, stop, status')
   // Reject remote Docker endpoints before creating or changing any containers.
   const endpoint =
-    process.env.DOCKER_HOST ||
-    docker(['context', 'inspect', '--format', '{{.Endpoints.docker.Host}}'], {
-      capture: true,
-    }).stdout.trim()
+    (!process.env.DOCKER_CONTEXT && process.env.DOCKER_HOST) ||
+    docker(
+      [
+        'context',
+        'inspect',
+        ...(process.env.DOCKER_CONTEXT ? [process.env.DOCKER_CONTEXT] : []),
+        '--format',
+        '{{.Endpoints.docker.Host}}',
+      ],
+      {
+        capture: true,
+      },
+    ).stdout.trim()
   if (!endpoint.startsWith('npipe:////./pipe/') && !endpoint.startsWith('unix:///')) {
     throw new Error(
       'Bitte einen lokalen Docker-Desktop-Kontext verwenden; Remote-Endpunkte sind nicht erlaubt.',

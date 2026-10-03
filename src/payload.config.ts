@@ -33,6 +33,10 @@ const smtpTransportOptions = {
 	}
 }
 
+// Local snapshot imports select an in-memory transport: no SMTP connection or delivery.
+const localEmail = process.env.EMAIL_TRANSPORT === 'json'
+const localTransportOptions = { host: '127.0.0.1', jsonTransport: true }
+
 const mongoURL = process.env.MONGODB_URI
 if (!mongoURL) {
 	throw new Error(
@@ -104,7 +108,8 @@ export default buildConfig({
 		defaultFromAddress: 'no-reply@the-easycode.eu',
 		defaultFromName: 'EasyCode',
 		// Nodemailer transportOptions
-		transportOptions: smtpTransportOptions
+		transportOptions: localEmail ? localTransportOptions : smtpTransportOptions,
+		skipVerify: localEmail
 	}),
 	secret: process.env.PAYLOAD_SECRET,
 	sharp,
