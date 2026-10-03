@@ -1,3 +1,5 @@
+import LoadingContent from '../loading'
+import { connection } from 'next/server'
 // src/app/(frontend)/[...slug]/page.tsx
 import type { Metadata } from 'next'
 
@@ -23,7 +25,11 @@ type Args = {
 }
 
 
-export default async function Page({ params: paramsPromise }: Args) {
+export default function Page(props: Args) {
+  return <React.Suspense fallback={<LoadingContent />}><PageContent {...props} /></React.Suspense>
+}
+
+async function PageContent({ params: paramsPromise }: Args) {
 	const { isEnabled: draft } = await draftMode()
 	const { slug = ['home'] } = await paramsPromise
 
@@ -39,7 +45,7 @@ export default async function Page({ params: paramsPromise }: Args) {
 	})
 
 	if (!page) {
-		return <PayloadRedirects url={urlPath} />
+		return <React.Suspense fallback={<LoadingContent />}><PayloadRedirects url={urlPath} /></React.Suspense>
 	}
 
 	// Wir prüfen, ob die Seite Breadcrumbs hat und ob die URL übereinstimmt.
@@ -58,12 +64,12 @@ export default async function Page({ params: paramsPromise }: Args) {
 	return (
 		<article>
 			<PageClient />
-			<PayloadRedirects disableNotFound url={urlPath} />
+			<React.Suspense fallback={null}><PayloadRedirects disableNotFound url={urlPath} /></React.Suspense>
 
 			{draft && <LivePreviewListener />}
 
 			<RenderHero {...hero} />
-			<RenderBlocks blocks={layout} />
+			<React.Suspense fallback={<LoadingContent />}><RenderBlocks blocks={layout} /></React.Suspense>
 		</article>
 	)
 }
@@ -83,6 +89,7 @@ export async function generateMetadata({
 }
 
 const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
+	await connection()
 	const payload = await getPayload({ config: configPromise })
 	const draft = await getPreviewAccess(payload)
 

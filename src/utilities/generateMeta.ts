@@ -21,6 +21,7 @@ export const generateMeta = async ({ doc, collection = 'pages' }: {
   doc: Partial<Page> | Partial<Post> | Partial<Project> | null
   collection?: 'pages' | 'posts' | 'projects'
 }): Promise<Metadata> => {
+  if (!doc) return { robots: { index: false, follow: false } }
   const meta = doc && 'meta' in doc ? doc.meta : undefined
   const title = `${meta?.title || doc?.title || 'The-EasyCode'}${meta?.title || doc?.title ? ' | The-EasyCode' : ''}`
   const description = meta?.description || (doc && 'shortDescription' in doc ? doc.shortDescription : undefined)

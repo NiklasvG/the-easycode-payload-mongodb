@@ -1,3 +1,4 @@
+import { connection } from 'next/server'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React from 'react'
@@ -25,6 +26,7 @@ const iconByType: Record<SocialType, React.FC<{ className?: string }>> = {
 }
 
 export async function Footer() {
+	await connection()
 	const footerData: Footer = await getCachedGlobal('footer', 1)()
 
 	const { aboutText, sections, contact } = footerData || {}

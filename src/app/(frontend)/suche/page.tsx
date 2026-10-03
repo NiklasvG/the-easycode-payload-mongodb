@@ -1,3 +1,5 @@
+import LoadingContent from '../loading'
+import { connection } from 'next/server'
 import type { Metadata } from 'next/types'
 import React from 'react'
 import Link from 'next/link'
@@ -16,7 +18,7 @@ import { getProjectTypeLabel, formatProjectDateRange } from '@/utilities/project
 
 type Args = {
 	searchParams: Promise<{
-		q: string
+		q?: string | string[]
 	}>
 }
 
@@ -79,10 +81,15 @@ function PageTiles({ pages }: { pages: SearchDoc[] }) {
 	)
 }
 
-export default async function Page({
+export default function Page(props: Args) {
+  return <React.Suspense fallback={<LoadingContent />}><SearchResults {...props} /></React.Suspense>
+}
+async function SearchResults({
 	searchParams: searchParamsPromise
 }: Args) {
-	const { q: query } = await searchParamsPromise
+	const { q } = await searchParamsPromise
+	const query = (typeof q === 'string' ? q : '').trim().slice(0, 200)
+	await connection()
 	const payload = await getPayload({ config: configPromise })
 
 	// ✅ typsicherer OR-Block

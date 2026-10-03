@@ -5,6 +5,7 @@ import { NextRequest } from 'next/server'
 const mocks = vi.hoisted(() => ({
   auth: vi.fn(), enable: vi.fn(), disable: vi.fn(), redirect: vi.fn(),
 }))
+vi.mock('next/server', async (importOriginal) => ({ ...await importOriginal<typeof import('next/server')>(), connection: async () => {} }))
 vi.mock('payload', () => ({ getPayload: async () => ({ auth: mocks.auth, logger: { error: vi.fn() } }) }))
 vi.mock('@payload-config', () => ({ default: {} }))
 vi.mock('next/headers', () => ({ draftMode: async () => ({ enable: mocks.enable, disable: mocks.disable }) }))

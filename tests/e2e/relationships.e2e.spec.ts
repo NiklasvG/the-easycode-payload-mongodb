@@ -28,7 +28,7 @@ test.describe('CMS relationship and global invalidation', () => {
       await request.patch(`/api/media/${image.id}`, { headers, data: { alt: image.alt } })
     }
   })
-  test('nested parent rename, globals and redirects are visible on the next request', async ({ request }) => {
+  test('nested parent rename, globals and redirects are visible on the next request', async ({ request, page }) => {
     const { token } = await (await request.post('/api/users/login', { data: { email: 'editor@example.test', password: 'CI-editor-only-123!' } })).json()
     const headers = { Authorization: `JWT ${token}` }
     const prefix = `nested-${Date.now()}`
@@ -63,9 +63,11 @@ test.describe('CMS relationship and global invalidation', () => {
       const redirectResponse = await request.post('/api/redirects', { headers, data: { from: `/${prefix}-redirect`, to: { type: 'custom', url: '/projekte' } } })
       expect(redirectResponse.ok(), await redirectResponse.text()).toBe(true)
       redirectID = (await redirectResponse.json()).doc.id
-      expect((await request.get(`/${prefix}-redirect`, { maxRedirects: 0 })).headers().location).toBe('/projekte')
+      await page.goto(`/${prefix}-redirect`)
+      await expect(page).toHaveURL('http://localhost:3000/projekte')
       await request.patch(`/api/redirects/${redirectID}`, { headers, data: { to: { type: 'custom', url: nextPath } } })
-      expect((await request.get(`/${prefix}-redirect`, { maxRedirects: 0 })).headers().location).toBe(nextPath)
+      await page.goto(`/${prefix}-redirect`)
+      await expect(page).toHaveURL(`http://localhost:3000${nextPath}`)
     } finally {
       if (redirectID) await request.delete(`/api/redirects/${redirectID}`, { headers })
       if (childID) await request.delete(`/api/pages/${childID}`, { headers })

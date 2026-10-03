@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 import { cn } from '@/utilities/ui'
 import localFont from 'next/font/local'
-import React from 'react'
+import React, { Suspense } from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
 import { Footer } from '@/Footer/Component'
@@ -19,7 +19,7 @@ import { UmamiAnalytics } from '@/components/UmamiAnalytics'
 import { CookieBanner } from '@/components/CookieBanner'
 
 // Read CMS content at request time; Docker builds need no database connection.
-export const dynamic = 'force-dynamic'
+// Runtime CMS boundaries below preserve builds without a database.
 
 const geistSans = localFont({
 	src: '../../fonts/Gabarito-variable.woff2',
@@ -30,18 +30,17 @@ const geistSans = localFont({
 
 const geistMono = localFont({
 	src: '../../fonts/GeistMono-variable.woff2',
+	preload: false,
 	weight: '100 900',
 	display: 'swap',
 	variable: '--font-geist-mono',
 })
 
-export default async function RootLayout({
+export default function RootLayout({
 	children
 }: {
 	children: React.ReactNode
 }) {
-	const { isEnabled } = await draftMode()
-
 	return (
 		<html
 			className={cn(geistSans.variable, geistMono.variable)}
@@ -59,15 +58,10 @@ export default async function RootLayout({
 					<div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/10 rounded-full blur-[120px]" />
 				</div>
 				<Providers>
-					<AdminBar
-						adminBarProps={{
-							preview: isEnabled
-						}}
-					/>
-
-					<Header />
+					<Suspense fallback={null}><PreviewBar /></Suspense>
+					<Suspense fallback={<div className="h-18 md:h-22 lg:h-30" aria-hidden="true" />}><Header /></Suspense>
 					{children}
-					<Footer />
+					<Suspense fallback={null}><Footer /></Suspense>
 					<AIChat />
 					<UmamiAnalytics
 						scriptUrl={process.env.UMAMI_SCRIPT_URL}
@@ -87,4 +81,9 @@ export const metadata: Metadata = {
 		card: 'summary_large_image',
 		creator: '@the_easycode'
 	}
+}
+
+async function PreviewBar() {
+  const { isEnabled } = await draftMode()
+  return <AdminBar adminBarProps={{ preview: isEnabled }} />
 }

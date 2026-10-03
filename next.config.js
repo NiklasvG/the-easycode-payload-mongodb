@@ -8,6 +8,7 @@ const NEXT_PUBLIC_SERVER_URL =
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	output: 'standalone',
+	cacheComponents: true,
 	async headers() {
 		return [{ source: '/:path*', headers: [
 			{ key: 'X-Content-Type-Options', value: 'nosniff' },
