@@ -347,3 +347,11 @@ Die neue Version verlangt erneut aktive Zustimmung; v1-Bestätigungen sind ungü
 Keine Änderung von Verarbeitungszweck, Empfänger, Speicherregeln oder Widerruf.
 Quellen zur gestuften Information:
 [EDSA: Transparenzleitlinien](https://www.edpb.europa.eu/documents/guideline/transparency_en).
+
+Der Kurztext nennt den Verantwortlichen nur noch als The-EasyCode; vollständiger
+Name und Kontaktdaten stehen in der CMS-Datenschutzerklärung. Gültigkeitsdauer,
+Speicherregeln und Kontaktalternative stehen ebenfalls dort. Gesprächsverlauf,
+OpenAI Ireland, Verarbeitungszweck, mögliche Verarbeitung außerhalb der EU,
+Freiwilligkeit und Widerruf bleiben in der Bubble sichtbar. Der Link heißt
+„Datenschutz zum KI-Chat“; sein zugänglicher Name kündigt den neuen Tab an.
+Die technische Gültigkeit (24 Stunden) und die Verarbeitung bleiben unverändert.

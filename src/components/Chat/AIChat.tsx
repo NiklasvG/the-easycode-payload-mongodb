@@ -25,11 +25,11 @@ interface ChatMessage {
 }
 
 const CHAT_CONSENT_SUMMARY =
-  'Ich willige ein, dass Niklas von Grzymala – The-EasyCode meine Nachrichten und den begrenzten Verlauf an OpenAI Ireland Ltd. übermittelt, um Fragen zu Leistungen, Projekten und Kontakt zu beantworten. Daten können außerhalb der EU verarbeitet und bei OpenAI gespeichert werden.'
+  'Ich willige ein, dass The-EasyCode meine Nachrichten und den Gesprächsverlauf zur Beantwortung meiner Fragen an OpenAI Ireland Ltd. übermittelt. Die Verarbeitung kann außerhalb der EU erfolgen.'
 const CHAT_CONSENT_CHOICE =
-  'Freiwillig, höchstens 24 Stunden pro Tab und jederzeit im Chat widerrufbar. Ohne Einwilligung bleibt das Kontaktformular verfügbar.'
+  'Die Einwilligung ist freiwillig und jederzeit im Chat widerrufbar.'
 const CHAT_CONSENT_WARNING =
-  'Bitte keine sensiblen oder fremden personenbezogenen Daten eingeben. KI-Antworten können Fehler enthalten.'
+  'Bitte keine sensiblen Daten oder Daten anderer Personen eingeben. KI-Antworten können Fehler enthalten.'
 
 const STORAGE_KEY = 'easycode-ai-chat-opened'
 const CONSENT_KEY = 'easycode-ai-chat-consent'
@@ -345,11 +345,12 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                   <p>
                     <a
                       href="/datenschutz"
+                      aria-label="Datenschutz zum KI-Chat (neuer Tab)"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-accent underline underline-offset-4"
                     >
-                      Datenschutz zum KI-Chat (neuer Tab)
+                      Datenschutz zum KI-Chat
                     </a>
                   </p>
                 </div>
