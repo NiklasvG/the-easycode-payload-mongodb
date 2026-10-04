@@ -333,13 +333,16 @@ Die Chat-Bubble enthält die aktive Einwilligung mit Verantwortlichem, Empfänge
 Daten und Zweck, Hinweis auf Speicherung und mögliche Verarbeitung außerhalb der
 EU, Freiwilligkeit, zeitlicher Gültigkeit und Widerruf. Speicherregeln, Nachweis,
 Kontaktangaben, Betroffenenrechte und weitere Details stehen direkt erreichbar
-auf `/datenschutz/ki-chat`. Der Link öffnet einen neuen Tab, damit die Entscheidung
+auf der CMS-gepflegten Seite `/datenschutz`, vorbereitet in Abschnitt 7 von
+`docs/datenschutzerklaerung-entwurf.md`. Der Link öffnet einen neuen Tab, damit die Entscheidung
 und der bisherige Zustand im ursprünglichen Tab bleiben. Das Lesen der Seite
-erteilt keine Einwilligung. Die Detailseite wird mit dem Code bereitgestellt;
-sie hängt nicht von einer noch unveröffentlichten CMS-Änderung ab und ersetzt
-nicht die allgemeine Datenschutzerklärung.
+erteilt keine Einwilligung. Es gibt keine separate Code-Detailseite. Der vollständige Text muss im CMS auf
+der Datenschutzseite übernommen und veröffentlicht werden, bevor auf diese
+Informationen als vollständig bereitgestellt vertraut wird.
 
-Kurztexte und Detailabschnitte stehen in `src/constants/chatPrivacy.ts`.
+Die kurzen Bubble-Texte stehen direkt in `src/components/Chat/AIChat.tsx`;
+die ausführlichen Datenschutztexte werden ausschließlich über den Markdown-Entwurf
+und anschließend die Datenschutzseite im CMS gepflegt.
 Die neue Version verlangt erneut aktive Zustimmung; v1-Bestätigungen sind ungültig.
 Keine Änderung von Verarbeitungszweck, Empfänger, Speicherregeln oder Widerruf.
 Quellen zur gestuften Information:

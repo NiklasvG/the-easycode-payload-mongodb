@@ -214,14 +214,24 @@ D01 YC43, Irland. Ein personalisierter
 Auftragsverarbeitungsvertrag vom 3. Oktober 2026 liegt mit Abschlusszertifikat vor.
 Vor der ersten Nachricht entscheiden Sie aktiv über Ihre Einwilligung. Die
 wichtigsten Angaben stehen im Chat; ergänzende Informationen sind vor der
-Entscheidung über [Datenschutz im KI-Chat](/datenschutz/ki-chat) direkt erreichbar. Ohne
+Entscheidung über einen direkten Link auf diese Datenschutzerklärung erreichbar. Ohne
 Einwilligung werden keine Chat-Inhalte an OpenAI übermittelt. Die übrigen
 Website-Funktionen und das Kontaktformular können Sie weiterhin nutzen.
+
+Eine Nachricht ist auf 1.000 Zeichen begrenzt. Als Gesprächskontext werden
+höchstens zwölf Nachrichten mit insgesamt 6.000 Zeichen übermittelt. Es werden
+keine Dateien hochgeladen und keine Kontaktanfragen oder privaten CMS-Inhalte
+als Gesprächskontext gelesen. Ihre Besucher-IP, Browser-Header und
+Einwilligungsbestätigung werden nicht an OpenAI übermittelt. OpenAI setzt
+vertraglich geregelte Unterauftragnehmer ein; Informationen dazu sind in der
+[OpenAI-Unterauftragnehmerliste](https://openai.com/policies/sub-processor-list/)
+verfügbar.
 
 Im Anwendungscode erfolgt keine dauerhafte Speicherung der Gesprächsinhalte
 in meiner CMS-Datenbank. Der Verlauf wird im Browser-Arbeitsspeicher gehalten
 und bei Folgefragen begrenzt erneut übertragen. „Verlauf löschen“ oder das
-Neuladen der Seite verwirft den Verlauf dort. Das Schließen des Chats bricht
+Neuladen der Seite verwirft den Verlauf dort. Chat-Inhalte werden weder im
+Local Storage noch im Session Storage gespeichert. Das Schließen des Chats bricht
 die laufende Verbindung zur Antworterzeugung ab, behält den sichtbaren Verlauf aber für das
 Wiederöffnen innerhalb derselben Seite. Die Löschung im Browser löscht keine
 bereits beim Anbieter verarbeiteten Daten.
@@ -248,7 +258,10 @@ ausschließliche Verarbeitung in der EU wird für diesen Betrieb nicht zugesagt.
 Der abgeschlossene DPA sieht für Übermittlungen von EWR-Daten durch OpenAI
 Ireland an Empfänger außerhalb des EWR beziehungsweise der Schweiz
 Standardvertragsklauseln oder einen Angemessenheitsbeschluss der Europäischen
-Kommission vor.
+Kommission vor. Informationen zu den anwendbaren Garantien können Sie über
+die in Abschnitt 1 genannte Kontaktadresse anfordern. Die Einwilligung in die
+Chat-Inhaltsverarbeitung ersetzt keine erforderlichen Übermittlungsgarantien
+und wird nicht als besondere Drittland-Einwilligung nach Art. 49 DSGVO verwendet.
 [Für die endgültige veröffentlichte Fassung den tatsächlichen Betriebsmodus,
 Verarbeitungsländer, Empfänger und Übermittlungsgarantien bei Drittlandverarbeitung
 aus den anwendbaren Verträgen übernehmen und prüfen. Falls später EU Data Residency
@@ -266,7 +279,12 @@ Rechtsgrundlage des Missbrauchsschutzes ist Art. 6 Abs. 1 lit. f DSGVO.
 
 Rechtsgrundlage für die Verarbeitung Ihrer Chat-Inhalte zur Antworterzeugung ist
 Ihre freiwillige Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO. Sie gilt innerhalb
-der jeweiligen Tab-Sitzung für höchstens 24 Stunden. Sie können sie jederzeit
+der jeweiligen Tab-Sitzung für höchstens 24 Stunden. Ihre Bestätigung wird mit
+Version, Zeitpunkt und zufälliger Bestätigungs-ID im Session Storage des
+Browser-Tabs gespeichert. Bei erkanntem Ablauf oder Widerruf werden die
+Bestätigung und der lokale Verlauf entfernt. Browser können Tab-Sitzungen
+wiederherstellen oder beim Duplizieren übernehmen; die zeitliche
+Gültigkeitsprüfung bleibt bestehen. Sie können Ihre Einwilligung jederzeit
 über „Einwilligung widerrufen“ im Chat zurücknehmen. Dabei werden der lokale
 Gesprächsverlauf und Ihre Bestätigung entfernt, eine laufende Anfrage wird
 abgebrochen und weitere Anfragen setzen eine erneute Einwilligung voraus.
@@ -288,7 +306,12 @@ oder besonders geschützten personenbezogenen Daten.
 Bitte geben Sie keine Gesundheitsdaten, Zugangsdaten, vertraulichen Informationen
 oder personenbezogenen Daten Dritter ein. Beschränken Sie Ihre Angaben auf das
 für die Frage erforderliche Maß. Der KI-Assistent kann fehlerhafte Antworten
-liefern und keine verbindlichen Angebote oder Zusagen machen.
+liefern und keine verbindlichen Angebote oder Zusagen machen. Der Chat dient
+nicht der Bewertung von Personen, dem Profiling oder Entscheidungen mit
+rechtlicher beziehungsweise ähnlich erheblicher Wirkung. Die Bereitstellung
+personenbezogener Chat-Inhalte ist freiwillig und weder gesetzlich noch
+vertraglich vorgeschrieben. Ihre Betroffenenrechte und die Kontaktmöglichkeiten
+zu ihrer Ausübung finden Sie in Abschnitt 10.
 
 Weitere Informationen: [OpenAI-Datenkontrollen](https://developers.openai.com/api/docs/guides/your-data)
 und [OpenAI-Datenschutzvereinbarung](https://openai.com/policies/data-processing-addendum/).

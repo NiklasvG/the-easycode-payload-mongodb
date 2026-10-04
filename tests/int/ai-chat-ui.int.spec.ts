@@ -46,7 +46,7 @@ describe('AI chat privacy and interaction', () => {
     )
     render(React.createElement(AIChat, { initiallyOpen: true }))
     const details = screen.getByRole('link', { name: 'Datenschutz zum KI-Chat (neuer Tab)' })
-    expect(details.getAttribute('href')).toBe('/datenschutz/ki-chat')
+    expect(details.getAttribute('href')).toBe('/datenschutz')
     expect(details.getAttribute('target')).toBe('_blank')
     fireEvent.click(details)
     expect(fetch).not.toHaveBeenCalled()

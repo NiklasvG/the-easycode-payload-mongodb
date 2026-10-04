@@ -14,12 +14,7 @@ import {
   type ChatConsent,
   compactChatHistory,
 } from '@/utilities/chatProtocol'
-import {
-  CHAT_PRIVACY_PATH,
-  CHAT_CONSENT_SUMMARY,
-  CHAT_CONSENT_CHOICE,
-  CHAT_CONSENT_WARNING,
-} from '@/constants/chatPrivacy'
+
 import { readChatEvents } from '@/utilities/readChatEvents'
 
 interface ChatMessage {
@@ -28,6 +23,13 @@ interface ChatMessage {
   isStreaming?: boolean
   excludeFromContext?: boolean
 }
+
+const CHAT_CONSENT_SUMMARY =
+  'Ich willige ein, dass Niklas von Grzymala – The-EasyCode meine Nachrichten und den begrenzten Verlauf an OpenAI Ireland Ltd. übermittelt, um Fragen zu Leistungen, Projekten und Kontakt zu beantworten. Daten können außerhalb der EU verarbeitet und bei OpenAI gespeichert werden.'
+const CHAT_CONSENT_CHOICE =
+  'Freiwillig, höchstens 24 Stunden pro Tab und jederzeit im Chat widerrufbar. Ohne Einwilligung bleibt das Kontaktformular verfügbar.'
+const CHAT_CONSENT_WARNING =
+  'Bitte keine sensiblen oder fremden personenbezogenen Daten eingeben. KI-Antworten können Fehler enthalten.'
 
 const STORAGE_KEY = 'easycode-ai-chat-opened'
 const CONSENT_KEY = 'easycode-ai-chat-consent'
@@ -342,7 +344,7 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                   <p className="text-xs text-gray-400">{CHAT_CONSENT_WARNING}</p>
                   <p>
                     <a
-                      href={CHAT_PRIVACY_PATH}
+                      href="/datenschutz"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-accent underline underline-offset-4"
