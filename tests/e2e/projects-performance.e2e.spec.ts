@@ -7,9 +7,11 @@ test('project filters keep matching cards, accessible contrast and restore all p
   await page.getByRole('button', { name: 'Alle ablehnen', exact: true }).click()
   const filters = page.locator('main button[aria-pressed]')
   const cards = page.locator('main .service-card')
+  await expect(filters.first()).toBeVisible()
+  await expect(cards.first()).toBeVisible()
   const total = await cards.count()
-  expect(total).toBeGreaterThan(0)
-  expect(await filters.count()).toBeGreaterThan(1)
+  expect(total).toBeGreaterThan(1)
+  expect(await filters.count()).toBeGreaterThan(2)
 
   for (let index = 1; index < await filters.count(); index++) {
     const filter = filters.nth(index)
@@ -18,6 +20,7 @@ test('project filters keep matching cards, accessible contrast and restore all p
     await expect(filter).toHaveAttribute('aria-pressed', 'true')
     await expect(cards.locator('.list--tag li.highlight').filter({ hasNotText: label })).toHaveCount(0)
     expect(await cards.count()).toBeGreaterThan(0)
+    expect(await cards.count()).toBeLessThan(total)
     const contrast = await filter.evaluate((element) => {
       const style = getComputedStyle(element)
       const canvas = document.createElement('canvas')
