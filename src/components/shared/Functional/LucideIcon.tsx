@@ -1,5 +1,3 @@
-'use client'
-
 import { getLucideIcon, LucideIconName } from '@/utilities/lucideIcons'
 import React from 'react'
 

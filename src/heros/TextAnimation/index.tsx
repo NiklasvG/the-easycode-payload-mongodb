@@ -1,9 +1,4 @@
-'use client'
-import React, { useEffect, useState, useRef } from 'react'
-
-// Libraries
-import { m, useScroll, useTransform } from 'framer-motion'
-import { usePrefersReducedMotion } from '@/utilities/usePrefersReducedMotion'
+import React from 'react'
 
 // Components
 import LucideIcon from '@/components/shared/Functional/LucideIcon'
@@ -11,8 +6,9 @@ import { LucideIconName } from '@/utilities/lucideIcons'
 
 // Types
 import type { Page } from '@/payload-types'
-import { AnimatedText } from '@/components/shared/Animation/AnimatedText'
+import { RotatingText } from '@/components/shared/Animation/AnimatedText'
 import { Media } from '@/components/Media'
+import { HeroIcons } from './HeroIcons'
 
 export const TextAnimationHero: React.FC<Page['hero']> = ({
   title,
@@ -25,36 +21,16 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
   const imageAspectRatio =
     typeof media === 'object' && media?.width && media.height ? media.width / media.height : 8 / 5
   const desktopImageWidth = Math.ceil(384 * imageAspectRatio)
-  const [index, setIndex] = useState(0)
-  const heroRef = useRef<HTMLElement>(null)
-  const reducedMotion = usePrefersReducedMotion()
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
-  const iconOffset = useTransform(scrollYProgress, [0, 1], [0, 60])
-
-  useEffect(() => {
-    const localPhrases = phrases ?? []
-
-    if (localPhrases.length === 0 || reducedMotion) return
-
-    const { length } = localPhrases
-
-    const intervalId = setInterval(() => {
-      setIndex((i) => (i + 1) % length)
-    }, 3000)
-
-    return () => clearInterval(intervalId)
-  }, [phrases, reducedMotion])
 
   return (
     <section
-      ref={heroRef}
-      className="bg-background w-full h-full py-12 lg:py-24 2xl:pb-32 flex items-start relative"
+      className="text-animation-hero bg-background w-full h-full py-12 lg:py-24 2xl:pb-32 flex items-start relative"
     >
       <div className="container mx-auto w-full h-full">
         <div className="grid grid-cols-1 lg:grid-cols-2">
           <div className="flex flex-col gap-6 lg:gap-10">
             <h1>
-              <AnimatedText text={phrases?.[index]?.phrase || ''} className="text-accent" />
+              <RotatingText phrases={phrases?.map(({ phrase }) => phrase) ?? []} className="text-accent" />
 
               <span className="block relative z-10 -mt-2">{title}</span>
             </h1>
@@ -89,14 +65,7 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
             )}
 
             {icons && (
-              <m.div
-                style={{ y: reducedMotion ? 0 : iconOffset }}
-                initial={reducedMotion ? false : { opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: reducedMotion ? 0 : 0.8, delay: reducedMotion ? 0 : 0.5 }}
-                className="absolute inset-0 pointer-events-none"
-              >
+              <HeroIcons>
                 <div className="absolute left-1/2 -translate-x-1/2 top-[calc(100%-5rem)] lg:top-auto lg:bottom-24 xl:bottom-28 2xl:bottom-18">
                   <ul className="flex px-1 py-1 bg-n-9/40 backdrop-blur-sm border rounded-2xl">
                     {icons.map((icon, index) => (
@@ -106,7 +75,7 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
                     ))}
                   </ul>
                 </div>
-              </m.div>
+              </HeroIcons>
             )}
           </div>
         </div>

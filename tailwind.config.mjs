@@ -26,7 +26,7 @@ const config = {
       colors: {
         accent: {
           DEFAULT: 'oklch(var(--accent) / <alpha-value>)',
-          contrast: '#007c82', // 4.54:1 contrast with gray-100 text (WCAG AA).
+          contrast: '#008085', // 4.54:1 contrast with gray-50 text (WCAG AA).
           foreground: 'oklch(var(--accent-foreground) / <alpha-value>)',
         },
         background: 'oklch(var(--background) / <alpha-value>)',

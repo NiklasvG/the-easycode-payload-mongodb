@@ -45,21 +45,31 @@ test('project filters keep matching cards, accessible contrast and restore all p
   expect(errors).toEqual([])
 })
 
-test('mobile hero serves a suitable image and content is visible without JavaScript', async ({ browser }) => {
-  const context = await browser.newContext({ viewport: { width: 412, height: 915 }, deviceScaleFactor: 1 })
-  const page = await context.newPage()
-  await page.goto('/projekte')
-  const hero = page.locator('main section img').first()
-  await hero.evaluate((image: HTMLImageElement) => image.decode())
-  await expect(hero).toHaveAttribute('fetchpriority', 'high')
-  await expect(hero).toHaveAttribute('loading', 'eager')
-  const image = await hero.evaluate((element: HTMLImageElement) => ({
-    candidate: Number(new URL(element.currentSrc).searchParams.get('w')),
-    displayed: element.getBoundingClientRect().width,
-  }))
-  expect(image.candidate).toBeGreaterThanOrEqual(image.displayed)
-  expect(image.candidate).toBeLessThanOrEqual(image.displayed * 1.15)
-  await context.close()
+test('mobile images match display density and content is visible without JavaScript', async ({ browser }) => {
+  for (const deviceScaleFactor of [1, 1.75, 3]) {
+    const context = await browser.newContext({ viewport: { width: 412, height: 915 }, deviceScaleFactor })
+    const page = await context.newPage()
+    const imageResponse = page.waitForResponse((response) =>
+      response.request().resourceType() === 'image' && response.url().includes('/_next/image'),
+    )
+    await page.goto('/projekte')
+    expect((await imageResponse).headers()['content-type']).toBe('image/avif')
+    const hero = page.locator('main section img').first()
+    await expect(hero).toHaveAttribute('fetchpriority', 'high')
+    await expect(hero).toHaveAttribute('loading', 'eager')
+    for (const image of [hero, page.locator('main .service-card img').first()]) {
+      await image.scrollIntoViewIfNeeded()
+      await image.evaluate((element: HTMLImageElement) => element.decode())
+      const size = await image.evaluate((element: HTMLImageElement) => ({
+        candidate: Number(new URL(element.currentSrc).searchParams.get('w')),
+        displayed: element.getBoundingClientRect().width,
+      }))
+      const requiredWidth = size.displayed * deviceScaleFactor
+      expect(size.candidate).toBeGreaterThanOrEqual(requiredWidth)
+      expect(size.candidate).toBeLessThanOrEqual(requiredWidth * 1.15)
+    }
+    await context.close()
+  }
 
   const noJS = await browser.newContext({ javaScriptEnabled: false })
   const staticPage = await noJS.newPage()
@@ -69,4 +79,19 @@ test('mobile hero serves a suitable image and content is visible without JavaScr
   await expect(staticPage.locator('main .service-card').first()).toBeVisible()
   await expect(staticPage.locator('main .service-card').first().locator('..')).toHaveCSS('opacity', '1')
   await noJS.close()
+})
+
+test('reduced motion keeps the hero phrase stable and disables icon parallax', async ({ browser }) => {
+  const context = await browser.newContext({ reducedMotion: 'reduce' })
+  const page = await context.newPage()
+  await page.goto('/projekte')
+  const phrase = page.locator('.text-animation-hero h1 > .text-accent')
+  const initialText = await phrase.innerText()
+  await page.waitForTimeout(3200)
+  await expect(phrase).toHaveText(initialText)
+  await expect(page.locator('.hero-icons')).toHaveCSS('transform', 'none')
+  await page.getByRole('button', { name: 'Alle ablehnen', exact: true }).click()
+  await page.locator('main button[aria-pressed]').nth(1).click()
+  await expect(page.locator('main .service-card').first().locator('..')).toHaveCSS('animation-name', 'none')
+  await context.close()
 })

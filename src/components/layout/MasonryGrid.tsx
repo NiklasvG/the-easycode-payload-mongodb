@@ -87,7 +87,7 @@ export default function MasonryGrid({
             className={[
               'rounded-full border px-4 py-2 text-sm font-bold transition-colors duration-200',
               activeProjectType === 'all'
-                ? 'border-accent bg-accent text-accent-foreground'
+                ? 'border-accent-contrast bg-accent-contrast text-gray-50'
                 : 'border-white/10 bg-secondary-background text-gray-300 hover:border-accent/60 hover:text-white',
             ].join(' ')}
           >
@@ -102,7 +102,7 @@ export default function MasonryGrid({
               className={[
                 'rounded-full border px-4 py-2 text-sm font-bold transition-colors duration-200',
                 activeProjectType === option.value
-                  ? 'border-accent bg-accent text-accent-foreground'
+                  ? 'border-accent-contrast bg-accent-contrast text-gray-50'
                   : 'border-white/10 bg-secondary-background text-gray-300 hover:border-accent/60 hover:text-white',
               ].join(' ')}
             >

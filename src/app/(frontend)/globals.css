@@ -584,7 +584,7 @@
       position: relative;
 
       &.highlight {
-        @apply bg-accent-contrast border-accent-contrast text-gray-100;
+        @apply bg-accent-contrast border-accent-contrast text-gray-50;
       }
     }
   }
@@ -718,7 +718,7 @@
   }
 
   .quote__content {
-    @apply bg-gray-100;
+    @apply bg-gray-50;
     color: #003241;
     position: relative;
   }
