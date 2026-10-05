@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion'
+import { m, AnimatePresence } from 'framer-motion'
 import { usePrefersReducedMotion } from '@/utilities/usePrefersReducedMotion'
 
 export function AnimatedText({ text, className }: { text: string; className?: string }) {
@@ -6,8 +6,8 @@ export function AnimatedText({ text, className }: { text: string; className?: st
   if (reducedMotion) return <span className={className}>{text}</span>
   return (
     <div className={`inline-block h-[1.2em] overflow-hidden lg:translate-y-2 ${className || ''}`}>
-      <AnimatePresence mode="wait">
-        <motion.span
+      <AnimatePresence mode="wait" initial={false}>
+        <m.span
           key={text}
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -16,7 +16,7 @@ export function AnimatedText({ text, className }: { text: string; className?: st
           className="inline-block"
         >
           {text}
-        </motion.span>
+        </m.span>
       </AnimatePresence>
     </div>
   )

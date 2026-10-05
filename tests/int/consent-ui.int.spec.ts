@@ -6,7 +6,7 @@ import { COOKIE_CONSENT_KEY } from '@/utilities/cookieConsent'
 
 vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: React.PropsWithChildren) => children,
-  motion: {
+  m: {
     div: ({
       initial: _i,
       animate: _a,

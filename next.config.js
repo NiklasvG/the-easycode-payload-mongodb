@@ -24,7 +24,9 @@ const nextConfig = {
 		] }]
 	},
 	images: {
-		imageSizes: [32, 48, 64, 96, 100, 128, 170, 212, 256, 320, 384, 480, 512, 560],
+		// Include mobile widths even when Next.js filters srcset using a 100vw sizes hint.
+		deviceSizes: [384, 480, 512, 560, 640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+		imageSizes: [32, 48, 64, 96, 100, 128, 170, 212, 256, 320],
 		qualities: [75, 85, 100],
 		localPatterns: [
 			{ pathname: '/api/media/file/**' },

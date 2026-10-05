@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useSyncExternalStore } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m, AnimatePresence } from 'framer-motion'
 import { ChartNoAxesCombined, Cookie, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 
@@ -94,7 +94,7 @@ export const CookieBanner = () => {
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
+        <m.div
           role="region"
           aria-label="Cookie-Einstellungen"
           initial={{ y: 100, opacity: 0 }}
@@ -143,7 +143,7 @@ export const CookieBanner = () => {
                 </div>
               </div>
             ) : (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -219,7 +219,7 @@ export const CookieBanner = () => {
                     Abbrechen & Zurück
                   </Button>
                 </div>
-              </motion.div>
+              </m.div>
             )}
 
             <div className="mt-6 flex shrink-0 justify-center gap-4 border-t border-border pt-4">
@@ -237,7 +237,7 @@ export const CookieBanner = () => {
               </Link>
             </div>
           </div>
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   )

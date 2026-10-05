@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 
 // Components
 import ServiceCard from '@/components/Cards/ServiceCard'
@@ -87,7 +87,7 @@ export default function MasonryGrid({
             className={[
               'rounded-full border px-4 py-2 text-sm font-bold transition-colors duration-200',
               activeProjectType === 'all'
-                ? 'border-accent bg-accent text-primary'
+                ? 'border-accent bg-accent text-accent-foreground'
                 : 'border-white/10 bg-secondary-background text-gray-300 hover:border-accent/60 hover:text-white',
             ].join(' ')}
           >
@@ -102,7 +102,7 @@ export default function MasonryGrid({
               className={[
                 'rounded-full border px-4 py-2 text-sm font-bold transition-colors duration-200',
                 activeProjectType === option.value
-                  ? 'border-accent bg-accent text-primary'
+                  ? 'border-accent bg-accent text-accent-foreground'
                   : 'border-white/10 bg-secondary-background text-gray-300 hover:border-accent/60 hover:text-white',
               ].join(' ')}
             >
@@ -112,10 +112,10 @@ export default function MasonryGrid({
         </div>
       )}
 
-      <motion.div className="columns-1 sm:columns-2 gap-4" layout>
+      <m.div className="columns-1 sm:columns-2 gap-4" layout>
         <AnimatePresence mode="popLayout" initial={false}>
           {filteredCards.map((card) => (
-            <motion.div
+            <m.div
               key={card.link.url ?? card.headline}
               layout
               initial={{ opacity: 0, y: 16, scale: 0.98 }}
@@ -136,10 +136,10 @@ export default function MasonryGrid({
                 tags={card.tags}
                 options={{ border: false, highlightTag: true }}
               />
-            </motion.div>
+            </m.div>
           ))}
         </AnimatePresence>
-      </motion.div>
+      </m.div>
     </div>
   )
 }

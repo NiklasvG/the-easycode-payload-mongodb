@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 
 // Libraries
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { m, useScroll, useTransform } from 'framer-motion'
 import { usePrefersReducedMotion } from '@/utilities/usePrefersReducedMotion'
 
 // Components
@@ -89,7 +89,7 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
             )}
 
             {icons && (
-              <motion.div
+              <m.div
                 style={{ y: reducedMotion ? 0 : iconOffset }}
                 initial={reducedMotion ? false : { opacity: 0 }}
                 whileInView={{ opacity: 1 }}
@@ -106,7 +106,7 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
                     ))}
                   </ul>
                 </div>
-              </motion.div>
+              </m.div>
             )}
           </div>
         </div>
