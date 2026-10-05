@@ -11,6 +11,10 @@ export const validateFormSubmission: CollectionBeforeValidateHook<FormSubmission
     if (!allowSubmission(req.headers)) throw new APIError('Too many submissions', 429)
   }
   const reject = () => { throw new APIError('Invalid form submission', 400) }
+  // Transport-only honeypot: reject before database lookup, storage or email hooks.
+  // Missing values remain valid for existing API clients; bots can bypass this layer.
+  const website = (data as { website?: unknown } | undefined)?.website
+  if (website !== undefined && website !== '') return reject()
   if (!data || typeof data.form !== 'string' || !Array.isArray(data.submissionData) || data.submissionData.length > 50) return reject()
   const form = await req.payload.findByID({ collection: 'forms', id: data.form, depth: 0, overrideAccess: false, req })
   const fields = new Map((form.fields || []).flatMap((field) => 'name' in field && field.name ? [[field.name, field] as const] : []))

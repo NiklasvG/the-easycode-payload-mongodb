@@ -8,7 +8,7 @@ import type {
 import { Check, Send } from 'lucide-react'
 
 import { useRouter } from 'next/navigation'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useId, useState } from 'react'
 import { useForm, FormProvider, type UseFormReturn } from 'react-hook-form'
 import RichText from '@/components/RichText'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
@@ -78,9 +78,13 @@ export const FormBlock: React.FC<
 		{ message: string; status?: string } | undefined
 	>()
 	const router = useRouter()
+	const honeypotID = useId()
 
 	const onSubmit = useCallback(
-		(data: Record<string, unknown>) => {
+		(data: Record<string, unknown>, event?: React.BaseSyntheticEvent) => {
+			const website = event?.target instanceof HTMLFormElement
+				? event.target.querySelector<HTMLInputElement>('[data-form-honeypot]')?.value ?? ''
+				: ''
 			const submitForm = async () => {
 				setError(undefined)
 				setIsLoading(true)
@@ -96,6 +100,7 @@ export const FormBlock: React.FC<
 						{
 							body: JSON.stringify({
 								form: formID,
+								website,
 								submissionData: dataToSend
 							}),
 							headers: {
@@ -174,6 +179,11 @@ export const FormBlock: React.FC<
 				)}
 				{!hasSubmitted && (
 					<form id={formID} onSubmit={handleSubmit(onSubmit)}>
+						{/* Keep the bot trap outside the CMS fields and keyboard/accessibility flow. */}
+						<div aria-hidden="true" style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, overflow: 'hidden' }}>
+							<label htmlFor={honeypotID}>Website – bitte leer lassen</label>
+							<input data-form-honeypot id={honeypotID} name="website" type="text" tabIndex={-1} autoComplete="off" />
+						</div>
 						<div className="relative z-10 grid grid-cols-12 gap-6">
 							{formFromProps?.fields?.map((field, index) => {
 								const colSpan = widthToColSpan('width' in field ? field.width : undefined)

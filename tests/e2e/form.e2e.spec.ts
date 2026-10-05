@@ -21,6 +21,17 @@ test('visitor form submission reaches only the local SMTP inbox', async ({ page,
     pageID = (await response.json()).doc.id
     await page.goto(`/${slug}`)
     await expect(page.getByLabel('Testname')).toHaveValue('Testbesucher')
+    const honeypot = page.locator('input[name="website"]')
+    await expect(honeypot).toHaveAttribute('tabindex', '-1')
+    await expect(honeypot.locator('..')).toHaveAttribute('aria-hidden', 'true')
+    // Bot traffic must be rejected without saving a submission or sending mail.
+    const trapped = await request.post('/api/form-submissions', { data: {
+      form: form.id, website: 'https://spam.example.test',
+      submissionData: [{ field: 'name', value: 'Bot' }],
+    } })
+    expect(trapped.status()).toBe(400)
+    const saved = await request.get(`/api/form-submissions?where[form][equals]=${form.id}`, { headers })
+    expect((await saved.json()).docs).toHaveLength(0)
     await page.getByRole('button', { name: 'Test absenden' }).click()
     await expect(page.getByText('Nachricht gesendet!')).toBeVisible()
     await expect.poll(async () => {
