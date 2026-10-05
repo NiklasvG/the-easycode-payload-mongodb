@@ -3,6 +3,7 @@ import React, { cache } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
+import { AIImageBadge } from '@/components/AIImageBadge'
 import { notFound } from 'next/navigation'
 import { draftMode } from 'next/headers'
 import { getPayload, type RequiredDataFromCollectionSlug } from 'payload'
@@ -188,6 +189,7 @@ export default async function ProjectDetailPage({ params: paramsPromise }: Args)
                 sizes="(max-width: 1024px) 100vw, 1200px"
               />
               <div className="absolute inset-0 bg-linear-to-t from-background/80 to-transparent pointer-events-none" />
+              <AIImageBadge resource={project.heroImage} />
             </div>
           )}
         </div>
@@ -247,6 +249,7 @@ export default async function ProjectDetailPage({ params: paramsPromise }: Args)
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                         sizes="(max-width: 1024px) 100vw, 600px"
                       />
+                      <AIImageBadge resource={img} />
                     </div>
                   )
                 })}
@@ -291,18 +294,21 @@ export default async function ProjectDetailPage({ params: paramsPromise }: Args)
                     &quot;{quote.text}&quot;
                   </p>
                   <footer className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold overflow-hidden">
+                    <div className="relative w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold">
                       {quote.image &&
                       typeof quote.image === 'object' &&
                       'url' in quote.image &&
                       quote.image.url ? (
-                        <Image
-                          src={quote.image.url as string}
-                          alt={quote.author}
-                          width={40}
-                          height={40}
-                          className="w-full h-full object-cover"
-                        />
+                        <>
+                          <Image
+                            src={quote.image.url as string}
+                            alt={quote.author}
+                            width={40}
+                            height={40}
+                            className="w-full h-full rounded-full object-cover"
+                          />
+                          <AIImageBadge resource={quote.image} compact />
+                        </>
                       ) : (
                         quote.author.charAt(0)
                       )}

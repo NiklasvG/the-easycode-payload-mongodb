@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight, Quote as QuoteIcon } from 'lucide-react'
 
 import type { Media } from '@/payload-types'
 import Image from 'next/image'
+import { AIImageBadge } from '@/components/AIImageBadge'
 
 export type QuoteItem = {
 	text: string
@@ -58,7 +59,7 @@ export const QuoteSlider: React.FC<Props> = ({ quotes }) => {
 									<figure className="quote__flex">
 										<div className="quote__person">
 											<QuoteIcon className="quote__icon" />
-											<div className="avatar">
+											<div className="avatar relative">
 												{q.image ? (
 													<div className="quote__image relative">
 														<Image
@@ -73,6 +74,7 @@ export const QuoteSlider: React.FC<Props> = ({ quotes }) => {
 												) : (
 													<div className="quote__image bg-muted" />
 												)}
+												<AIImageBadge resource={q.image} compact />
 											</div>
 											<figcaption className="quote__caption">
 												<span className="quote__name">{q.author}</span>

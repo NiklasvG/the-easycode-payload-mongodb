@@ -336,6 +336,10 @@ export interface Post {
 export interface Media {
   id: string;
   alt?: string | null;
+  /**
+   * Zeigt bei diesem Bild im Frontend einen KI-Hinweis an.
+   */
+  isAIGenerated?: boolean | null;
   caption?: {
     root: {
       type: string;
@@ -2189,6 +2193,7 @@ export interface PostsSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  isAIGenerated?: T;
   caption?: T;
   folder?: T;
   updatedAt?: T;

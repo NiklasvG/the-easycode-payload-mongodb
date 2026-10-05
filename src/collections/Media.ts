@@ -30,6 +30,16 @@ export const Media: CollectionConfig = {
       //required: true,
     },
     {
+      name: 'isAIGenerated',
+      label: 'Mit KI generiert oder angepasst',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description: 'Zeigt bei diesem Bild im Frontend einen KI-Hinweis an.',
+        condition: (data) => Boolean(data?.mimeType?.startsWith('image/')),
+      },
+    },
+    {
       name: 'caption',
       type: 'richText',
       editor: lexicalEditor({

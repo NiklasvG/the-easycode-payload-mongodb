@@ -9,6 +9,7 @@ import React from 'react'
 import type { Props as MediaProps } from '../types'
 
 import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { AIImageBadge } from '@/components/AIImageBadge'
 
 export const ImageMedia: React.FC<MediaProps> = (props) => {
 	const {
@@ -50,7 +51,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 	const sizes = sizeFromProps || '100vw'
     if (!src) return null
 
-	return (
+	const image = (
 		<picture className={cn(fill && 'relative block h-full w-full', pictureClassName)}>
 			<NextImage
 				alt={alt || ''}
@@ -70,5 +71,16 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 			/>
 		</picture>
 	)
+
+	if (resource && typeof resource === 'object' && resource.isAIGenerated) {
+		return (
+			<div className={cn('relative', fill ? 'h-full w-full' : 'inline-block max-w-full align-top')}>
+				{image}
+				<AIImageBadge resource={resource} />
+			</div>
+		)
+	}
+
+	return image
 }
 

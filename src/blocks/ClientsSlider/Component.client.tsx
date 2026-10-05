@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Image from 'next/image'
+import { AIImageBadge } from '@/components/AIImageBadge'
 import { Splide, Options } from '@splidejs/react-splide'
 import { AutoScroll } from '@splidejs/splide-extension-auto-scroll'
 
@@ -15,6 +16,7 @@ interface Logo {
 	height?: number
 	imageWidth?: number
 	imageHeight?: number
+	isAIGenerated?: boolean | null
 }
 
 interface LogoSliderProps {
@@ -73,6 +75,7 @@ export const LogoSlider: React.FC<LogoSliderProps> = ({ logos, options, logoHeig
 										className="max-w-full max-h-full w-auto h-auto object-contain"
 										sizes={`${Math.ceil((logo.height || logoHeight) * ((logo.imageWidth || 80) / (logo.imageHeight || 80)))}px`}
 									/>
+									<AIImageBadge resource={logo} compact />
 								</div>
 							</div>
 						</div>

@@ -50,6 +50,7 @@ export const ClientsSliderBlock: React.FC<Props> = async ({
 					companyName,
 					imageWidth: media?.width ?? undefined,
 					imageHeight: media?.height ?? undefined,
+					isAIGenerated: media?.isAIGenerated,
 					height: 80
 				}
 			})
@@ -73,6 +74,7 @@ export const ClientsSliderBlock: React.FC<Props> = async ({
 						companyName: string
 						imageWidth?: number
 						imageHeight?: number
+						isAIGenerated?: boolean | null
 						height?: number
 					}[]
 				}
