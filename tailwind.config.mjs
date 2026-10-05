@@ -3,136 +3,137 @@ import typography from '@tailwindcss/typography'
 
 /** @type {import('tailwindcss').Config} */
 const config = {
-	content: [
-		'./pages/**/*.{ts,tsx}',
-		'./components/**/*.{ts,tsx}',
-		'./app/**/*.{ts,tsx}',
-		'./src/**/*.{ts,tsx}'
-	],
-	darkMode: ['selector', '[data-theme="dark"]'],
-	plugins: [tailwindcssAnimate, typography],
-	prefix: '',
-	theme: {
-		extend: {
-			animation: {
-				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			},
-			borderRadius: {
-				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
-			},
-			colors: {
-				accent: {
-					DEFAULT: 'oklch(var(--accent) / <alpha-value>)',
-					foreground: 'oklch(var(--accent-foreground) / <alpha-value>)'
-				},
-				background: 'oklch(var(--background) / <alpha-value>)',
-				border: 'oklch(var(--border) / <alpha-value>)',
-				card: {
-					DEFAULT: 'oklch(var(--card) / <alpha-value>)',
-					foreground: 'oklch(var(--card-foreground) / <alpha-value>)'
-				},
-				destructive: {
-					DEFAULT: 'oklch(var(--destructive) / <alpha-value>)',
-					foreground: 'oklch(var(--destructive-foreground) / <alpha-value>)'
-				},
-				foreground: 'oklch(var(--foreground) / <alpha-value>)',
-				input: 'oklch(var(--input) / <alpha-value>)',
-				muted: {
-					DEFAULT: 'oklch(var(--muted) / <alpha-value>)',
-					foreground: 'oklch(var(--muted-foreground) / <alpha-value>)'
-				},
-				popover: {
-					DEFAULT: 'oklch(var(--popover) / <alpha-value>)',
-					foreground: 'oklch(var(--popover-foreground) / <alpha-value>)'
-				},
-				primary: {
-					DEFAULT: 'oklch(var(--primary) / <alpha-value>)',
-					foreground: 'oklch(var(--primary-foreground) / <alpha-value>)'
-				},
-				ring: 'oklch(var(--ring) / <alpha-value>)',
-				secondary: {
-					DEFAULT: 'oklch(var(--secondary) / <alpha-value>)',
-					foreground: 'oklch(var(--secondary-foreground) / <alpha-value>)',
-					background: 'oklch(var(--secondary-background) / <alpha-value>)'
-				},
-				success: 'oklch(var(--success) / <alpha-value>)',
-				error: 'oklch(var(--error) / <alpha-value>)',
-				warning: 'oklch(var(--warning) / <alpha-value>)'
-			},
-			dropShadow: {
-				accent: '0px 4px 30px rgba(0, 173, 178, 0.25)'
-			},
-			fontFamily: {
-				mono: ['var(--font-geist-mono)']
-			},
-			keyframes: {
-				'accordion-down': {
-					from: { height: '0' },
-					to: { height: 'var(--radix-accordion-content-height)' }
-				},
-				'accordion-up': {
-					from: { height: 'var(--radix-accordion-content-height)' },
-					to: { height: '0' }
-				}
-			},
-			strokeWidth: {
-				3: '3px'
-			},
-			rotate: {
-				135: '135deg',
-				225: '225deg',
-				270: '270deg',
-				315: '315deg'
-			},
-			backgroundImage: {
-				'radial-gradient': 'radial-gradient(var(--tw-gradient-stops))',
-				'conic-gradient':
-					'conic-gradient(from 225deg, #00ADB5, #79FFF7, #D633FF, #FF98E2, #00ADB5)'
-			},
-			typography: () => ({
-				DEFAULT: {
-					css: [
-						{
-							'--tw-prose-body': 'var(--text)',
-							'--tw-prose-headings': 'var(--text)',
-							h1: {
-								fontWeight: 'normal',
-								marginBottom: '0.25em'
-							}
-						}
-					]
-				},
-				base: {
-					css: [
-						{
-							h1: {
-								fontSize: '2.5rem'
-							},
-							h2: {
-								fontSize: '1.25rem',
-								fontWeight: 600
-							}
-						}
-					]
-				},
-				md: {
-					css: [
-						{
-							h1: {
-								fontSize: '3.5rem'
-							},
-							h2: {
-								fontSize: '1.5rem'
-							}
-						}
-					]
-				}
-			})
-		}
-	}
+  content: [
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
+  ],
+  darkMode: ['selector', '[data-theme="dark"]'],
+  plugins: [tailwindcssAnimate, typography],
+  prefix: '',
+  theme: {
+    extend: {
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+      },
+      colors: {
+        accent: {
+          DEFAULT: 'oklch(var(--accent) / <alpha-value>)',
+          contrast: '#007c82', // 4.54:1 contrast with gray-100 text (WCAG AA).
+          foreground: 'oklch(var(--accent-foreground) / <alpha-value>)',
+        },
+        background: 'oklch(var(--background) / <alpha-value>)',
+        border: 'oklch(var(--border) / <alpha-value>)',
+        card: {
+          DEFAULT: 'oklch(var(--card) / <alpha-value>)',
+          foreground: 'oklch(var(--card-foreground) / <alpha-value>)',
+        },
+        destructive: {
+          DEFAULT: 'oklch(var(--destructive) / <alpha-value>)',
+          foreground: 'oklch(var(--destructive-foreground) / <alpha-value>)',
+        },
+        foreground: 'oklch(var(--foreground) / <alpha-value>)',
+        input: 'oklch(var(--input) / <alpha-value>)',
+        muted: {
+          DEFAULT: 'oklch(var(--muted) / <alpha-value>)',
+          foreground: 'oklch(var(--muted-foreground) / <alpha-value>)',
+        },
+        popover: {
+          DEFAULT: 'oklch(var(--popover) / <alpha-value>)',
+          foreground: 'oklch(var(--popover-foreground) / <alpha-value>)',
+        },
+        primary: {
+          DEFAULT: 'oklch(var(--primary) / <alpha-value>)',
+          foreground: 'oklch(var(--primary-foreground) / <alpha-value>)',
+        },
+        ring: 'oklch(var(--ring) / <alpha-value>)',
+        secondary: {
+          DEFAULT: 'oklch(var(--secondary) / <alpha-value>)',
+          foreground: 'oklch(var(--secondary-foreground) / <alpha-value>)',
+          background: 'oklch(var(--secondary-background) / <alpha-value>)',
+        },
+        success: 'oklch(var(--success) / <alpha-value>)',
+        error: 'oklch(var(--error) / <alpha-value>)',
+        warning: 'oklch(var(--warning) / <alpha-value>)',
+      },
+      dropShadow: {
+        accent: '0px 4px 30px rgba(0, 173, 178, 0.25)',
+      },
+      fontFamily: {
+        mono: ['var(--font-geist-mono)'],
+      },
+      keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
+      },
+      strokeWidth: {
+        3: '3px',
+      },
+      rotate: {
+        135: '135deg',
+        225: '225deg',
+        270: '270deg',
+        315: '315deg',
+      },
+      backgroundImage: {
+        'radial-gradient': 'radial-gradient(var(--tw-gradient-stops))',
+        'conic-gradient':
+          'conic-gradient(from 225deg, #00ADB5, #79FFF7, #D633FF, #FF98E2, #00ADB5)',
+      },
+      typography: () => ({
+        DEFAULT: {
+          css: [
+            {
+              '--tw-prose-body': 'var(--text)',
+              '--tw-prose-headings': 'var(--text)',
+              h1: {
+                fontWeight: 'normal',
+                marginBottom: '0.25em',
+              },
+            },
+          ],
+        },
+        base: {
+          css: [
+            {
+              h1: {
+                fontSize: '2.5rem',
+              },
+              h2: {
+                fontSize: '1.25rem',
+                fontWeight: 600,
+              },
+            },
+          ],
+        },
+        md: {
+          css: [
+            {
+              h1: {
+                fontSize: '3.5rem',
+              },
+              h2: {
+                fontSize: '1.5rem',
+              },
+            },
+          ],
+        },
+      }),
+    },
+  },
 }
 
 export default config

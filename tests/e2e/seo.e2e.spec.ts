@@ -17,7 +17,9 @@ test.describe('SEO in the initial HTML', () => {
 
   test('all service FAQ answers are present and can open without JavaScript', async ({ page }) => {
     for (const path of ['/leistungen/web-entwicklung', '/leistungen/dev-ops']) {
-      await page.goto(path, { waitUntil: 'domcontentloaded' })
+      const response = await page.goto(path, { waitUntil: 'domcontentloaded' })
+      expect(response?.status()).toBe(200)
+      expect(new URL(page.url()).pathname).toBe(path)
       const details = page.locator('article details')
       expect(await details.count()).toBeGreaterThan(1)
       await expect(details.locator('.payload-richtext')).toHaveCount(await details.count())
@@ -65,7 +67,8 @@ test.describe('SEO in the initial HTML', () => {
   })
 
   test('contact retains its single CMS heading', async ({ page }) => {
-    await page.goto('/kontakt', { waitUntil: 'domcontentloaded' })
+    const response = await page.goto('/kontakt', { waitUntil: 'domcontentloaded' })
+    expect(response?.status()).toBe(200)
     await expect(page.locator('main h1')).toHaveCount(1)
   })
 })

@@ -2,6 +2,16 @@ import { getPayload } from 'payload'
 import config from '../src/payload.config'
 import sharp from 'sharp'
 
+const richText = (value: string) => ({
+  root: {
+    type: 'root', version: 1, format: '' as const, indent: 0, direction: null,
+    children: [{
+      type: 'paragraph', version: 1, format: '' as const, indent: 0, direction: null,
+      children: [{ type: 'text', version: 1, text: value, format: 0, detail: 0, mode: 'normal', style: '' }],
+    }],
+  },
+})
+
 const uri = new URL(process.env.MONGODB_URI || '')
 if (process.env.TEST_DATABASE !== 'true' || !['localhost', '127.0.0.1'].includes(uri.hostname) || uri.pathname !== '/easycode_test') {
   throw new Error('Seed requires TEST_DATABASE=true and local easycode_test database')
@@ -26,7 +36,7 @@ try {
   await payload.create({ collection: 'projects', context, data: { title: 'Testprojekt', slug: 'testprojekt', client: client.id, shortDescription: 'Reproduzierbares Projekt für automatisierte Tests', projectType: 'brand-webseite', industry: 'IT', startDate: '2026-01-01', role: 'Entwicklung', outcomeSentence: 'Zuverlässige Tests', image: media.id, _status: 'published' } })
   for (const slug of ['home', 'projekte']) {
     await payload.create({ collection: 'pages', context, data: {
-      title: slug === 'home' ? 'The-EasyCode Dresden' : 'Projekte', slug, _status: 'published',
+      title: slug === 'home' ? 'Webentwicklung Dresden' : 'Projekte', slug, _status: 'published',
       hero: { type: 'textAnimation', title: 'Dresden', description: 'Testseite', phrases: [{ phrase: 'Webentwicklung' }], media: media.id },
       layout: [
         { blockType: 'projectsGrid', backgroundVariant: 'primary', headline: 'Projekte', link: { type: 'custom', url: '/projekte', label: 'Alle Projekte' } },
@@ -34,6 +44,30 @@ try {
       ],
     } })
   }
+  // SEO browser tests need published CMS content, including nested service routes.
+  const services = await payload.create({ collection: 'pages', context, data: {
+    title: 'Leistungen', slug: 'leistungen', _status: 'published',
+    hero: { type: 'none' },
+    layout: [{ blockType: 'content', columns: [{ size: 'full', richText: richText('Unsere Leistungen im Überblick.') }] }],
+  } })
+  for (const [slug, title] of [['web-entwicklung', 'Webentwicklung'], ['dev-ops', 'DevOps']]) {
+    await payload.create({ collection: 'pages', context, data: {
+      title, slug, parent: services.id, _status: 'published',
+      hero: { type: 'none' },
+      layout: [{
+        blockType: 'faq', backgroundVariant: 'primary', headline: `Fragen zu ${title}`,
+        items: [
+          { question: 'Wie beginnt die Zusammenarbeit?', answer: richText('Wir besprechen Ziele und Anforderungen.') },
+          { question: 'Wie wird das Projekt umgesetzt?', answer: richText('Wir setzen das Projekt in abgestimmten Schritten um.') },
+        ],
+      }],
+    } })
+  }
+  await payload.create({ collection: 'pages', context, data: {
+    title: 'Kontakt', slug: 'kontakt', _status: 'published',
+    hero: { type: 'none' },
+    layout: [{ blockType: 'contactIntro', headline: 'Lass uns etwas Großartiges bauen.' }],
+  } })
   await payload.updateGlobal({ slug: 'header', context, data: { navItems: [{ link: { type: 'custom', url: '/projekte', label: 'Projekte' } }] } })
   await payload.create({ collection: 'redirects', context, data: { from: '/altes-projekt', to: { type: 'custom', url: '/projekte/testkunde/testprojekt' } } })
 } finally {

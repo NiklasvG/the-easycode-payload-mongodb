@@ -584,7 +584,7 @@
       position: relative;
 
       &.highlight {
-        @apply bg-accent text-accent-foreground border-accent;
+        @apply bg-accent-contrast border-accent-contrast text-gray-100;
       }
     }
   }
