@@ -240,7 +240,8 @@ export default async function Page({
 
 export function generateMetadata(): Metadata {
 	return {
-		title: `The-EasyCode | Suche`
+		title: 'Suche | The-EasyCode',
+		robots: { index: false, follow: true },
 	}
 }
 

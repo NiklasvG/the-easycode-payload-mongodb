@@ -1,11 +1,6 @@
 import React from 'react'
 import type { FAQBlock } from '@/payload-types'
-import {
-	Accordion,
-	AccordionItem,
-	AccordionTrigger,
-	AccordionContent
-} from '@/components/ui/accordion'
+import { ChevronDown } from 'lucide-react'
 import RichText from '@/components/RichText'
 
 type Props = FAQBlock & {
@@ -48,22 +43,18 @@ export const FAQBlockComponent: React.FC<Props> = ({
 
 				{/* Rechte Spalte: FAQ */}
 				<div data-js="accordion">
-					<Accordion
-						type="single"
-						collapsible
-						className="w-full"
-						defaultValue={items[0]?.question ? `item-0` : undefined}
-					>
+					<div className="w-full">
 						{items.map((item, index) => (
-							<AccordionItem
+							<details
 								key={index}
-								value={`item-${index}`}
-								className="accordion__item"
+								open={index === 0}
+								className="group border-b border-white/20"
 							>
-								<AccordionTrigger className="accordion__head">
+								<summary className="big flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-medium hover:underline [&::-webkit-details-marker]:hidden">
 									{item.question}
-								</AccordionTrigger>
-								<AccordionContent className="accordion__body">
+									<ChevronDown aria-hidden="true" className="size-6 shrink-0 transition-transform group-open:rotate-180" />
+								</summary>
+								<div className="big pb-4 font-normal text-gray-300">
 									{item.answer && (
 										<RichText
 											data={item.answer}
@@ -71,10 +62,10 @@ export const FAQBlockComponent: React.FC<Props> = ({
 											enableProse={true}
 										/>
 									)}
-								</AccordionContent>
-							</AccordionItem>
+								</div>
+							</details>
 						))}
-					</Accordion>
+					</div>
 				</div>
 			</div>
 		</section>

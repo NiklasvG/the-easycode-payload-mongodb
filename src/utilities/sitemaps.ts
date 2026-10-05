@@ -4,12 +4,14 @@ import { getSitemapOrigin } from './getSitemapOrigin'
 import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { getContentPath } from './generateMeta'
+import { isNoIndex } from './seo'
 
 type Source = 'pages' | 'posts' | 'projects'
 
 async function readSitemap(source: Source, origin: string): Promise<MetadataRoute.Sitemap> {
   const payload = await getPayload({ config })
-  const entries: MetadataRoute.Sitemap = source === 'pages' ? [{ url: `${origin}/suche` }] : []
+  const entries: MetadataRoute.Sitemap = []
   let page = 1
   let totalPages = 1
   do {
@@ -17,11 +19,11 @@ async function readSitemap(source: Source, origin: string): Promise<MetadataRout
       collection: source, overrideAccess: false, draft: false,
       depth: source === 'projects' ? 1 : 0, limit: 500, page,
       where: { _status: { equals: 'published' } },
-      select: { slug: true, updatedAt: true, ...(source === 'pages' ? { breadcrumbs: true } : {}), ...(source === 'projects' ? { client: true } : {}) },
+      select: { slug: true, updatedAt: true, meta: true, ...(source === 'pages' ? { breadcrumbs: true } : {}), ...(source === 'projects' ? { client: true } : {}) },
       ...(source === 'projects' ? { populate: { clients: { slug: true } } } : {}),
     })
     for (const doc of result.docs) {
-      if (!doc.slug) continue
+      if (!doc.slug || isNoIndex(doc)) continue
       let path: string
       if (source === 'projects') {
         const client = (doc as unknown as Pick<Project, 'client'>).client
@@ -30,8 +32,7 @@ async function readSitemap(source: Source, origin: string): Promise<MetadataRout
       } else if (source === 'posts') {
         path = `/posts/${encodeURIComponent(doc.slug)}`
       } else {
-        const breadcrumbs = (doc as unknown as Pick<Page, 'breadcrumbs'>).breadcrumbs
-        path = doc.slug === 'home' ? '/' : breadcrumbs?.at(-1)?.url || `/${encodeURIComponent(doc.slug)}`
+        path = getContentPath(doc as Partial<Page>, 'pages')
       }
       const url = new URL(path, origin)
       if (url.origin !== new URL(origin).origin) continue

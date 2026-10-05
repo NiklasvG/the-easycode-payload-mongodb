@@ -17,6 +17,6 @@ it('canonical and OpenGraph URLs follow nested pages, posts and projects', async
 })
 it('absolute media URLs stay intact and invalid dates are omitted', async () => {
   const meta = await generateMeta({ doc: { meta: { image: { url: 'https://cdn.example.test/image.webp' } } } as Page })
-  expect(meta.openGraph?.images).toEqual([{ url: 'https://cdn.example.test/image.webp' }])
+  expect(meta.openGraph?.images).toEqual([{ url: 'https://cdn.example.test/image.webp', alt: 'The-EasyCode' }])
   expect(formatProjectDateRange('invalid', '2026-01-01')).toBeNull()
 })

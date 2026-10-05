@@ -12,7 +12,7 @@ describe('native sitemaps', () => {
   it('paginates published pages and keeps nested canonical URLs', async () => {
     mocks.find.mockResolvedValueOnce({ docs: [{ slug: 'home', updatedAt: '2026-10-03' }], totalPages: 2 }).mockResolvedValueOnce({ docs: [{ slug: 'child', breadcrumbs: [{ url: '/parent/child' }], updatedAt: '2026-10-03' }], totalPages: 2 })
     const result = await getCachedSitemap('pages')
-    expect(result.map(item => item.url)).toEqual(['https://example.test/suche', 'https://example.test/', 'https://example.test/parent/child'])
+    expect(result.map(item => item.url)).toEqual(['https://example.test/', 'https://example.test/parent/child'])
     expect(mocks.find).toHaveBeenLastCalledWith(expect.objectContaining({ page: 2, overrideAccess: false, draft: false, where: { _status: { equals: 'published' } } }))
   })
   it('includes valid client/project URLs and varies cache keys by origin', async () => {
@@ -29,8 +29,14 @@ describe('native sitemaps', () => {
     expect(await response.text()).toContain('?a=1&amp;b=2')
   })
   it('blocks all crawling on staging and protects admin/API on production', () => {
-    expect(robots().rules).toEqual({ userAgent: '*', disallow: ['/admin/', '/api/', '/next/'] })
+    expect(robots().rules).toEqual({ userAgent: '*', allow: ['/api/media/file/'], disallow: ['/admin', '/api/', '/next/'] })
     vi.stubEnv('APP_ENV', 'staging')
     expect(robots().rules).toEqual({ userAgent: '*', disallow: '/' })
+  })
+  it('excludes noindex content from every sitemap source', async () => {
+    for (const source of ['pages', 'posts', 'projects'] as const) {
+      mocks.find.mockResolvedValue({ docs: [{ slug: 'hidden', meta: { noIndex: true }, client: { slug: 'client' } }], totalPages: 1 })
+      expect(await getCachedSitemap(source)).toEqual([])
+    }
   })
 })

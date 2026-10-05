@@ -12,7 +12,10 @@ import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { draftMode } from 'next/headers'
 
 import './globals.css'
-import { getServerSideURL } from '@/utilities/getURL'
+import { getSitemapOrigin } from '@/utilities/getSitemapOrigin'
+import { siteName, siteDescription } from '@/utilities/seo'
+import { StructuredData } from '@/components/StructuredData'
+import { getSiteStructuredData } from '@/utilities/structuredData'
 import { ChatLauncher } from '@/components/Chat/ChatLauncher'
 import { UmamiAnalytics } from '@/components/UmamiAnalytics'
 import { CookieBanner } from '@/components/CookieBanner'
@@ -45,6 +48,7 @@ export default async function RootLayout({
 				<link href="/favicon.svg" rel="icon" type="image/svg+xml" />
 			</head>
 			<body>
+				<StructuredData data={getSiteStructuredData()} />
 				{/* Background Gradients */}
 				<div className="absolute top-0 left-0 w-full h-full pointer-events-none z-30 overflow-hidden">
 					<div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/10 rounded-full blur-[120px]" />
@@ -67,7 +71,10 @@ export default async function RootLayout({
 }
 
 export const metadata: Metadata = {
-	metadataBase: new URL(getServerSideURL()),
+	metadataBase: new URL(getSitemapOrigin()),
+	title: siteName,
+	description: siteDescription,
+	...(process.env.APP_ENV === 'staging' ? { robots: { index: false, follow: false } } : {}),
 	openGraph: mergeOpenGraph(),
 	twitter: {
 		card: 'summary_large_image',

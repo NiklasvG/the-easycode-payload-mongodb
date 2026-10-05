@@ -46,7 +46,7 @@ export const PostHero: React.FC<{
             {hasAuthors && (
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1">
-                  <p className="text-sm">Author</p>
+                  <p className="text-sm">Autor</p>
 
                   <p>{formatAuthors(populatedAuthors)}</p>
                 </div>
@@ -54,9 +54,15 @@ export const PostHero: React.FC<{
             )}
             {publishedAt && (
               <div className="flex flex-col gap-1">
-                <p className="text-sm">Date Published</p>
+                <p className="text-sm">Veröffentlicht</p>
 
                 <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
+              </div>
+            )}
+            {post.updatedAt && post.updatedAt !== publishedAt && (
+              <div className="flex flex-col gap-1">
+                <p className="text-sm">Aktualisiert</p>
+                <time dateTime={post.updatedAt}>{formatDateTime(post.updatedAt)}</time>
               </div>
             )}
           </div>

@@ -23,6 +23,7 @@ import { ContactIntroBlock } from '@/blocks/ContactIntro/config'
 import { ContactLinksBlock } from '@/blocks/ContactLinks/config'
 
 import { hero } from '@/heros/config'
+import { noIndexField } from '@/fields/seo'
 
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { revalidateDelete, revalidatePage } from './hooks/revalidatePage'
@@ -134,6 +135,7 @@ export const Pages: CollectionConfig<'pages'> = {
 						}),
 
 						MetaDescriptionField({}),
+						noIndexField,
 						PreviewField({
 							// if the `generateUrl` function is configured
 							hasGenerateFn: true,

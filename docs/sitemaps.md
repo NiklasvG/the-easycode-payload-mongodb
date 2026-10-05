@@ -7,3 +7,5 @@ Jetzt: natives sitemap.ts liefert unter derselben /sitemap.xml einen vollständi
 Alle Datenquellen lesen veröffentlichte Dokumente mit overrideAccess:false und draft:false, paginieren und berücksichtigen verschachtelte Seitenpfade beziehungsweise Client-/Projektpfade. Cache-Schlüssel enthalten Quelle und kanonischen Ursprung; public-cms und source-sitemap verbinden sie mit den CMS-Hooks. Die Metadatenrouten sind dynamisch, sodass Docker-Builds weiterhin keine Datenbank benötigen.
 
 Tests prüfen Paginierung, verschachtelte URLs, Projektzuordnung, originabhängige Schlüssel, XML-Escaping und Staging-Robots. next-sitemap und Postbuild-Schritt entfallen.
+
+SEO-Erweiterung vom 5. Oktober 2026: Die interne Suche ist `noindex` und wird nicht mehr in der Sitemap aufgeführt. `meta.noIndex` schließt einzelne Seiten, Posts und Projekte zusätzlich aus. Payload-Mediendateien unter `/api/media/file/` dürfen trotz allgemeiner API-Crawlersperre abgerufen werden. Canonicals, strukturierte Daten, Sitemap und das neue CMS-generierte `/llms.txt` verwenden denselben Ursprung. Der ausführliche Maßnahmen- und Pflegeplan steht in [seo-plan.md](seo-plan.md).

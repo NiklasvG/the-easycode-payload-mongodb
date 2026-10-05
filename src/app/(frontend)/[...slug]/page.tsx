@@ -15,6 +15,9 @@ import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { getPreviewAccess } from '@/utilities/getPreviewAccess'
 import { getPagePath } from '@/utilities/contentPaths'
+import { StructuredData } from '@/components/StructuredData'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { getContentBreadcrumbs, getContentStructuredData } from '@/utilities/structuredData'
 
 // Helper um Params korrekt zu typisieren
 type Args = {
@@ -26,10 +29,11 @@ type Args = {
 
 export default async function Page({ params: paramsPromise }: Args) {
 	const { isEnabled: draft } = await draftMode()
-	const { slug = ['home'] } = await paramsPromise
+	const { slug: requestedSlug } = await paramsPromise
+	const slug = requestedSlug?.length ? requestedSlug : ['home']
 
 	// 1. URL aus Params rekonstruieren (z.B. "/leistungen/web-entwicklung")
-	const urlPath = '/' + slug.join('/')
+	const urlPath = requestedSlug?.length ? '/' + requestedSlug.join('/') : '/'
 
 	// 2. Letztes Segment für DB-Suche nutzen
 	const lastSegment = slug[slug.length - 1]
@@ -45,19 +49,15 @@ export default async function Page({ params: paramsPromise }: Args) {
 
 	// Wir prüfen, ob die Seite Breadcrumbs hat und ob die URL übereinstimmt.
 	// Das nestedDocs Plugin speichert die volle URL im letzten Breadcrumb.
-	if (page.breadcrumbs && page.breadcrumbs.length > 0) {
-		const correctURL = page.breadcrumbs[page.breadcrumbs.length - 1]?.url
-
-		// Wenn die aufgerufene URL (urlPath) nicht der korrekten URL entspricht -> Redirect
-		if (correctURL && correctURL !== urlPath) {
-			permanentRedirect(correctURL)
-		}
-	}
+	const correctURL = getPagePath(page)
+	if (correctURL !== urlPath) permanentRedirect(correctURL)
 
 	const { hero, layout } = page
 
 	return (
 		<article>
+			{!draft && <StructuredData data={getContentStructuredData(page, 'pages')} />}
+			<Breadcrumbs items={getContentBreadcrumbs(page, 'pages')} />
 			<PageClient />
 			<PayloadRedirects disableNotFound url={urlPath} />
 
@@ -80,7 +80,8 @@ export async function generateMetadata({
 		slug: decodedSlug
 	})
 
-	return generateMeta({ doc: page })
+	const { isEnabled: preview } = await draftMode()
+	return generateMeta({ doc: page, preview })
 }
 
 export async function generateStaticParams() {

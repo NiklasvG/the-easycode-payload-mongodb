@@ -26,6 +26,7 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { slugField } from 'payload'
+import { noIndexField } from '@/fields/seo'
 
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
@@ -150,6 +151,7 @@ export const Posts: CollectionConfig<'posts'> = {
             }),
 
             MetaDescriptionField({}),
+            noIndexField,
             PreviewField({
               // if the `generateUrl` function is configured
               hasGenerateFn: true,

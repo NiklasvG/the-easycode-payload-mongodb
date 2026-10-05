@@ -251,6 +251,10 @@ export interface Page {
      */
     image?: (string | null) | Media;
     description?: string | null;
+    /**
+     * Setzt noindex und entfernt die URL aus Sitemap und llms.txt. Die Seite bleibt öffentlich erreichbar; dies ist kein Zugriffsschutz.
+     */
+    noIndex?: boolean | null;
   };
   publishedAt?: string | null;
   /**
@@ -303,6 +307,10 @@ export interface Post {
      */
     image?: (string | null) | Media;
     description?: string | null;
+    /**
+     * Setzt noindex und entfernt die URL aus Sitemap und llms.txt. Die Seite bleibt öffentlich erreichbar; dies ist kein Zugriffsschutz.
+     */
+    noIndex?: boolean | null;
   };
   publishedAt?: string | null;
   authors?: (string | User)[] | null;
@@ -1356,6 +1364,18 @@ export interface Project {
     };
     [k: string]: unknown;
   } | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+    description?: string | null;
+    /**
+     * Setzt noindex und entfernt die URL aus Sitemap und llms.txt. Die Seite bleibt öffentlich erreichbar; dies ist kein Zugriffsschutz.
+     */
+    noIndex?: boolean | null;
+  };
   stats?:
     | {
         value: string;
@@ -1765,6 +1785,7 @@ export interface PagesSelect<T extends boolean = true> {
         title?: T;
         image?: T;
         description?: T;
+        noIndex?: T;
       };
   publishedAt?: T;
   generateSlug?: T;
@@ -2146,6 +2167,7 @@ export interface PostsSelect<T extends boolean = true> {
         title?: T;
         image?: T;
         description?: T;
+        noIndex?: T;
       };
   publishedAt?: T;
   authors?: T;
@@ -2353,6 +2375,14 @@ export interface ProjectsSelect<T extends boolean = true> {
   theSolution?: T;
   theOutcome?: T;
   theNerdDetails?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+        noIndex?: T;
+      };
   stats?:
     | T
     | {

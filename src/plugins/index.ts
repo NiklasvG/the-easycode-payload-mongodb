@@ -15,13 +15,13 @@ import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, Post, Project } from '@/payload-types'
-import { getServerSideURL } from '@/utilities/getURL'
+import { absoluteSEOURL, getSEOTitle } from '@/utilities/seo'
 import { getContentPath } from '@/utilities/generateMeta'
 import { authenticated } from '@/access/authenticated'
 import { validateFormSubmission } from '@/hooks/validateFormSubmission'
 
-const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
-	return doc?.title ? `${doc.title} | The-EasyCode` : 'The-EasyCode'
+const generateTitle: GenerateTitle<Post | Page | Project> = ({ doc }) => {
+	return getSEOTitle(doc?.title)
 }
 
 const generateURL: GenerateURL<Post | Page | Project> = async ({ doc, collectionSlug, req }) => {
@@ -31,7 +31,7 @@ const generateURL: GenerateURL<Post | Page | Project> = async ({ doc, collection
     const client = await req.payload.findByID({ collection: 'clients', id: doc.client, depth: 0, overrideAccess: false, req })
     resolved = { ...doc, client }
   }
-  return new URL(getContentPath(resolved, collection), getServerSideURL()).href
+  return absoluteSEOURL(getContentPath(resolved, collection))
 }
 
 export const plugins: Plugin[] = [

@@ -23,6 +23,9 @@ import { Github } from '@/components/icons/brands'
 import RichText from '@/components/RichText'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { getPreviewAccess } from '@/utilities/getPreviewAccess'
+import { StructuredData } from '@/components/StructuredData'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { getContentBreadcrumbs, getContentStructuredData } from '@/utilities/structuredData'
 
 type Project = RequiredDataFromCollectionSlug<'projects'>
 type Client = RequiredDataFromCollectionSlug<'clients'>
@@ -88,6 +91,8 @@ export default async function ProjectDetailPage({ params: paramsPromise }: Args)
 
   return (
     <article className="min-h-screen bg-background text-foreground animate-in fade-in duration-500 selection:bg-accent selection:text-white">
+      {!draft && <StructuredData data={getContentStructuredData(project, 'projects')} />}
+      <Breadcrumbs items={getContentBreadcrumbs(project, 'projects')} />
       {draft && <LivePreviewListener />}
 
       {/* --- HERO SECTION --- */}
@@ -177,7 +182,7 @@ export default async function ProjectDetailPage({ params: paramsPromise }: Args)
             <div className="relative w-full aspect-video lg:aspect-21/9 rounded-2xl overflow-hidden border border-white/10 shadow-2xl group">
               <Image
                 src={project.heroImage.url!}
-                alt={`${project.title} Hero`}
+                alt={project.heroImage.alt || project.title}
                 fill
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                 sizes="(max-width: 1024px) 100vw, 1200px"
@@ -399,7 +404,8 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
   if (!project) return { robots: { index: false, follow: false } }
 
-  return generateMeta({ doc: project, collection: 'projects' })
+  const { isEnabled: preview } = await draftMode()
+  return generateMeta({ doc: project, collection: 'projects', preview })
 }
 
 // -------- Helpers --------

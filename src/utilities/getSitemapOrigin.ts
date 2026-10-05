@@ -1,2 +1,3 @@
+// Canonicals, structured data and sitemap always use the same origin.
 export const getSitemapOrigin = () =>
-  (process.env.NEXT_PUBLIC_SERVER_URL || 'https://the-easycode.eu').replace(/\/$/, '')
+  new URL(process.env.NEXT_PUBLIC_SERVER_URL || 'https://the-easycode.eu').origin
