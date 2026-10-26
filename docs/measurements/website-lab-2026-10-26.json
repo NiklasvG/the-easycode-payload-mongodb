@@ -1,0 +1,53 @@
+{
+  "limitations": "Unthrottled local Chromium; no production field metrics, no before/after speed claim.",
+  "results": [
+    {
+      "width": 390,
+      "path": "/",
+      "lcp": 132,
+      "cls": 0,
+      "ttfb": 2.299999952316284,
+      "transferredBytes": 401955
+    },
+    {
+      "width": 390,
+      "path": "/projekte",
+      "lcp": 56,
+      "cls": 0,
+      "ttfb": 4.5,
+      "transferredBytes": 51795
+    },
+    {
+      "width": 390,
+      "path": "/projekte/queo/mes-dashboard-zur-steuerung-von-reparaturprozessen",
+      "lcp": 84,
+      "cls": 0,
+      "ttfb": 4.100000023841858,
+      "transferredBytes": 117617
+    },
+    {
+      "width": 1440,
+      "path": "/",
+      "lcp": 136,
+      "cls": 0,
+      "ttfb": 2.3000000715255737,
+      "transferredBytes": 431537
+    },
+    {
+      "width": 1440,
+      "path": "/projekte",
+      "lcp": 60,
+      "cls": 0,
+      "ttfb": 4.700000047683716,
+      "transferredBytes": 95840
+    },
+    {
+      "width": 1440,
+      "path": "/projekte/queo/mes-dashboard-zur-steuerung-von-reparaturprozessen",
+      "lcp": 84,
+      "cls": 0,
+      "ttfb": 3.5,
+      "transferredBytes": 139556
+    }
+  ]
+}

@@ -26,8 +26,7 @@ interface ChatMessage {
 
 const CHAT_CONSENT_SUMMARY =
   'Ich willige ein, dass The-EasyCode meine Nachrichten und den Gesprächsverlauf zur Beantwortung meiner Fragen an OpenAI Ireland Ltd. übermittelt. Die Verarbeitung kann außerhalb der EU erfolgen.'
-const CHAT_CONSENT_CHOICE =
-  'Die Einwilligung ist freiwillig und jederzeit im Chat widerrufbar.'
+const CHAT_CONSENT_CHOICE = 'Die Einwilligung ist freiwillig und jederzeit im Chat widerrufbar.'
 const CHAT_CONSENT_WARNING =
   'Bitte keine sensiblen Daten oder Daten anderer Personen eingeben. KI-Antworten können Fehler enthalten.'
 
@@ -77,7 +76,10 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
     return () => window.clearInterval(timer)
   }, [retryAt])
 
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messagesRef = useRef<HTMLDivElement>(null)
+  const followLatest = useRef(true)
+  const launcherRef = useRef<HTMLButtonElement>(null)
+  const consentHeadingRef = useRef<HTMLHeadingElement>(null)
   const inputRef = useRef<HTMLInputElement>(null) // ✅ NEW
   const requestAbort = useRef<AbortController | null>(null)
   useEffect(() => () => requestAbort.current?.abort(), [])
@@ -92,22 +94,27 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
     }
   }, [initiallyOpen])
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
-
   useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    const list = messagesRef.current
+    if (isOpen && list && followLatest.current) list.scrollTop = list.scrollHeight
+  }, [messages, isOpen])
 
   // ✅ NEW: Fokus setzen, sobald der Chat geöffnet ist
   useEffect(() => {
     if (!isOpen) return
     // nach dem Render fokussieren
-    requestAnimationFrame(() => {
-      inputRef.current?.focus()
+    const frame = requestAnimationFrame(() => {
+      const target = consent ? inputRef.current : consentHeadingRef.current
+      target?.focus({ preventScroll: true })
     })
-  }, [isOpen])
+    return () => cancelAnimationFrame(frame)
+  }, [isOpen, consent])
+
+  const closeChat = () => {
+    requestAbort.current?.abort()
+    setIsOpen(false)
+    launcherRef.current?.focus({ preventScroll: true })
+  }
 
   const handleConsent = () => {
     const accepted: ChatConsent = {
@@ -175,6 +182,7 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
       messages.filter((message) => !message.excludeFromContext && !message.isStreaming),
     )
     const userIndex = messages.length
+    followLatest.current = true
     setInputValue('')
     setMessages((prev) => [
       ...prev,
@@ -280,17 +288,22 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <div className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] z-50 flex flex-col items-end">
       {isOpen && (
         <div
           id="easycode-ai-chat"
           role="region"
           aria-label="EasyCode AI Chat"
-          aria-busy={isLoading}
-          className="mb-4 w-[90vw] max-w-sm md:w-96 h-[500px] bg-black border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in slide-in-from-bottom-10 fade-in duration-300 motion-reduce:animate-none"
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              event.stopPropagation()
+              closeChat()
+            }
+          }}
+          className="mb-4 w-[calc(100vw-2rem)] max-w-sm md:w-96 h-[min(36rem,calc(100dvh-7rem-env(safe-area-inset-bottom)))] bg-black border border-white/20 rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in duration-200 motion-reduce:animate-none"
         >
           {/* Header */}
-          <div className="bg-linear-to-r from-accent to-accent-dark p-4 flex justify-between items-center">
+          <div className="shrink-0 bg-secondary-background border-b border-white/10 p-3 flex justify-between items-center">
             <div className="flex items-center gap-2 text-white">
               <Sparkles className="w-5 h-5" />
               <span className="font-display font-bold tracking-wide">EasyCode AI</span>
@@ -319,10 +332,7 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
               <button
                 type="button"
                 aria-label="Chatfenster schließen"
-                onClick={() => {
-                  requestAbort.current?.abort()
-                  setIsOpen(false)
-                }}
+                onClick={closeChat}
                 title="Chatfenster schließen"
                 className="flex size-11 items-center justify-center rounded-xl text-white/80 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
@@ -331,13 +341,19 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
             </div>
           </div>
 
-          <div className="flex-1 relative flex flex-col overflow-hidden">
+          <div className="min-h-0 flex-1 relative flex flex-col overflow-hidden">
             {!consent && (
-              <div className="absolute inset-0 z-20 bg-black/95 backdrop-blur-xs overflow-y-auto p-5 flex flex-col items-center justify-start text-center animate-in fade-in duration-300">
+              <div className="absolute inset-0 z-20 bg-black overflow-y-auto overscroll-contain p-5 flex flex-col items-center justify-start text-center">
                 <div className="p-3 bg-accent/10 rounded-full text-accent mb-4 ring-1 ring-accent/20">
                   <ShieldCheck className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-4">KI-Chat freiwillig nutzen</h3>
+                <h3
+                  ref={consentHeadingRef}
+                  tabIndex={-1}
+                  className="text-xl font-bold text-white mb-4 outline-hidden"
+                >
+                  KI-Chat freiwillig nutzen
+                </h3>
                 <div className="text-sm text-gray-300 leading-relaxed space-y-3 mb-5 payload-richtext">
                   <p>{CHAT_CONSENT_SUMMARY}</p>
                   <p>{CHAT_CONSENT_CHOICE}</p>
@@ -357,30 +373,42 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                 <button
                   type="button"
                   onClick={handleConsent}
-                  className="w-full bg-accent hover:bg-accent-dark text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  className="w-full shrink-0 bg-accent-contrast hover:bg-accent-contrast/90 text-white font-bold py-3 px-6 rounded-xl transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   Einwilligen und Chat nutzen
                 </button>
                 <button
                   type="button"
-                  onClick={() => setIsOpen(false)}
-                  className="mt-3 w-full rounded-xl border border-white/20 py-3 px-6 text-sm text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  onClick={closeChat}
+                  className="mt-3 w-full shrink-0 rounded-xl border border-white/20 py-3 px-6 text-sm text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   Ohne KI-Chat fortfahren
                 </button>
               </div>
             )}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-black bg-opacity-95 scroll-smooth chat-scroll">
+            <div
+              ref={messagesRef}
+              role="log"
+              aria-label="Chatverlauf"
+              aria-live="polite"
+              aria-busy={isLoading}
+              inert={!consent}
+              onScroll={(event) => {
+                const list = event.currentTarget
+                followLatest.current = list.scrollHeight - list.scrollTop - list.clientHeight < 64
+              }}
+              className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 space-y-4 bg-black chat-scroll"
+            >
               {messages.map((msg, idx) => (
                 <div
                   key={idx}
                   className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[80%] p-3 rounded-2xl text-sm leading-relaxed
+                    className={`min-w-0 max-w-[90%] p-3 rounded-2xl text-sm leading-relaxed [overflow-wrap:anywhere]
 												${
                           msg.role === 'user'
-                            ? 'bg-accent text-white rounded-br-sm'
+                            ? 'bg-accent-contrast text-white rounded-br-sm'
                             : 'bg-black border border-white/10 text-gray-200 rounded-bl-sm'
                         }`}
                   >
@@ -414,7 +442,7 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                         components={{
                           img: () => null,
                           strong: ({ children }) => (
-                            <strong className="font-semibold text-accent">{children}</strong>
+                            <strong className="font-semibold">{children}</strong>
                           ),
                           a: ({ children, href, ...props }) => (
                             <a
@@ -453,7 +481,10 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                     </div>
 
                     {msg.isStreaming && (
-                      <div className="inline-flex gap-1 justify-start items-center">
+                      <div
+                        aria-hidden="true"
+                        className="inline-flex gap-1 justify-start items-center motion-reduce:[&>div]:animate-none"
+                      >
                         <div className="size-2 bg-accent rounded-full animate-bounce [animation-delay:-0.3s]" />
                         <div className="size-2 bg-accent rounded-full animate-bounce [animation-delay:-0.15s]" />
                         <div className="size-2 bg-accent rounded-full animate-bounce" />
@@ -462,14 +493,13 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                   </div>
                 </div>
               ))}
-              <div ref={messagesEndRef} />
             </div>
 
             {consent && (
               <button
                 type="button"
                 onClick={handleWithdrawConsent}
-                className="shrink-0 bg-secondary-background px-4 py-2 text-xs text-gray-300 underline underline-offset-4 hover:text-white focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-accent"
+                className="shrink-0 min-h-11 bg-secondary-background px-4 py-2 text-xs text-gray-300 underline underline-offset-4 hover:text-white focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-accent"
               >
                 Einwilligung widerrufen
               </button>
@@ -478,7 +508,7 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
             {/* Input */}
             <form
               onSubmit={handleSubmit}
-              className="p-4 bg-secondary-background border-t border-white/10"
+              className="shrink-0 p-4 bg-secondary-background border-t border-white/10"
             >
               {errorMessage && (
                 <p role="alert" className="mb-2 text-sm text-gray-300">
@@ -507,13 +537,14 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                   onChange={(e) => setInputValue(e.target.value)}
                   disabled={!consent || isLoading || cooldown > 0}
                   maxLength={CHAT_MESSAGE_CHARS}
+                  enterKeyHint="send"
                   aria-label="Deine Nachricht an den KI-Assistenten"
                   placeholder={consent ? 'Frag mich etwas ...' : 'Bitte erst einwilligen'}
-                  className="w-full bg-background/50 border border-white/10 rounded-xl pl-4 pr-12 py-3 text-base md:text-sm text-foreground focus:outline-hidden focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all placeholder:text-gray-400 disabled:opacity-50"
+                  className="w-full min-w-0 bg-background/50 border border-white/20 rounded-xl pl-4 pr-12 py-3 text-base text-foreground focus:outline-hidden focus:border-accent focus:ring-2 focus:ring-accent transition-colors placeholder:text-gray-400 disabled:opacity-50"
                 />
                 {inputValue.length > 800 && (
                   <div className="absolute -top-4 right-0 text-[10px] text-gray-500 font-mono">
-                    {inputValue.length}/1000
+                    {inputValue.length}/{CHAT_MESSAGE_CHARS}
                   </div>
                 )}
                 <button
@@ -540,18 +571,14 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
 
       {/* Toggle Button */}
       <button
+        ref={launcherRef}
         onClick={handleToggleOpen}
         aria-label={isOpen ? 'KI-Chat schließen' : 'KI-Chat öffnen'}
         aria-expanded={isOpen}
         aria-controls="easycode-ai-chat"
-        className="group relative flex items-center justify-center w-14 h-14 rounded-full bg-accent hover:bg-accent-dark text-white shadow-lg shadow-accent/20 transition-all duration-300 hover:scale-110 active:scale-95"
+        className="group relative flex items-center justify-center w-14 h-14 rounded-full bg-accent-contrast hover:bg-accent-contrast/90 text-white shadow-lg shadow-accent/20 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
       >
         {isOpen ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
-
-        {/* Pulse effect nur, wenn der Chat noch nie geöffnet wurde */}
-        {!isOpen && !hasOpenedOnce && (
-          <span className="absolute -z-10 w-full h-full rounded-full bg-accent opacity-40 animate-ping motion-reduce:animate-none" />
-        )}
       </button>
     </div>
   )

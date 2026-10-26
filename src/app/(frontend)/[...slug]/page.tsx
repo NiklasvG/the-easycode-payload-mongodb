@@ -16,8 +16,8 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { getPreviewAccess } from '@/utilities/getPreviewAccess'
 import { getPagePath } from '@/utilities/contentPaths'
 import { StructuredData } from '@/components/StructuredData'
-import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { getContentBreadcrumbs, getContentStructuredData } from '@/utilities/structuredData'
+import { getContentStructuredData } from '@/utilities/structuredData'
+import { CreditsPage } from '@/components/Credits/Page'
 
 // Helper um Params korrekt zu typisieren
 type Args = {
@@ -57,14 +57,19 @@ export default async function Page({ params: paramsPromise }: Args) {
 	return (
 		<article>
 			{!draft && <StructuredData data={getContentStructuredData(page, 'pages')} />}
-			<Breadcrumbs items={getContentBreadcrumbs(page, 'pages')} />
 			<PageClient />
 			<PayloadRedirects disableNotFound url={urlPath} />
 
 			{draft && <LivePreviewListener />}
 
-			<RenderHero {...hero} />
-			<RenderBlocks blocks={layout} />
+			{page.slug === 'credits' ? (
+				<CreditsPage hero={hero} layout={layout} />
+			) : (
+				<>
+					<RenderHero {...hero} />
+					<RenderBlocks blocks={layout} />
+				</>
+			)}
 		</article>
 	)
 }

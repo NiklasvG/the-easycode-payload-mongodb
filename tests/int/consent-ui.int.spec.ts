@@ -45,4 +45,30 @@ describe('consent UI external storage', () => {
     expect(screen.queryByRole('button', { name: 'Alle ablehnen' })).toBeNull()
     expect(localStorage.getItem(COOKIE_CONSENT_KEY)).toBeNull()
   })
+  it('names necessary controls and restores focus after editing preferences', () => {
+    render(
+      React.createElement(
+        React.Fragment,
+        null,
+        React.createElement(
+          'button',
+          { onClick: () => window.dispatchEvent(new Event('show-cookie-banner')) },
+          'Cookieauswahl ändern',
+        ),
+        React.createElement(CookieBanner),
+      ),
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Alle ablehnen' }))
+    const trigger = screen.getByRole('button', { name: 'Cookieauswahl ändern' })
+    trigger.focus()
+    fireEvent.click(trigger)
+    expect(
+      screen.getByRole('checkbox', { name: 'Notwendige Funktionen, immer aktiv' }),
+    ).toBeTruthy()
+    expect(document.activeElement).toBe(
+      screen.getByRole('heading', { name: 'Cookie-Einstellungen' }),
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Auswahl bestätigen' }))
+    expect(document.activeElement).toBe(trigger)
+  })
 })

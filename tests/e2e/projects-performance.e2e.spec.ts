@@ -1,11 +1,13 @@
 import { expect, test } from '@playwright/test'
 
-test('project filters keep matching cards, accessible contrast and restore all projects', async ({ page }) => {
+test('project filters keep matching cards, accessible contrast and restore all projects', async ({
+  page,
+}) => {
   const errors: string[] = []
   page.on('pageerror', (error) => errors.push(error.message))
   await page.goto('/projekte')
   await page.getByRole('button', { name: 'Alle ablehnen', exact: true }).click()
-  const filters = page.locator('main button[aria-pressed]')
+  const filters = page.getByRole('group', { name: 'Projekte nach Typ filtern' }).getByRole('button')
   const cards = page.locator('main .service-card')
   await expect(filters.first()).toBeVisible()
   await expect(cards.first()).toBeVisible()
@@ -13,12 +15,14 @@ test('project filters keep matching cards, accessible contrast and restore all p
   expect(total).toBeGreaterThan(1)
   expect(await filters.count()).toBeGreaterThan(2)
 
-  for (let index = 1; index < await filters.count(); index++) {
+  for (let index = 1; index < (await filters.count()); index++) {
     const filter = filters.nth(index)
     const label = (await filter.innerText()).trim()
     await filter.click()
     await expect(filter).toHaveAttribute('aria-pressed', 'true')
-    await expect(cards.locator('.list--tag li.highlight').filter({ hasNotText: label })).toHaveCount(0)
+    await expect(
+      cards.locator('.list--tag li.highlight').filter({ hasNotText: label }),
+    ).toHaveCount(0)
     expect(await cards.count()).toBeGreaterThan(0)
     expect(await cards.count()).toBeLessThan(total)
     const contrast = await filter.evaluate((element) => {
@@ -48,12 +52,18 @@ test('project filters keep matching cards, accessible contrast and restore all p
   expect(errors).toEqual([])
 })
 
-test('mobile images match display density and content is visible without JavaScript', async ({ browser }) => {
+test('mobile images match display density and content is visible without JavaScript', async ({
+  browser,
+}) => {
   for (const deviceScaleFactor of [1, 1.75, 3]) {
-    const context = await browser.newContext({ viewport: { width: 412, height: 915 }, deviceScaleFactor })
+    const context = await browser.newContext({
+      viewport: { width: 412, height: 915 },
+      deviceScaleFactor,
+    })
     const page = await context.newPage()
-    const imageResponse = page.waitForResponse((response) =>
-      response.request().resourceType() === 'image' && response.url().includes('/_next/image'),
+    const imageResponse = page.waitForResponse(
+      (response) =>
+        response.request().resourceType() === 'image' && response.url().includes('/_next/image'),
     )
     await page.goto('/projekte')
     expect((await imageResponse).headers()['content-type']).toBe('image/avif')
@@ -80,21 +90,33 @@ test('mobile images match display density and content is visible without JavaScr
   await expect(staticPage.locator('main h1')).toBeVisible()
   await expect(staticPage.locator('main h1 span').first()).toHaveCSS('opacity', '1')
   await expect(staticPage.locator('main .service-card').first()).toBeVisible()
-  await expect(staticPage.locator('main .service-card').first().locator('..')).toHaveCSS('opacity', '1')
+  await expect(staticPage.locator('main .service-card').first().locator('..')).toHaveCSS(
+    'opacity',
+    '1',
+  )
   await noJS.close()
 })
 
-test('reduced motion keeps the hero phrase stable and disables icon parallax', async ({ browser }) => {
+test('reduced motion keeps the hero phrase stable and disables icon parallax', async ({
+  browser,
+}) => {
   const context = await browser.newContext({ reducedMotion: 'reduce' })
   const page = await context.newPage()
   await page.goto('/projekte')
   const phrase = page.locator('.text-animation-hero h1 > .text-accent')
   const initialText = await phrase.innerText()
   await page.waitForTimeout(3200)
-  await expect(phrase).toHaveText(initialText)
+  await expect.poll(() => phrase.innerText()).toBe(initialText)
   await expect(page.locator('.hero-icons')).toHaveCSS('transform', 'none')
   await page.getByRole('button', { name: 'Alle ablehnen', exact: true }).click()
-  await page.locator('main button[aria-pressed]').nth(1).click()
-  await expect(page.locator('main .service-card').first().locator('..')).toHaveCSS('animation-name', 'none')
+  await page
+    .getByRole('group', { name: 'Projekte nach Typ filtern' })
+    .getByRole('button')
+    .nth(1)
+    .click()
+  await expect(page.locator('main .service-card').first().locator('..')).toHaveCSS(
+    'animation-name',
+    'none',
+  )
   await context.close()
 })

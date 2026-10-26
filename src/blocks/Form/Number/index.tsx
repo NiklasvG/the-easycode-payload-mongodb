@@ -1,9 +1,5 @@
 import type { TextField } from '@payloadcms/plugin-form-builder/types'
-import type {
-	FieldErrorsImpl,
-	FieldValues,
-	UseFormRegister
-} from 'react-hook-form'
+import type { FieldErrorsImpl, FieldValues, UseFormRegister } from 'react-hook-form'
 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,30 +8,33 @@ import React from 'react'
 import { Error } from '../Error'
 
 export const Number: React.FC<
-	Omit<TextField, 'blockType'> & { blockType: 'number' } & {
-		errors: Partial<FieldErrorsImpl>
-		register: UseFormRegister<FieldValues>
-	}
+  Omit<TextField, 'blockType'> & { blockType: 'number' } & {
+    errors: Partial<FieldErrorsImpl>
+    register: UseFormRegister<FieldValues>
+  }
 > = ({ name, defaultValue, errors, label, register, required }) => {
-	return (
-		<div>
-			<Label htmlFor={name}>
-				{label}
+  return (
+    <div>
+      <Label htmlFor={name}>
+        {label || name}
 
-				{required && (
-					<span className="required">
-						* <span className="sr-only">(required)</span>
-					</span>
-				)}
-			</Label>
-			<Input
-				defaultValue={defaultValue}
-				id={name}
-				type="number"
-				{...register(name, { required })}
-			/>
-			{errors[name] && <Error name={name} />}
-		</div>
-	)
+        {required && (
+          <span className="required">
+            * <span className="sr-only">(Pflichtfeld)</span>
+          </span>
+        )}
+      </Label>
+      <Input
+        defaultValue={defaultValue}
+        id={name}
+        aria-required={!!required}
+        aria-invalid={!!errors[name]}
+        aria-describedby={errors[name] ? `${name}-error` : undefined}
+        type="number"
+        inputMode="decimal"
+        {...register(name, { required })}
+      />
+      {errors[name] && <Error name={name} />}
+    </div>
+  )
 }
-

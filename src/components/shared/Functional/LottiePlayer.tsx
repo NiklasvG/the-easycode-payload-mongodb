@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { LottieSvg, type LottieHandle } from 'lottie-react'
-import { useReducedMotion } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/utilities/usePrefersReducedMotion'
 
 import type { LottieSvgProps } from 'lottie-react'
 
@@ -15,8 +15,32 @@ const LottiePlayer = ({ animationData, triggerPlay }: LottiePlayerProps) => {
   const lottieRef = useRef<LottieHandle>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const playedOnce = useRef(false)
-  const reducedMotion = useReducedMotion()
+  const reducedMotion = usePrefersReducedMotion()
   const isPlaying = useRef(false)
+  const visible = useRef(false)
+
+  // Lottie SVG updates are useful only while the icon can actually be seen.
+  useEffect(() => {
+    const element = containerRef.current
+    if (!element) return
+    const syncPlayback = () => {
+      if (reducedMotion || document.hidden || !visible.current) {
+        lottieRef.current?.pause()
+      } else if (isPlaying.current) {
+        lottieRef.current?.play()
+      }
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      visible.current = entry.isIntersecting
+      syncPlayback()
+    })
+    observer.observe(element)
+    document.addEventListener('visibilitychange', syncPlayback)
+    return () => {
+      observer.disconnect()
+      document.removeEventListener('visibilitychange', syncPlayback)
+    }
+  }, [reducedMotion])
 
   // Wenn von außen neu getriggert wird → Reset
   useEffect(() => {
@@ -28,7 +52,13 @@ const LottiePlayer = ({ animationData, triggerPlay }: LottiePlayerProps) => {
 
   // Normales Verhalten: über Prop triggerPlay steuern (z. B. Hover, Scroll, etc.)
   useEffect(() => {
-    if (triggerPlay && !playedOnce.current && !isPlaying.current && !reducedMotion) {
+    if (
+      triggerPlay &&
+      !playedOnce.current &&
+      !isPlaying.current &&
+      !reducedMotion &&
+      !document.hidden
+    ) {
       isPlaying.current = true
       lottieRef.current?.seek({ frame: 0 })
       lottieRef.current?.play()
@@ -48,7 +78,13 @@ const LottiePlayer = ({ animationData, triggerPlay }: LottiePlayerProps) => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && !playedOnce.current && !isPlaying.current && !reducedMotion) {
+          if (
+            entry.isIntersecting &&
+            !playedOnce.current &&
+            !isPlaying.current &&
+            !reducedMotion &&
+            !document.hidden
+          ) {
             isPlaying.current = true
             lottieRef.current?.seek({ frame: 0 })
             lottieRef.current?.play()
@@ -68,7 +104,7 @@ const LottiePlayer = ({ animationData, triggerPlay }: LottiePlayerProps) => {
   }, [reducedMotion])
 
   return (
-    <div ref={containerRef} className="h-full w-full">
+    <div ref={containerRef} className="h-full w-full" aria-hidden="true">
       <LottieSvg
         lottieRef={lottieRef}
         src={animationData}
@@ -86,4 +122,3 @@ const LottiePlayer = ({ animationData, triggerPlay }: LottiePlayerProps) => {
 }
 
 export default LottiePlayer
-

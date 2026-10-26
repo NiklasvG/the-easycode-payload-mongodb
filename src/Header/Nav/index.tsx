@@ -1,260 +1,211 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-
-// Types
-import type { Header as HeaderType } from '@/payload-types'
-
-// Libraries
-import { disablePageScroll, enablePageScroll } from '@fluejs/noscroll'
-
-// Components
+import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { ArrowUpRight, Search } from 'lucide-react'
-import { Instagram, Linkedin } from '@/components/icons/brands'
 import { usePathname } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import MenuSvg from '@/components/shared/Designs/svg/MenuSvg'
+import { ArrowUpRight, Search, X } from 'lucide-react'
+import { Instagram, Linkedin } from '@/components/icons/brands'
+import type { Header as HeaderType } from '@/payload-types'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Logo } from '@/components/Logo/Logo'
 import { CMSLink } from '@/components/Link'
+import { resolveCMSLinkHref } from '@/utilities/resolveCMSLinkHref'
+import MenuSvg from '@/components/shared/Designs/svg/MenuSvg'
 
 export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
-	const pathname = usePathname()
+  const pathname = usePathname()
+  const [open, setOpen] = useState(false)
+  const dialog = useRef<HTMLDialogElement>(null)
+  const trigger = useRef<HTMLButtonElement>(null)
+  const items = (data?.navItems || []).flatMap(({ link }, index) => {
+    const href = resolveCMSLinkHref(link)
+    if (!href) return []
+    const doc = link.reference?.value
+    const label = link.label || (doc && typeof doc === 'object' ? doc.title : '') || 'Seite'
+    const active =
+      href.startsWith('/') &&
+      (pathname === href || (href !== '/' && pathname.startsWith(`${href}/`)))
+    return [{ link, href, label, active, index }]
+  })
 
-	const navItems = data?.navItems || []
+  useEffect(() => {
+    if (!open || !dialog.current) return
+    const element = dialog.current
+    const previousOverflow = document.body.style.overflow
+    element.showModal()
+    document.body.style.overflow = 'hidden'
+    const breakpoint = window.matchMedia('(min-width: 1024px)')
+    const onResize = () => {
+      if (breakpoint.matches) element.close()
+    }
+    breakpoint.addEventListener('change', onResize)
+    return () => {
+      breakpoint.removeEventListener('change', onResize)
+      document.body.style.overflow = previousOverflow
+      element.close()
+    }
+  }, [open])
 
-	const [openNavigation, setOpenNavigation] = useState<boolean>(false)
-	const [openNavigationDelay, setOpenNavigationDelay] = useState<boolean>(false)
-
-	const toggleNavigation = () => {
-		if (openNavigation) {
-			setOpenNavigation(false)
-			enablePageScroll()
-		} else {
-			setOpenNavigation(true)
-			disablePageScroll()
-		}
-	}
-
-	const handleClick = () => {
-		if (!openNavigation) return
-
-		enablePageScroll()
-		setOpenNavigation(false)
-	}
-
-	useEffect(() => {
-		const timeoutId = setTimeout(() => {
-			setOpenNavigationDelay(openNavigation)
-		}, 10)
-
-		return () => {
-			clearTimeout(timeoutId)
-		}
-	}, [openNavigation])
-
-	useEffect(() => {
-		// check if browser
-		if (typeof window === 'undefined') return
-
-		const handleResize = () => {
-			if (window.innerWidth >= 1024 && openNavigation) {
-				enablePageScroll()
-				setOpenNavigation(false)
-			}
-		}
-
-		window.addEventListener('resize', handleResize)
-		return () => window.removeEventListener('resize', handleResize)
-	}, [openNavigation])
-
-	return (
-		<>
-			<ul className="hidden lg:flex relative z-20 items-center justify-center gap-4 lg:gap-8 m-auto">
-				{navItems.map(({ link }, i) => {
-					let label
-					let url
-
-					if (link?.reference?.relationTo === 'pages') {
-						const value = link?.reference?.value
-						const breadcrumbs =
-							typeof value !== 'string' && value ? value.breadcrumbs || [] : []
-						label = link?.label
-							? link?.label
-							: breadcrumbs.length > 0
-								? breadcrumbs[breadcrumbs.length - 1].label
-								: 'Seite'
-						url = typeof value !== 'string' && value ? value.slug || '/' : '/'
-					} else {
-						label = link?.label
-						url = link?.url
-					}
-
-					const isActive = pathname.startsWith(`/${url}` || '')
-					const variant = isActive ? 'default' : 'ghost'
-
-					if (!url) return null
-
-					return (
-						<li key={i} className="nav-main__item">
-							<CMSLink {...link} label={null} url={url} onClick={handleClick}>
-								<Button variant={variant} size="lg">
-									{label}
-								</Button>
-							</CMSLink>
-						</li>
-					)
-				})}
-			</ul>
-
-			<ul className="hidden md:flex gap-6 items-center justify-end w-full">
-				<li className="nav-main__item">
-					<Link href="/suche" onClick={handleClick}>
-						<Button variant="secondary" size="lg">
-							<Search />
-							Suche
-						</Button>
-					</Link>
-				</li>
-				<li className="nav-main__item">
-					<Link href="/kontakt" onClick={handleClick}>
-						<Button variant="outline" size="lg">
-							Kontakt
-							<span className="block bg-accent rounded-full p-1">
-								<ArrowUpRight className="stroke-3 text-primary!" />
-							</span>
-						</Button>
-					</Link>
-				</li>
-			</ul>
-
-			<Button
-				className="ml-auto lg:hidden px-3 relative"
-				onClick={toggleNavigation}
-                aria-label={openNavigation ? 'Menü schließen' : 'Menü öffnen'}
-                aria-expanded={openNavigation}
-				variant="ghost"
-			>
-				<MenuSvg openNavigation={openNavigationDelay} />
-			</Button>
-
-			{/* Mobile Navigation */}
-			<div
-				className={`${
-					openNavigation ? 'flex' : 'hidden'
-				} z-40 fixed top-0 left-0 right-0 bottom-0 bg-background flex-col h-full lg:hidden lg:bg-transparent`}
-			>
-				<div className="flex items-center container mx-auto w-full py-4 lg:py-8 gap-8">
-					<Link href="/" className="logo shrink-0" onClick={handleClick}>
-						<Logo />
-					</Link>
-
-					<ul className="hidden sm:flex gap-6 items-center justify-end w-full">
-						<li className="nav-main__item">
-							<Link href="/Suche" onClick={handleClick}>
-								<Button variant="secondary" size="lg">
-									<Search />
-									Suche
-								</Button>
-							</Link>
-						</li>
-						<li className="nav-main__item">
-							<Link href="/Kontakt" onClick={handleClick}>
-								<Button variant="outline" size="lg">
-									Kontakt
-									<span className="block bg-accent rounded-full p-1">
-										<ArrowUpRight className="stroke-3 text-primary!" />
-									</span>
-								</Button>
-							</Link>
-						</li>
-					</ul>
-					<Button
-						className="ml-auto lg:hidden px-3 relative"
-						onClick={toggleNavigation}
-                aria-label={openNavigation ? 'Menü schließen' : 'Menü öffnen'}
-                aria-expanded={openNavigation}
-						variant="ghost"
-					>
-						<MenuSvg openNavigation={openNavigationDelay} />
-					</Button>
-				</div>
-
-				<div className="relative z-20 w-full border-t overflow-auto">
-					<div className="container py-4">
-						<ul className="pb-14 flex flex-col gap-4 lg:gap-8">
-							{navItems.map(({ link }, i) => {
-								let label
-								let url
-
-								if (link?.reference?.relationTo === 'pages') {
-									const value = link?.reference?.value
-									const breadcrumbs =
-										typeof value !== 'string' && value
-											? value.breadcrumbs || []
-											: []
-									label = link?.label
-										? link?.label
-										: breadcrumbs.length > 0
-											? breadcrumbs[breadcrumbs.length - 1].label
-											: 'Seite'
-									url =
-										typeof value !== 'string' && value ? value.slug || '/' : '/'
-								} else {
-									label = link?.label
-									url = link?.url
-								}
-
-								if (!url) return null
-
-								return (
-									<li key={i} className="nav-main__item nav-main__item--1">
-										<Link
-											href={url}
-											onClick={handleClick}
-											className="nav-main__link nav-main__link--1"
-										>
-											{label}
-										</Link>
-									</li>
-								)
-							})}
-						</ul>
-						<div className="flex flex-col gap-6">
-							<div className="text-accent text-2xl font-medium">
-								Jetzt durchstarten!
-							</div>
-							<Link href="/Kontakt" onClick={handleClick}>
-								<Button variant="default" size="lg">
-									Kontakt
-									<span className="block bg-accent rounded-full p-1">
-										<ArrowUpRight className="stroke-3 text-primary!" />
-									</span>
-								</Button>
-							</Link>
-
-							<div className="flex gap-6 mt-8">
-								<div className="social-media__label">Folge uns</div>
-								<a
-									href="https://www.linkedin.com/company/the-easycode/"
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									<Linkedin className="text-white hover:text-accent transition-all" />
-								</a>
-								<a
-									href="https://www.instagram.com/the_easycode/"
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									<Instagram className="text-white hover:text-accent transition-all" />
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</>
-	)
+  const close = () => dialog.current?.close()
+  return (
+    <>
+      <nav className="hidden min-w-0 lg:block" aria-label="Hauptnavigation">
+        <ul className="flex items-center gap-2 xl:gap-8">
+          {items.map(({ link, label, active, index }) => (
+            <li key={index} className="min-w-0">
+              <CMSLink
+                {...link}
+                label={label}
+                aria-current={active ? 'page' : undefined}
+                className="header-link"
+              />
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <div className="ml-auto hidden shrink-0 items-center gap-3 md:flex">
+        <Link
+          href="/suche"
+          className={buttonVariants({ variant: 'secondary', className: 'header-search' })}
+        >
+          <Search aria-hidden="true" />
+          Suche
+        </Link>
+        <Link href="/kontakt" className={buttonVariants({ variant: 'outline' })}>
+          Kontakt
+          <span className="rounded-full bg-accent p-1">
+            <ArrowUpRight className="text-white size-4" aria-hidden="true" />
+          </span>
+        </Link>
+      </div>
+      <Button
+        ref={trigger}
+        type="button"
+        variant="ghost"
+        size="icon"
+        className="ml-auto shrink-0 lg:hidden md:ml-0"
+        onClick={() => setOpen(true)}
+        aria-label="Menü öffnen"
+        aria-expanded={open}
+        aria-controls="mobile-navigation"
+        aria-haspopup="dialog"
+      >
+        <MenuSvg openNavigation={false} />
+      </Button>
+      <dialog
+        ref={dialog}
+        id="mobile-navigation"
+        className="mobile-navigation"
+        aria-label="Navigation"
+        onKeyDown={(event) => {
+          if (event.key !== 'Tab') return
+          const controls = event.currentTarget.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), [tabindex="0"]',
+          )
+          const first = controls[0]
+          const last = controls[controls.length - 1]
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault()
+            last?.focus()
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault()
+            first?.focus()
+          }
+        }}
+        onCancel={() => setOpen(false)}
+        onClose={() => {
+          setOpen(false)
+          trigger.current?.focus({ preventScroll: true })
+        }}
+      >
+        <div className="container flex min-h-full flex-col py-4">
+          <div className="flex items-center justify-between gap-4 pb-6">
+            <Link
+              href="/"
+              className="logo shrink-0"
+              aria-label="The-EasyCode – Startseite"
+              onClick={close}
+            >
+              <Logo />
+            </Link>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={close}
+              aria-label="Menü schließen"
+              aria-expanded="true"
+              className="mobile-navigation__close"
+              autoFocus
+            >
+              <X className="size-6" aria-hidden="true" />
+            </Button>
+          </div>
+          <nav aria-label="Mobile Hauptnavigation">
+            <ul>
+              {items.map(({ link, label, active, index }) => (
+                <li key={index}>
+                  <CMSLink
+                    {...link}
+                    label={null}
+                    aria-current={active ? 'page' : undefined}
+                    onClick={close}
+                    className={`mobile-navigation__link nav-main__link--1 ${active ? 'text-accent' : ''}`}
+                  >
+                    <span>{label}</span>
+                    <ArrowUpRight aria-hidden="true" className="size-5 shrink-0" />
+                  </CMSLink>
+                </li>
+              ))}
+              <li>
+                <Link
+                  href="/suche"
+                  onClick={close}
+                  aria-current={pathname === '/suche' ? 'page' : undefined}
+                  className="mobile-navigation__link"
+                >
+                  <span>Suche</span>
+                  <Search aria-hidden="true" className="size-5 shrink-0" />
+                </Link>
+              </li>
+            </ul>
+          </nav>
+          <div className="pt-10 pb-6">
+            <p className="text-accent text-2xl font-medium mb-6">Jetzt durchstarten!</p>
+            <Link
+              href="/kontakt"
+              onClick={close}
+              className={buttonVariants({ variant: 'default' })}
+            >
+              Kontakt
+              <span className="rounded-full bg-accent p-1">
+                <ArrowUpRight className="size-4 text-white" aria-hidden="true" />
+              </span>
+            </Link>
+            <div className="flex flex-wrap items-center gap-3 mt-10 text-foreground">
+              <span className="mr-2 text-sm font-semibold">Folge uns</span>
+              <a
+                href="https://www.linkedin.com/company/the-easycode/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-link"
+                aria-label="LinkedIn (öffnet in neuem Tab)"
+              >
+                <Linkedin />
+              </a>
+              <a
+                href="https://www.instagram.com/the_easycode/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-link"
+                aria-label="Instagram (öffnet in neuem Tab)"
+              >
+                <Instagram />
+              </a>
+            </div>
+          </div>
+        </div>
+      </dialog>
+    </>
+  )
 }
-

@@ -10,8 +10,7 @@ import { PostHero } from '@/heros/PostHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import { getPreviewAccess } from '@/utilities/getPreviewAccess'
 import { StructuredData } from '@/components/StructuredData'
-import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { getContentBreadcrumbs, getContentStructuredData } from '@/utilities/structuredData'
+import { getContentStructuredData } from '@/utilities/structuredData'
 import { RelatedPosts } from '@/blocks/RelatedPosts/Component'
 
 type Args = { params: Promise<{ slug: string }> }
@@ -32,7 +31,6 @@ export default async function PostPage({ params }: Args) {
     {draft && <LivePreviewListener />}
     <PostHero post={post} />
     {!draft && <StructuredData data={getContentStructuredData(post, 'posts')} />}
-    <Breadcrumbs items={getContentBreadcrumbs(post, 'posts')} />
     <RichText className="container py-12" data={post.content} />
     {post.relatedPosts?.some(item => typeof item === 'object') && <section className="container pb-12">
       <h2 className="mb-6 text-2xl">Weiterführende Artikel</h2>

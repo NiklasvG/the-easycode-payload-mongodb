@@ -34,6 +34,27 @@ afterEach(() => {
 })
 
 describe('AI chat privacy and interaction', () => {
+  it('starts keyboard focus at the readable consent heading without contacting the provider', async () => {
+    render(React.createElement(AIChat, { initiallyOpen: true }))
+    await waitFor(() =>
+      expect(document.activeElement).toBe(
+        screen.getByRole('heading', { name: 'KI-Chat freiwillig nutzen' }),
+      ),
+    )
+    expect(fetch).not.toHaveBeenCalled()
+  })
+  it('closes with Escape, returns focus and keeps streaming scroll inside the chat', async () => {
+    render(React.createElement(AIChat, { initiallyOpen: true }))
+    confirm()
+    send(
+      'Projekt mit langer URL https://example.com/projects/international-accessibility-and-commerce',
+    )
+    await screen.findByText('Webentwicklung.')
+    expect(Element.prototype.scrollIntoView).not.toHaveBeenCalled()
+    fireEvent.keyDown(screen.getByRole('region', { name: 'EasyCode AI Chat' }), { key: 'Escape' })
+    expect(screen.queryByRole('region', { name: 'EasyCode AI Chat' })).toBeNull()
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'KI-Chat öffnen' }))
+  })
   it('offers detailed privacy information without granting consent or contacting the provider', () => {
     sessionStorage.setItem(
       'easycode-ai-chat-consent',

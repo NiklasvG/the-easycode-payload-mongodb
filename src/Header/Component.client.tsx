@@ -32,14 +32,14 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   return (
     <div>
       <header
-        className="min-h-18 md:min-h-22 lg:min-h-30 w-full z-40 lg:bg-transparent lg:backdrop-blur-xs relative"
+        className="min-h-18 md:min-h-22 lg:min-h-30 w-full z-40 relative"
         {...(headerTheme ? { 'data-theme': headerTheme } : {})}
       >
-        <div className="flex items-center container mx-auto w-full py-4 lg:py-8 gap-8">
-          <Link href="/" className="logo shrink-0">
+        <div className="flex flex-wrap items-center container mx-auto w-full py-4 lg:py-8 gap-4 xl:gap-8">
+          <Link href="/" className="logo shrink-0" aria-label="The-EasyCode – Startseite">
             <Logo />
           </Link>
-          <HeaderNav data={data} />
+          <HeaderNav key={pathname} data={data} />
         </div>
       </header>
     </div>

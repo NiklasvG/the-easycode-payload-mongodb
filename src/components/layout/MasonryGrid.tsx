@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
-import { AnimatePresence, m } from 'framer-motion'
 
 // Components
 import ServiceCard from '@/components/Cards/ServiceCard'
@@ -79,13 +78,13 @@ export default function MasonryGrid({
   return (
     <div className="flex flex-col gap-6">
       {showProjectTypeFilter && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Projekte nach Typ filtern">
           <button
             type="button"
             aria-pressed={activeProjectType === 'all'}
             onClick={() => setActiveProjectType('all')}
             className={[
-              'rounded-full border px-4 py-2 text-sm font-bold transition-colors duration-200',
+              'min-h-11 max-w-full rounded-full border px-4 py-2 text-sm font-bold [overflow-wrap:anywhere] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent',
               activeProjectType === 'all'
                 ? 'border-accent-contrast bg-accent-contrast text-gray-50'
                 : 'border-white/10 bg-secondary-background text-gray-300 hover:border-accent/60 hover:text-white',
@@ -100,7 +99,7 @@ export default function MasonryGrid({
               aria-pressed={activeProjectType === option.value}
               onClick={() => setActiveProjectType(option.value)}
               className={[
-                'rounded-full border px-4 py-2 text-sm font-bold transition-colors duration-200',
+                'min-h-11 max-w-full rounded-full border px-4 py-2 text-sm font-bold [overflow-wrap:anywhere] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent',
                 activeProjectType === option.value
                   ? 'border-accent-contrast bg-accent-contrast text-gray-50'
                   : 'border-white/10 bg-secondary-background text-gray-300 hover:border-accent/60 hover:text-white',
@@ -112,34 +111,35 @@ export default function MasonryGrid({
         </div>
       )}
 
-      <m.div className="columns-1 sm:columns-2 gap-4" layout>
-        <AnimatePresence mode="popLayout" initial={false}>
-          {filteredCards.map((card) => (
-            <m.div
-              key={card.link.url ?? card.headline}
-              layout
-              initial={{ opacity: 0, y: 16, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 12, scale: 0.98 }}
-              transition={{ duration: 0.25, ease: 'easeOut' }}
-              className="mb-4 break-inside-avoid-column"
-            >
-              <ServiceCard
-                enableLink={card.enableTeaserLink}
-                link={card.link}
-                icon={card.icon}
-                image={card.image}
-                imageHint={card.imageHint}
-                meta={card.meta}
-                headline={card.headline}
-                abstract={card.abstract}
-                tags={card.tags}
-                options={{ border: false, highlightTag: true }}
-              />
-            </m.div>
-          ))}
-        </AnimatePresence>
-      </m.div>
+      {showProjectTypeFilter && (
+        <p className="sr-only" role="status" aria-live="polite">
+          {filteredCards.length} {filteredCards.length === 1 ? 'Projekt' : 'Projekte'} angezeigt
+        </p>
+      )}
+      {filteredCards.length === 0 && (
+        <p className="text-muted-foreground">Keine Projekte vorhanden.</p>
+      )}
+      <div className="columns-1 sm:columns-2 gap-4">
+        {filteredCards.map((card, index) => (
+          <div
+            key={`${card.link.url || card.headline}-${index}`}
+            className="mb-4 break-inside-avoid-column"
+          >
+            <ServiceCard
+              enableLink={card.enableTeaserLink}
+              link={card.link}
+              icon={card.icon}
+              image={card.image}
+              imageHint={card.imageHint}
+              meta={card.meta}
+              headline={card.headline}
+              abstract={card.abstract}
+              tags={card.tags}
+              options={{ border: false, highlightTag: true }}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

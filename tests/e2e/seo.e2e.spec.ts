@@ -29,7 +29,7 @@ test.describe('SEO in the initial HTML', () => {
     }
   })
 
-  test('project schema agrees with its canonical and visible breadcrumbs', async ({ page }) => {
+  test('project schema agrees with its canonical without visible breadcrumbs', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' })
     const href = await page.locator('article a[href^="/projekte/"]').first().getAttribute('href')
     expect(href).toBeTruthy()
@@ -38,11 +38,9 @@ test.describe('SEO in the initial HTML', () => {
     const entities = (await page.locator('script[type="application/ld+json"]').allTextContents()).flatMap(value => JSON.parse(value)['@graph'])
     expect(entities).toContainEqual(expect.objectContaining({ '@type': 'CreativeWork', url: canonical }))
     const nav = page.getByRole('navigation', { name: 'Brotkrümelnavigation' })
-    await expect(nav.getByRole('link', { name: 'Projekte', exact: true })).toHaveAttribute('href', '/projekte')
-    await expect(nav.locator('[aria-current="page"]')).toHaveText(await page.locator('h1').innerText())
+    await expect(nav).toHaveCount(0)
     await page.setViewportSize({ width: 390, height: 844 })
-    await expect(nav).toBeVisible()
-    expect(await nav.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true)
+    await expect(nav).toHaveCount(0)
   })
 
   test('search is excluded and the public directory uses real CMS links', async ({ page, request }) => {

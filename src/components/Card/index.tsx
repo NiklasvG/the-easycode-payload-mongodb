@@ -1,8 +1,7 @@
 'use client'
 import { cn } from '@/utilities/ui'
-import useClickableCard from '@/utilities/useClickableCard'
 import Link from 'next/link'
-import React, { Fragment } from 'react'
+import React from 'react'
 
 import type { Post } from '@/payload-types'
 
@@ -18,71 +17,59 @@ export const Card: React.FC<{
   showCategories?: boolean
   title?: string
 }> = (props) => {
-  const { cardRef, linkRef } = useClickableCard({})
   const { className, doc, relationTo, showCategories, title: titleFromProps } = props
 
   const { slug, categories, meta, title } = doc || {}
   const { description, image: metaImage } = meta || {}
 
-  const hasCategories = categories && Array.isArray(categories) && categories.length > 0
+  const categoryTitles = showCategories
+    ? categories?.flatMap((category) =>
+        typeof category === 'object' && category.title ? [category.title] : [],
+      )
+    : []
   const titleToUse = titleFromProps || title
   const sanitizedDescription = description?.replace(/\s/g, ' ') // replace non-breaking space with white space
-  const href = `/${relationTo}/${slug}`
+  const href = slug ? `/${relationTo || 'posts'}/${encodeURIComponent(slug)}` : null
 
   return (
     <article
       className={cn(
-        'border border-border rounded-lg overflow-hidden bg-card hover:cursor-pointer',
+        'relative min-w-0 rounded-2xl border border-white/15 bg-card [overflow-wrap:anywhere] focus-within:border-accent',
         className,
       )}
-      ref={cardRef}
     >
-      <div className="relative w-full ">
-        {!metaImage && <div className="">No image</div>}
-        {metaImage && typeof metaImage !== 'string' && (
+      {metaImage && typeof metaImage === 'object' && metaImage.url && (
+        <div className="relative w-full overflow-hidden rounded-t-2xl">
           <Media
             resource={metaImage}
+            imgClassName="w-full h-auto"
             size="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
           />
-        )}
-      </div>
-      <div className="p-4">
-        {showCategories && hasCategories && (
-          <div className="uppercase text-sm mb-4">
-            {showCategories && hasCategories && (
-              <div>
-                {categories?.map((category, index) => {
-                  if (typeof category === 'object') {
-                    const { title: titleFromCategory } = category
-
-                    const categoryTitle = titleFromCategory || 'Untitled category'
-
-                    const isLast = index === categories.length - 1
-
-                    return (
-                      <Fragment key={index}>
-                        {categoryTitle}
-                        {!isLast && <Fragment>, &nbsp;</Fragment>}
-                      </Fragment>
-                    )
-                  }
-
-                  return null
-                })}
-              </div>
-            )}
-          </div>
+        </div>
+      )}
+      <div className="p-5 sm:p-6">
+        {categoryTitles && categoryTitles.length > 0 && (
+          <p className="mb-3 text-sm font-medium text-muted-foreground">
+            {categoryTitles.join(', ')}
+          </p>
         )}
         {titleToUse && (
-          <div className="prose">
-            <h3>
-              <Link className="not-prose" href={href} ref={linkRef}>
+          <h3 className="text-xl! leading-snug!">
+            {href ? (
+              <Link
+                className="after:absolute after:inset-0 hover:underline focus-visible:underline"
+                href={href}
+              >
                 {titleToUse}
               </Link>
-            </h3>
-          </div>
+            ) : (
+              titleToUse
+            )}
+          </h3>
         )}
-        {description && <div className="mt-2">{description && <p>{sanitizedDescription}</p>}</div>}
+        {description && (
+          <p className="mt-3 text-muted-foreground leading-relaxed">{sanitizedDescription}</p>
+        )}
       </div>
     </article>
   )

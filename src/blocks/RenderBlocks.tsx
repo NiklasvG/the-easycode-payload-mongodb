@@ -20,6 +20,7 @@ import { TextIconTimelineBlockComponent } from './TextIconTimeline/Component'
 import { SplitLayoutBlockComponent } from '@/blocks/SplitLayout/Component'
 import { ContactIntroBlockComponent } from '@/blocks/ContactIntro/Component'
 import { ContactLinksBlockComponent } from '@/blocks/ContactLinks/Component'
+import { CreditsContent } from '@/components/Credits/Content'
 
 export const blockComponents = {
   archive: ArchiveBlock,
@@ -43,8 +44,9 @@ export const blockComponents = {
 
 export const RenderBlocks: React.FC<{
   blocks: Page['layout'][0][]
+  contentAppearance?: 'credits'
 }> = (props) => {
-  const { blocks } = props
+  const { blocks, contentAppearance } = props
 
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
 
@@ -57,6 +59,10 @@ export const RenderBlocks: React.FC<{
       {blocks.map((block, index) => {
         const { blockType } = block
         const backgroundVariant = 'backgroundVariant' in block ? block.backgroundVariant : null
+
+        if (blockType === 'content' && contentAppearance === 'credits') {
+          return <CreditsContent key={block.id || index} {...block} />
+        }
 
         if (blockType && blockType in blockComponents) {
           const Block = blockComponents[blockType]

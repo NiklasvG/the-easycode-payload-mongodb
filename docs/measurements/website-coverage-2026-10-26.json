@@ -1,0 +1,179 @@
+{
+  "inventory": {
+    "pages": 10,
+    "projects": 5,
+    "posts": 0
+  },
+  "visited": [
+    {
+      "path": "/",
+      "width": 1440,
+      "heading": "Ihr Freelancer\nfür Web­ent­wicklung aus Dresden"
+    },
+    {
+      "path": "/suche",
+      "width": 1440,
+      "heading": "Suche"
+    },
+    {
+      "path": "/suche?q=keine-treffer-xyz-9281",
+      "width": 1440,
+      "heading": "Suche"
+    },
+    {
+      "path": "/credits",
+      "width": 1440,
+      "heading": "Credits"
+    },
+    {
+      "path": "/datenschutz",
+      "width": 1440,
+      "heading": "Datenschutzerklärung"
+    },
+    {
+      "path": "/impressum",
+      "width": 1440,
+      "heading": "Impressum"
+    },
+    {
+      "path": "/leistungen/dev-ops",
+      "width": 1440,
+      "heading": "Für Unternehmen\nDevOps, die skaliert."
+    },
+    {
+      "path": "/freelancer",
+      "width": 1440,
+      "heading": "Ihr Freelancer\naus Dresden für moderne Web- und Softwareprojekte"
+    },
+    {
+      "path": "/leistungen/web-entwicklung",
+      "width": 1440,
+      "heading": "Für Unternehmen\nWeb-Entwicklung, die funktioniert."
+    },
+    {
+      "path": "/projekte",
+      "width": 1440,
+      "heading": "Markenauftritte\nmit messbarem Mehrwert"
+    },
+    {
+      "path": "/leistungen",
+      "width": 1440,
+      "heading": "Websites\nfür KMUs & Agenturen"
+    },
+    {
+      "path": "/kontakt",
+      "width": 1440,
+      "heading": "Lass uns etwas Großartiges schaffen."
+    },
+    {
+      "path": "/projekte/queo/mes-dashboard-zur-steuerung-von-reparaturprozessen",
+      "width": 1440,
+      "heading": "MES-Dashboard zur Steuerung von Reparaturprozessen"
+    },
+    {
+      "path": "/projekte/wallner-bau-und-garten/moderne-handwerker-webseite-fuer-wallner-bau--garten",
+      "width": 1440,
+      "heading": "Moderne Handwerker-Webseite für Wallner Bau & Garten"
+    },
+    {
+      "path": "/projekte/colpari/moderne-unternehmenswebseite-fuer-b2b-kunden",
+      "width": 1440,
+      "heading": "Moderne Unternehmenswebseite für B2B Kunden"
+    },
+    {
+      "path": "/projekte/queo/enterprise-dashboard-angular-extjs-fuer-bmw",
+      "width": 1440,
+      "heading": "Enterprise Dashboard: Angular & ExtJS für BMW"
+    },
+    {
+      "path": "/projekte/destillerie-schneider/moderner-e-commerce-fuer-hochwertige-spirituosen",
+      "width": 1440,
+      "heading": "Moderner E-Commerce für hochwertige Spirituosen"
+    },
+    {
+      "path": "/",
+      "width": 320,
+      "heading": "Ihr Freelancer\nfür Web­ent­wicklung aus Dresden"
+    },
+    {
+      "path": "/suche",
+      "width": 320,
+      "heading": "Suche"
+    },
+    {
+      "path": "/suche?q=keine-treffer-xyz-9281",
+      "width": 320,
+      "heading": "Suche"
+    },
+    {
+      "path": "/credits",
+      "width": 320,
+      "heading": "Credits"
+    },
+    {
+      "path": "/datenschutz",
+      "width": 320,
+      "heading": "Datenschutzerklärung"
+    },
+    {
+      "path": "/impressum",
+      "width": 320,
+      "heading": "Impressum"
+    },
+    {
+      "path": "/leistungen/dev-ops",
+      "width": 320,
+      "heading": "Für Unternehmen\nDevOps, die skaliert."
+    },
+    {
+      "path": "/freelancer",
+      "width": 320,
+      "heading": "Ihr Freelancer\naus Dresden für moderne Web- und Softwareprojekte"
+    },
+    {
+      "path": "/leistungen/web-entwicklung",
+      "width": 320,
+      "heading": "Für Unternehmen\nWeb-Entwicklung, die funktioniert."
+    },
+    {
+      "path": "/projekte",
+      "width": 320,
+      "heading": "Markenauftritte\nmit messbarem Mehrwert"
+    },
+    {
+      "path": "/leistungen",
+      "width": 320,
+      "heading": "Websites\nfür KMUs & Agenturen"
+    },
+    {
+      "path": "/kontakt",
+      "width": 320,
+      "heading": "Lass uns etwas Großartiges schaffen."
+    },
+    {
+      "path": "/projekte/queo/mes-dashboard-zur-steuerung-von-reparaturprozessen",
+      "width": 320,
+      "heading": "MES-Dashboard zur Steuerung von Reparaturprozessen"
+    },
+    {
+      "path": "/projekte/wallner-bau-und-garten/moderne-handwerker-webseite-fuer-wallner-bau--garten",
+      "width": 320,
+      "heading": "Moderne Handwerker-Webseite für Wallner Bau & Garten"
+    },
+    {
+      "path": "/projekte/colpari/moderne-unternehmenswebseite-fuer-b2b-kunden",
+      "width": 320,
+      "heading": "Moderne Unternehmenswebseite für B2B Kunden"
+    },
+    {
+      "path": "/projekte/queo/enterprise-dashboard-angular-extjs-fuer-bmw",
+      "width": 320,
+      "heading": "Enterprise Dashboard: Angular & ExtJS für BMW"
+    },
+    {
+      "path": "/projekte/destillerie-schneider/moderner-e-commerce-fuer-hochwertige-spirituosen",
+      "width": 320,
+      "heading": "Moderner E-Commerce für hochwertige Spirituosen"
+    }
+  ]
+}
