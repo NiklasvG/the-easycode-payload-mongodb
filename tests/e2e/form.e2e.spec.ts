@@ -21,6 +21,15 @@ test('visitor form submission reaches only the local SMTP inbox', async ({ page,
     pageID = (await response.json()).doc.id
     await page.goto(`/${slug}`)
     await expect(page.getByLabel('Testname')).toHaveValue('Testbesucher')
+    await page.getByLabel('Testname').fill('')
+    await page.getByRole('button', { name: 'Test absenden' }).click()
+    await expect(page.getByLabel('Testname')).toHaveAttribute('aria-invalid', 'true')
+    await page.getByLabel('Testname').fill('Testbesucher')
+    // A failed request must preserve the visitor's input, then permit a real retry.
+    await page.route('**/api/form-submissions', (route) => route.fulfill({ status: 503, contentType: 'application/json', body: '{}' }), { times: 1 })
+    await page.getByRole('button', { name: 'Test absenden' }).click()
+    await expect(page.getByRole('alert').filter({ hasText: 'Die Nachricht konnte nicht gesendet werden' })).toBeVisible()
+    await expect(page.getByLabel('Testname')).toHaveValue('Testbesucher')
     const honeypot = page.locator('input[name="website"]')
     await expect(honeypot).toHaveAttribute('tabindex', '-1')
     await expect(honeypot.locator('..')).toHaveAttribute('aria-hidden', 'true')

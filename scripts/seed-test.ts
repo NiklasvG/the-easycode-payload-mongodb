@@ -38,7 +38,7 @@ try {
   for (const slug of ['home', 'projekte']) {
     await payload.create({ collection: 'pages', context, data: {
       title: slug === 'home' ? 'Webentwicklung Dresden' : 'Projekte', slug, _status: 'published',
-      hero: { type: 'textAnimation', title: 'Dresden', description: 'Testseite', phrases: [{ phrase: 'Webentwicklung' }], media: media.id },
+      hero: { type: 'textAnimation', title: 'Dresden', description: 'Testseite', phrases: [{ phrase: 'Webentwicklung' }, { phrase: 'Softwareentwicklung' }], media: media.id },
       layout: [
         { blockType: 'projectsGrid', backgroundVariant: 'primary', headline: 'Projekte', enableProjectTypeFilter: slug === 'projekte', link: { type: 'custom', url: '/projekte', label: 'Alle Projekte' } },
         ...(slug === 'home' ? [{ blockType: 'clientQuotes' as const, backgroundVariant: 'primary' as const, headline: 'Kundenstimmen', maxQuotes: 2 }] : []),
@@ -69,7 +69,11 @@ try {
     hero: { type: 'none' },
     layout: [{ blockType: 'contactIntro', headline: 'Lass uns etwas Großartiges bauen.' }],
   } })
-  await payload.updateGlobal({ slug: 'header', context, data: { navItems: [{ link: { type: 'custom', url: '/projekte', label: 'Projekte' } }] } })
+  await payload.updateGlobal({ slug: 'header', context, data: { navItems: [
+    { link: { type: 'custom', url: '/projekte', label: 'Projekte' } },
+    { link: { type: 'custom', url: '/leistungen', label: 'Leistungen' } },
+    { link: { type: 'custom', url: '/kontakt', label: 'Kontakt' } },
+  ] } })
   await payload.create({ collection: 'redirects', context, data: { from: '/altes-projekt', to: { type: 'custom', url: '/projekte/testkunde/testprojekt' } } })
 } finally {
   await payload.destroy()

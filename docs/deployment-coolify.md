@@ -5,9 +5,133 @@ For self-hosted analytics, performance and uptime alternatives, see
 For the configured Umami integration and runtime variables, see
 [Umami setup](umami-coolify.md).
 
-## Staging first
+## main als Deployment-Branch, Domain bleibt zunächst Staging
 
-- Branch: `staging`. Deploy to `https://staging.the-easycode.eu`.
+Die verbindliche Kette lautet:
+
+`main → Quality gate → Coolify → build-new → Registry → prod-app-01.ec-host.de`
+
+Das bisherige Live-Projekt unter the-easycode.eu liegt in einem anderen Repository
+und wird nicht geändert. Es wird keine zweite dauerhafte Staging-Anwendung
+aufgebaut: dieselbe Anwendung wird später zur Produktion.
+
+### Einmalige Einrichtung vor Aktivierung
+
+1. Automatisches Deployment bei Git-Push in Coolify deaktivieren. Vorher weder
+   die bisher überwachte staging-Branch aktualisieren noch die Übernahme nach
+   main als Deployment auslösen. GitHub App für Repositoryzugriff beibehalten.
+2. Datenbank und Medien vom bisherigen Host sichern und auf den Zielserver
+   übertragen. Ein MongoDB-Dump enthält keine Mediendateien. Schreibzugriffe für
+   die finale Kopie kurz sperren; IDs und Beziehungen unverändert erhalten.
+   Vorhandene MongoDB-Version beibehalten, kein gleichzeitiges Versionsupgrade.
+3. Auf prod-app-01.ec-host.de MongoDB mit Authentifizierung, Replica Set und
+   persistentem Datenvolume betreiben. Öffentliches versioniertes MongoDB-Image
+   vom Docker Hub ist korrekt; es muss nicht in die private Website-Registry.
+4. Anwendung als Dockerfile-Ressource auf dem Zielserver einrichten. Domain
+   https://staging.the-easycode.eu, Branch main, APP_ENV=staging, Port 3000,
+   Medienvolume /app/media mit UID/GID 1001:1001. DNS erst nach verifizierter
+   Datenübernahme auf den neuen Zielserver umstellen.
+5. build-new auf Rolle Builds only setzen. Live-Server auf Deployments only,
+   Team-Fallback für Builds deaktivieren. Buildserver auswählen; keine zusätzliche
+   Deployment-Destination für den Buildserver anlegen.
+6. Registry auf beiden Hosts anmelden: Buildserver benötigt Push, Zielserver
+   Pull. Image-Repository bewusst festlegen; Vorschlag cxcr.eu/easycode/website.
+   Registry-Zugangsdaten bleiben in Coolify/Server-Docker-Konfigurationen.
+7. MongoDB über private Verbindung vom Buildserver erreichbar machen. Eine
+   Docker-interne Serviceadresse des Live-Servers reicht im Builder nicht aus.
+   Build- und Runtime-URI dürfen unterschiedlich sein, müssen aber dasselbe CMS
+   adressieren. Netzwerkzugriff nur für die beteiligten Hosts öffnen.
+8. BuildKit-Secrets und Runtime-Variablen wie unten konfigurieren. Healthcheck aus
+   dem Dockerfile verwenden: Node ruft /api/health/ready auf; kein curl nötig.
+   Unhealthy Ersatzcontainer dürfen den gesunden bisherigen Container nicht
+   ersetzen. Kein fester Containername und keine Host-Port-Bindung für die App.
+9. In GitHub main schützen: erforderlicher Statuscheck Quality gate, Änderungen
+   über Pull Requests und aktuelle Prüfungen vor Merge verlangen.
+
+### GitHub-Konfiguration
+
+Repository-Variablen (oder Variablen im Environment staging):
+
+| Name | Wert |
+| --- | --- |
+| COOLIFY_URL | https://coolify.ec-host.de |
+| COOLIFY_APPLICATION_UUID | UUID der Anwendung auf dem Zielserver |
+| DEPLOY_PUBLIC_URL | https://staging.the-easycode.eu |
+| COOLIFY_DEPLOY_ENABLED | Erst nach vollständiger Einrichtung true setzen; **Repository-Variable**, da sie vor Auswahl des Environments ausgewertet wird |
+
+Secret COOLIFY_TOKEN im GitHub-Environment staging oder Repository hinterlegen.
+Token benötigt Anwendung lesen/aktualisieren sowie Deployment starten/lesen.
+Keine Tokens in Dateien oder Chatnachrichten ablegen. GitHubs eingebauter Token
+reicht für das Lesen des aktuellen main-Commits.
+
+Das Deployment-Script prüft Repository, Branch, Dockerfile, Domain, deaktivierte
+Push-Automatik und Registry-Image. Es überspringt überholte main-Commits, setzt
+git_commit_sha und den Image-Tag auf den geprüften SHA, liest den Pin zurück und
+startet danach das Deployment. Laufende Jobs werden nicht automatisch abgebrochen.
+Der GitHub-Deploymentjob ist pro Anwendung serialisiert. Keine parallelen manuellen
+Deployments währenddessen starten, weil diese die Quellrevision ändern könnten.
+
+Coolify wird mit force=true aufgerufen: CMS-Inhalte und Secrets invalidieren keine
+Docker-Layer. In Actions wird nur die Builder-Stufe erzwungen und der Dependency-
+Cache wiederverwendet. Coolifys Standard-API kann diese selektive Cachefreigabe
+nicht vorgeben; dort wird daher sicherheitshalber der gesamte Releasebuild frisch
+ausgeführt. CI-Testimage und CMS-Releaseimage sind bewusst getrennt.
+
+Das Script wartet maximal 24 Minuten plus begrenzte einzelne HTTP-Anfragen;
+Workflowlimit 27 Minuten. Nur status=finished mit dem geprüften Commit und
+erfolgreicher öffentlicher Readiness/Startseite zählt als Erfolg. Timeout oder
+HTTP-Fehler erzeugt keine blinde erneute Deployment-Anfrage; Coolify zuerst prüfen.
+Die öffentliche Readiness muss denselben SHA als revision melden. Dafür wird
+Coolifys automatisch gesetzte Runtime-Variable SOURCE_COMMIT verwendet; nicht
+manuell überschreiben. Eine noch auf den alten Server zeigende Domain gibt keine
+Freigabe. Auch die Auswahl des separaten Buildservers wird vorab geprüft.
+
+### Übertragener Datenbestand (27.10.2026)
+
+- Zielanwendung: rwzukgdnukwmpkgu0fyubgau auf prod-app-01.ec-host.de.
+- Ziel-MongoDB: cui3iuxrxvwqytlyw9htzsek, MongoDB 8.0, Replica Set rs0, PRIMARY.
+- Die CMS-Datenbank heißt **easycode_import**. Die Anzeige Initial database=easycode
+  ist kein Grund, den importierten Namespace zu ändern. Der Benutzer easycode_app
+  wird in easycode authentifiziert und hat readWrite auf easycode_import.
+- Wiederhergestellt und mit dem Anwendungsbenutzer geprüft: 10 Pages, 5 Projects,
+  35 Media-Dokumente, 2 Users. Der Import meldete 494 Dokumente ohne Fehler.
+- Medienvolume rwzukgdnukwmpkgu0fyubgau-the-easycode-staging-media an /app/media:
+  202 Dateien, UID/GID 1001:1001. MongoDB-Dump und Medienarchiv sind getrennte Backups.
+- MongoDB ist an die private Hostadresse 10.1.0.2:27017 gebunden. Die Verbindung
+  aus einem Container auf build-new wurde mit dem Anwendungsbenutzer geprüft.
+- Build- und Appserver laufen auf ARM64; GitHub prüft den Container auf AMD64.
+  Der erste tatsächliche Releasebuild auf ARM64 bleibt zusätzlich abzunehmen.
+
+Die übertragenen Daten sind eine Momentaufnahme. Vor endgültiger Umschaltung
+weitere Änderungen an der Quelle ausschließen oder DB und Medien erneut konsistent
+übertragen. Neue Backup-Zeitpläne, öffentliche Erreichbarkeit, Domain-Umschaltung
+und der erste vollständige Registry-Release sind noch gesondert zu prüfen.
+
+deployment-record.json protokolliert Commit, Deployment-ID, Image-Referenz, Status
+und den Manifest-Digest, falls Coolifys BuildKit-Logs ihn liefern. Fehlt der Digest,
+ist er bei der Abnahme aus der Registry zu ergänzen; nicht aus einer beliebigen
+sha256-Zeichenfolge ableiten. Alte Images für Rollbacks behalten. Rollbacks setzen
+nicht die Datenbank zurück; Datenänderungen müssen kompatibel bleiben.
+
+### Abnahme und Go-live
+
+- In einem Pull Request einen Pflichtcheck fehlschlagen lassen: kein Deployment.
+- Erfolgreichen PR aus staging nach main übernehmen; der tatsächliche main-Commit
+  durchläuft die Prüfungen erneut. Nur Push auf main darf deployen.
+- Image in Registry, Build auf build-new, Laufzeit ausschließlich auf Zielserver
+  sowie Commit und Digest nachweisen.
+- Registryfehler, DB-Ausfall und fehlschlagenden Healthcheck kontrolliert erproben.
+- Login, Upload/Ersetzung, Veröffentlichung und Formularversand prüfen; erneuter
+  Deploy muss DB-Inhalte und Uploads erhalten. Backup-Restore und Image-Rollback
+  in isolierter Umgebung erproben.
+- Zum Go-live Branch main beibehalten. Domain, NEXT_PUBLIC_SERVER_URL und APP_ENV
+  auf Produktion umstellen, domainabhängige Integrationen prüfen und frisch bauen.
+  Canonical, Sitemap, HTTPS und entfernten Indexierungsschutz nachweisen. Erst
+  dann DNS/Domain von der bisherigen Website auf dieses Projekt umstellen.
+
+## Variablen und Datenhaltung während der Staging-Phase
+
+- Branch: `main`. Deploy to `https://staging.the-easycode.eu`.
 - Use the new Hetzner MongoDB as the staging database initially. Never point
   staging at the existing production database or production upload directory.
 - Give production its own database credentials and media volume before cutover.
@@ -15,7 +139,7 @@ For the configured Umami integration and runtime variables, see
 
 ## Application resource
 
-- Git repository, branch `staging`, Dockerfile build pack.
+- Git repository, branch `main`, Dockerfile build pack; push auto-deploy disabled.
 - Repository root as build context; Dockerfile at `/Dockerfile`.
 - Exposed container port: `3000`; listen address is `0.0.0.0`.
 - Same Coolify destination network as MongoDB.
@@ -32,7 +156,7 @@ Set these as **build and runtime** variables:
 ```dotenv
 NEXT_PUBLIC_SERVER_URL=https://staging.the-easycode.eu
 APP_ENV=staging
-MONGODB_URI=mongodb://easycode_app:APP_PASSWORD@BUILD_REACHABLE_HOST:27017/easycode?authSource=easycode&replicaSet=rs0&directConnection=true
+MONGODB_URI=mongodb://easycode_app:APP_PASSWORD@BUILD_REACHABLE_HOST:27017/easycode_import?authSource=easycode&replicaSet=rs0&directConnection=true
 PAYLOAD_SECRET=YOUR_SECRET
 UMAMI_SCRIPT_URL=https://YOUR_UMAMI_HOST/script.js
 UMAMI_WEBSITE_ID=YOUR_UMAMI_WEBSITE_ID

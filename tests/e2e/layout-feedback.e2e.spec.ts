@@ -27,7 +27,10 @@ test('pages and project details do not display breadcrumbs', async ({ page }) =>
   await expect(page.getByRole('navigation', { name: 'Brotkrümelnavigation' })).toHaveCount(0)
   await page.goto('/leistungen/web-entwicklung')
   await expect(page.getByRole('navigation', { name: 'Brotkrümelnavigation' })).toHaveCount(0)
-  await page.goto('/projekte/queo/enterprise-dashboard-angular-extjs-fuer-bmw')
+  await page.goto('/projekte')
+  const detail = await page.locator('main a[href^="/projekte/"]').first().getAttribute('href')
+  expect(detail).toBeTruthy()
+  await page.goto(detail!)
   const breadcrumb = page.getByRole('navigation', { name: 'Brotkrümelnavigation' })
   const back = page.getByRole('link', { name: 'Alle Projekte', exact: true })
   for (const width of [1440, 320]) {

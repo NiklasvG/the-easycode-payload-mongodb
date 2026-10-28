@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { expectPublicResponse } from '../support/public-response'
 
 test.describe('CMS relationship and global invalidation', () => {
   test.skip(process.env.TEST_DATABASE !== 'true', 'Requires isolated seed')
@@ -18,11 +19,9 @@ test.describe('CMS relationship and global invalidation', () => {
       expect(await detail.text()).toContain('Changed HTTP client')
       const search = await (await request.get(`/api/search?where[doc.value][equals]=${project.id}&depth=0`)).json()
       expect(search.docs[0].clientSlug).toBe(slug)
-      const xml = await (await request.get('/sitemap.xml')).text()
-      expect(xml).toContain(`/projekte/${slug}/${project.slug}`)
-      expect(xml).not.toContain(`/projekte/${client.slug}/${project.slug}`)
+      await expectPublicResponse(request, '/sitemap.xml', (xml, status) => status === 200 && xml.includes(`/projekte/${slug}/${project.slug}`) && !xml.includes(`/projekte/${client.slug}/${project.slug}`))
       expect((await request.patch(`/api/media/${image.id}`, { headers, data: { alt: 'Updated HTTP image alt' } })).ok()).toBe(true)
-      expect(await (await request.get('/projekte')).text()).toContain('Updated HTTP image alt')
+      await expectPublicResponse(request, '/projekte', (html, status) => status === 200 && html.includes('Updated HTTP image alt'))
     } finally {
       await request.patch(`/api/clients/${client.id}`, { headers, data: { slug: client.slug, companyName: client.companyName } })
       await request.patch(`/api/media/${image.id}`, { headers, data: { alt: image.alt } })
@@ -52,20 +51,23 @@ test.describe('CMS relationship and global invalidation', () => {
       const changed = await request.get(nextPath)
       expect(changed.ok()).toBe(true)
       expect(await changed.text()).toContain(`http://localhost:3000${nextPath}`)
-      const xml = await (await request.get('/sitemap.xml')).text()
-      expect(xml).toContain(nextPath)
-      expect(xml).not.toContain(childPath)
+      await expectPublicResponse(request, '/sitemap.xml', (xml, status) => status === 200 && xml.includes(nextPath) && !xml.includes(childPath))
       expect((await request.post('/api/globals/header', { headers, data: { navItems: [{ link: { type: 'custom', url: '/projekte', label: 'Changed HTTP nav' } }] } })).ok()).toBe(true)
       expect((await request.post('/api/globals/footer', { headers, data: { aboutText: 'Changed HTTP footer' } })).ok()).toBe(true)
-      const home = await (await request.get('/')).text()
-      expect(home).toContain('Changed HTTP nav')
-      expect(home).toContain('Changed HTTP footer')
+      await expectPublicResponse(request, '/', (html, status) => status === 200 && html.includes('Changed HTTP nav') && html.includes('Changed HTTP footer'))
       const redirectResponse = await request.post('/api/redirects', { headers, data: { from: `/${prefix}-redirect`, to: { type: 'custom', url: '/projekte' } } })
       expect(redirectResponse.ok(), await redirectResponse.text()).toBe(true)
       redirectID = (await redirectResponse.json()).doc.id
       await page.goto(`/${prefix}-redirect`)
       await expect(page).toHaveURL('http://localhost:3000/projekte')
-      await request.patch(`/api/redirects/${redirectID}`, { headers, data: { to: { type: 'custom', url: nextPath } } })
+      const updatedRedirect = await request.patch(`/api/redirects/${redirectID}`, { headers, data: { to: { type: 'custom', url: nextPath } } })
+      expect(updatedRedirect.ok(), await updatedRedirect.text()).toBe(true)
+      expect((await updatedRedirect.json()).doc.to.url).toBe(nextPath)
+      await expect.poll(async () => {
+        const response = await request.get(`/${prefix}-redirect`, { maxRedirects: 0 })
+        const locations = response.headers().location?.split(',').map(value => value.trim()) || []
+        return { status: response.status(), locations: [...new Set(locations.map(location => new URL(location, 'http://localhost:3000').pathname))] }
+      }, { timeout: 5000, intervals: [50, 100, 250, 500] }).toEqual({ status: 307, locations: [nextPath] })
       await page.goto(`/${prefix}-redirect`)
       await expect(page).toHaveURL(`http://localhost:3000${nextPath}`)
     } finally {

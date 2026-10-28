@@ -1,6 +1,6 @@
 import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
 
-import { revalidateTag } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 
 export const revalidateRedirects: CollectionAfterChangeHook & CollectionAfterDeleteHook = ({
   doc,
@@ -10,6 +10,8 @@ export const revalidateRedirects: CollectionAfterChangeHook & CollectionAfterDel
   payload.logger.info(`Revalidating redirects`)
 
   revalidateTag('redirects', { expire: 0 })
+  // Redirect responses are cached as routes too, including former missing pages.
+  revalidatePath('/', 'layout')
 
   return doc
 }

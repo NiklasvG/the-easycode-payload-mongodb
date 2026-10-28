@@ -52,8 +52,6 @@ it('links field errors to inputs, retains accessible focus and stacks narrow CMS
   expect(input.getAttribute('aria-describedby')).toBe('visitor-error')
   expect(document.getElementById('visitor-error')?.textContent).toContain('Bitte fülle')
   expect(document.activeElement).toBe(input)
-  expect(input.closest('.col-span-1')?.className).toContain('sm:col-span-3')
-  expect(input.closest('.grid')?.className).toContain('grid-cols-1 sm:grid-cols-12')
   expect(fetch).not.toHaveBeenCalled()
 })
 

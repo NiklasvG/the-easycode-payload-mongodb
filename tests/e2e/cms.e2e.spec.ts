@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { expectPublicResponse } from '../support/public-response'
 
 test.describe('CMS → public HTTP invalidation', () => {
   test.skip(process.env.TEST_DATABASE !== 'true', 'Only isolated seed allowed')
@@ -50,10 +51,14 @@ test.describe('CMS → public HTTP invalidation', () => {
       await page.goto(`/admin/collections/pages/${doc.id}`)
       await expect(page.frameLocator('iframe').first().getByRole('heading', { name: 'Private draft', exact: true })).toBeVisible()
       const titleInput = page.getByLabel('Title', { exact: true }).filter({ visible: true }).first()
+      const autosave = page.waitForResponse((response) => response.url().includes(`/api/pages/${doc.id}?autosave=true`) && response.request().method() === 'PATCH' && Boolean(response.request().postData()?.includes('Edited through Admin UI')))
       await titleInput.fill('Edited through Admin UI')
       await titleInput.blur()
-      const save = page.waitForResponse((response) => response.url().includes(`/api/pages/${doc.id}`) && response.request().method() === 'PATCH' && Boolean(response.request().postData()?.includes('Edited through Admin UI')))
-      await page.getByRole('button', { name: /^Publish(?: changes)?$/i }).click()
+      expect((await autosave).ok()).toBe(true)
+      const save = page.waitForResponse((response) => response.url().includes(`/api/pages/${doc.id}`) && !response.url().includes('autosave=true') && response.request().method() === 'PATCH' && Boolean(response.request().postData()?.includes('Edited through Admin UI')))
+      const publish = page.getByRole('button', { name: /^Publish(?: changes)?$/i })
+      await expect(publish).toBeEnabled()
+      await publish.click()
       const saved = await save
       expect(saved.ok(), await saved.text()).toBe(true)
       await expect.poll(async () => {
@@ -61,9 +66,7 @@ test.describe('CMS → public HTTP invalidation', () => {
         const result = await docResponse.json()
         return `${result.hero.title}:${result._status}`
       }, { timeout: 15000 }).toBe('Edited through Admin UI:published')
-      const publishedFromUI = await request.get(`/${slug}-new`)
-      expect(publishedFromUI.ok()).toBe(true)
-      expect(await publishedFromUI.text()).toContain('Edited through Admin UI')
+      await expectPublicResponse(request, `/${slug}-new`, (html, status) => status === 200 && html.includes('Edited through Admin UI'))
     } finally {
       expect((await request.delete(`/api/pages/${doc.id}`, { headers })).ok()).toBe(true)
     }
@@ -90,24 +93,20 @@ test.describe('CMS → public HTTP invalidation', () => {
       const { doc } = await created.json()
       const path = (value: string) => collection === 'posts' ? `/posts/${value}` : `/projekte/${projectSeed.client.slug}/${value}`
       const expectMissing = async (url: string) => {
-        const response = await request.get(url)
-        // A loading boundary may stream the HTTP 200 shell before notFound().
-        expect([200, 404]).toContain(response.status())
-        const html = await response.text()
-        expect(html).toContain('noindex')
-        expect(html).toContain('NEXT_HTTP_ERROR_FALLBACK;404')
-        expect(html).not.toContain(collection === 'posts' ? 'Lifecycle post' : 'Lifecycle project')
-        expect(html).not.toContain('Changed lifecycle')
+        await expectPublicResponse(request, url, (html, status) =>
+          status === 404 && html.includes('noindex') && html.includes('Seite nicht gefunden') &&
+          !html.includes(collection === 'posts' ? 'Lifecycle post' : 'Lifecycle project') &&
+          !html.includes('Changed lifecycle'))
       }
       try {
         expect((await request.get(path(slug))).ok()).toBe(true)
-        expect(await (await request.get('/sitemap.xml')).text()).toContain(path(slug))
+        await expectPublicResponse(request, '/sitemap.xml', (xml, status) => status === 200 && xml.includes(path(slug)))
         expect((await request.patch(`/api/${collection}/${doc.id}`, { headers, data: { slug: `${slug}-new`, title: 'Changed lifecycle' } })).ok()).toBe(true)
         await expectMissing(path(slug))
         expect(await (await request.get(path(`${slug}-new`))).text()).toContain('Changed lifecycle')
         expect((await request.patch(`/api/${collection}/${doc.id}`, { headers, data: { _status: 'draft' } })).ok()).toBe(true)
         await expectMissing(path(`${slug}-new`))
-        expect(await (await request.get('/sitemap.xml')).text()).not.toContain(path(`${slug}-new`))
+        await expectPublicResponse(request, '/sitemap.xml', (xml, status) => status === 200 && !xml.includes(path(`${slug}-new`)))
       } finally {
         expect((await request.delete(`/api/${collection}/${doc.id}`, { headers })).ok()).toBe(true)
       }

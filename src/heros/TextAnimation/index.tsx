@@ -41,11 +41,12 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
               </ul>
             )}
           </div>
-          <div className="grid place-items-center w-full h-full relative py-16 lg:pt-0">
+          <div className="min-w-0 grid place-items-center w-full h-full relative py-16 lg:pt-0">
             {media && (
               <div
-                className="relative w-full max-w-full sm:h-96 sm:w-auto"
+                className="relative w-full max-w-full"
                 style={{
+                  maxWidth: desktopImageWidth,
                   aspectRatio:
                     typeof media === 'object' && media.width && media.height
                       ? `${media.width} / ${media.height}`
