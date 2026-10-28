@@ -1,226 +1,252 @@
-// app/api/ai-chat/route.ts
-import { GoogleGenAI } from '@google/genai'
-import { generateSystemInstruction } from '@/constants/ai-systemprompt'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import { generateSystemInstruction } from '@/constants/ai-systemprompt'
+import { readLimitedJSON, RequestBodyError } from '@/utilities/publicRequestLimits'
+import { validateChatInput, type ChatEvent } from '@/utilities/chatProtocol'
+import { createChatLimiter } from '@/utilities/chatLimits'
+import { readOpenAIText } from '@/utilities/openAIChatStream'
 
-const ai = new GoogleGenAI({
-	apiKey: process.env.GEMINI_API_KEY!
-})
+const limiter = createChatLimiter()
+const headers = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }
+const providerEndpoint = () => {
+  const region = process.env.OPENAI_CHAT_REGION || 'eu'
+  if (region === 'global' && process.env.APP_ENV === 'staging')
+    return 'https://api.openai.com/v1/responses'
+  if (region === 'eu' && process.env.OPENAI_EU_APPROVED === 'true')
+    return 'https://eu.api.openai.com/v1/responses'
+  return null
+}
+const chatConfigured = () =>
+  process.env.AI_CHAT_ENABLED === 'true' &&
+  Boolean(providerEndpoint()) &&
+  Boolean(process.env.OPENAI_API_KEY) &&
+  Boolean(process.env.PUBLIC_TRUSTED_CLIENT_IP_HEADER)
 
-// Einfaches In-Memory Rate Limiting
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
-const RATE_LIMIT_COUNT = 5
-const RATE_LIMIT_WINDOW = 60 * 1000 // 1 Minute
-const MAX_MESSAGE_LENGTH = 1000
+export function GET() {
+  let validOrigin = false
+  try {
+    validOrigin = Boolean(new URL(process.env.NEXT_PUBLIC_SERVER_URL!).origin)
+  } catch {
+    /* Unconfigured. */
+  }
+  return Response.json({ available: validOrigin && chatConfigured() }, { headers })
+}
+const fail = (error: string, status: number, retryAfter?: number) =>
+  Response.json(
+    { error },
+    {
+      status,
+      headers: { ...headers, ...(retryAfter ? { 'Retry-After': String(retryAfter) } : {}) },
+    },
+  )
 
-function isRateLimited(ip: string): boolean {
-	const now = Date.now()
-	const record = rateLimitMap.get(ip)
-
-	if (!record || now > record.resetAt) {
-		rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW })
-		return false
-	}
-
-	if (record.count >= RATE_LIMIT_COUNT) {
-		return true
-	}
-
-	record.count++
-	return false
+async function untilAbort<T>(operation: Promise<T>, signal: AbortSignal): Promise<T> {
+  if (signal.aborted) throw new Error('Aborted')
+  let onAbort: () => void = () => {}
+  try {
+    return await Promise.race([
+      operation,
+      new Promise<never>((_, reject) => {
+        onAbort = () => reject(new Error('Aborted'))
+        signal.addEventListener('abort', onAbort, { once: true })
+      }),
+    ])
+  } finally {
+    signal.removeEventListener('abort', onAbort)
+  }
 }
 
 export async function POST(req: Request) {
-	try {
-		const { message, history, _hp } = (await req.json()) as {
-			message?: string
-			history?: Array<{
-				role: 'user' | 'model'
-				text: string
-				thoughtSignature?: string
-			}>
-			_hp?: string // Honeypot
-		}
-
-		// 1. Bot-Schutz (Honeypot)
-		if (_hp) {
-			return new Response(JSON.stringify({ error: 'Bot detected' }), {
-				status: 400,
-				headers: { 'Content-Type': 'application/json' }
-			})
-		}
-
-		// 2. Rate Limiting
-		const ip = req.headers.get('x-forwarded-for') || 'anonymous'
-		if (isRateLimited(ip)) {
-			return new Response(
-				JSON.stringify({
-					error: 'Zu viele Anfragen. Bitte versuche es in einer Minute erneut.'
-				}),
-				{
-					status: 429,
-					headers: { 'Content-Type': 'application/json' }
-				}
-			)
-		}
-
-		// 3. Validierung der Nachricht
-		if (!message || typeof message !== 'string') {
-			return new Response(JSON.stringify({ error: 'Message is required' }), {
-				status: 400,
-				headers: { 'Content-Type': 'application/json' }
-			})
-		}
-
-		if (message.length > MAX_MESSAGE_LENGTH) {
-			return new Response(
-				JSON.stringify({ error: `Nachricht zu lang (max. ${MAX_MESSAGE_LENGTH} Zeichen)` }),
-				{
-					status: 400,
-					headers: { 'Content-Type': 'application/json' }
-				}
-			)
-		}
-
-		// 1. Payload initialisieren
-		const payload = await getPayload({ config: configPromise })
-
-		// 2. Projekte aus der DB holen
-		// Wir holen nur published Projekte und selektieren nur relevante Felder, um Token zu sparen
-		const { docs: projects } = await payload.find({
-			collection: 'projects',
-			where: {
-				_status: {
-					equals: 'published'
-				}
-			},
-			pagination: false,
-			limit: 20, // Limitierung für Kontext-Größe
-			depth: 1, // Damit wir Tech-Stack Namen bekommen
-			select: {
-				title: true,
-				shortDescription: true,
-				technologies: true,
-				slug: true,
-				client: true
-			}
-		})
-
-		// 3. Projekte als String formatieren
-		const projectsContext = projects
-			.map((p) => {
-				// Tech Stack auflösen (falls vorhanden)
-				const techStack =
-					p.technologies?.map((t: any) => t.name).join(', ') || 'N/A'
-
-				// Client Name auflösen
-				let clientName = 'Kunde'
-				if (
-					p.client &&
-					typeof p.client === 'object' &&
-					'companyName' in p.client
-				) {
-					clientName = p.client.companyName
-				}
-
-				// Optional: Link generieren, damit die KI drauf verweisen kann
-				// Hinweis: Hierfür müsste man den Client-Slug kennen, wenn deine URL so aufgebaut ist.
-				// Wenn client depth=1 ist, hast du Zugriff auf p.client.slug
-				let projectUrl = ''
-				if (p.client && typeof p.client === 'object' && 'slug' in p.client) {
-					projectUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/projekte/${p.client.slug}/${p.slug}`
-				}
-
-				return `- **${p.title}** (für ${clientName}):
-  Beschreibung: ${p.shortDescription}
-  Tech Stack: ${techStack}
-  ${projectUrl ? `Link: ${projectUrl}` : ''}`
-			})
-			.join('\n\n')
-
-		// Fallback, falls keine Projekte da sind
-		const finalProjectContext =
-			projectsContext.length > 0
-				? projectsContext
-				: 'Keine öffentlichen Projekte gelistet.'
-
-		// 4. Chat Session mit dynamischem Prompt starten
-		// Konvertiere History für das SDK
-		const convertedHistory =
-			history?.map((h) => ({
-				role: h.role,
-				parts: [
-					{ text: h.text },
-					...(h.thoughtSignature
-						? [{ thoughtSignature: h.thoughtSignature } as any]
-						: [])
-				]
-			})) || []
-
-		const chat = ai.chats.create({
-			model: 'gemini-3.1-flash-lite-preview',
-			history: convertedHistory,
-			config: {
-				systemInstruction: generateSystemInstruction(finalProjectContext)
-			}
-		})
-
-		// 5. Streaming
-		const geminiStream = await chat.sendMessageStream({ message })
-
-		const stream = new ReadableStream({
-			async start(controller) {
-				const encoder = new TextEncoder()
-				try {
-					for await (const chunk of geminiStream) {
-						const text = chunk.text ?? ''
-						if (text) {
-							controller.enqueue(encoder.encode(text))
-						}
-
-						// Suche nach Thought Signature im Chunk
-						const thoughtPart = chunk.candidates?.[0]?.content?.parts?.find(
-							(p: any) => p.thoughtSignature
-						)
-						if (thoughtPart) {
-							// Wir senden die Signature als speziellen Kommentar am Ende oder Metadaten
-							// Da der Client einfach nur Text erwartet, hängen wir sie diskret an oder nutzen einen Delimiter
-							// Da wir aber "Circulation" brauchen, muss der Client sie speichern.
-							// Plan: Benutze einen Delimiter, den der Client erkennt.
-							controller.enqueue(
-								encoder.encode(
-									`\n__THOUGHT_SIG__:${thoughtPart.thoughtSignature}`
-								)
-							)
-						}
-					}
-				} catch (err) {
-					console.error('AI Stream Error:', err)
-					controller.error(err)
-				} finally {
-					controller.close()
-				}
-			}
-		})
-
-		return new Response(stream, {
-			status: 200,
-			headers: {
-				'Content-Type': 'text/plain; charset=utf-8',
-				'Cache-Control': 'no-cache',
-				Connection: 'keep-alive',
-				'Transfer-Encoding': 'chunked'
-			}
-		})
-	} catch (error) {
-		console.error('AI Route Error:', error)
-		return new Response(
-			JSON.stringify({ error: 'Interner Fehler beim AI-Endpoint' }),
-			{
-				status: 500,
-				headers: { 'Content-Type': 'application/json' }
-			}
-		)
-	}
+  let expectedOrigin: string
+  try {
+    expectedOrigin = new URL(process.env.NEXT_PUBLIC_SERVER_URL!).origin
+  } catch {
+    return fail('Der KI-Chat ist vorübergehend nicht verfügbar.', 503)
+  }
+  if (
+    req.headers.get('origin') !== expectedOrigin ||
+    req.headers.get('sec-fetch-site') === 'cross-site'
+  )
+    return fail('Diese Anfrage ist nicht erlaubt.', 403)
+  // Operational switches are not proof of contractual approval.
+  if (!chatConfigured())
+    return fail('Der KI-Chat ist noch nicht verfügbar. Bitte nutze das Kontaktformular.', 503)
+  if (req.headers.get('content-type')?.split(';')[0].trim().toLowerCase() !== 'application/json')
+    return fail('Bitte JSON senden.', 415)
+  const slot = limiter.acquire(req.headers)
+  if ('retryAfter' in slot)
+    return fail('Zu viele Anfragen. Bitte warte und versuche es erneut.', 429, slot.retryAfter)
+  const abort = new AbortController()
+  let timedOut = false
+  const timeout = setTimeout(() => {
+    timedOut = true
+    abort.abort()
+    slot.release()
+  }, 45000)
+  const signal = AbortSignal.any([req.signal, abort.signal])
+  const cleanup = () => {
+    clearTimeout(timeout)
+    slot.release()
+    signal.removeEventListener('abort', cleanup)
+  }
+  signal.addEventListener('abort', cleanup, { once: true })
+  try {
+    let input: ReturnType<typeof validateChatInput>
+    try {
+      // Next wraps requests in a Proxy; reconstructing them breaks native private-state checks.
+      input = validateChatInput(await readLimitedJSON(req, 16384, signal))
+    } catch (error) {
+      cleanup()
+      return fail(
+        error instanceof RequestBodyError
+          ? error.message
+          : timedOut
+            ? 'Die Anfrage hat zu lange gedauert.'
+            : error instanceof Error
+              ? error.message
+              : 'Ungültige Anfrage.',
+        timedOut ? 408 : error instanceof RequestBodyError ? error.status : 400,
+      )
+    }
+    // Record only the versioned client consent declaration; never message content or IP.
+    // These receipts follow the application's configured Docker log rotation.
+    console.info('[ai-chat-consent]', JSON.stringify(input.consent))
+    const payload = await untilAbort(getPayload({ config: configPromise }), signal)
+    const { docs: projects } = await untilAbort(
+      payload.find({
+        collection: 'projects',
+        overrideAccess: false,
+        draft: false,
+        where: { _status: { equals: 'published' } },
+        // pagination:false ignores limit in Payload; bound the actual database query.
+        pagination: true,
+        limit: 12,
+        sort: '-updatedAt',
+        depth: 1,
+        select: {
+          title: true,
+          shortDescription: true,
+          technologies: true,
+          slug: true,
+          client: true,
+        },
+      }),
+      signal,
+    )
+    let contextSize = 0
+    const projectContext = projects
+      .flatMap((project) => {
+        const client =
+          project.client && typeof project.client === 'object' ? project.client : undefined
+        const slug = project.slug
+        if (!client?.slug || !slug) return []
+        const row = JSON.stringify({
+          title: project.title?.slice(0, 150),
+          description: project.shortDescription?.slice(0, 400),
+          technologies: project.technologies?.slice(0, 8).map((tech) => tech.name?.slice(0, 60)),
+          url: `${expectedOrigin}/projekte/${encodeURIComponent(client.slug)}/${encodeURIComponent(slug)}`,
+        })
+        if (contextSize + row.length > 6000) return []
+        contextSize += row.length
+        return [row]
+      })
+      .join('\n')
+    if (signal.aborted) throw new Error('Aborted')
+    const endpoint = providerEndpoint()
+    if (!endpoint) throw new Error('Provider unavailable')
+    const upstream = await fetch(endpoint, {
+      method: 'POST',
+      signal,
+      cache: 'no-store',
+      redirect: 'error',
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-6-luna',
+        store: false,
+        stream: true,
+        reasoning: { effort: 'none' },
+        text: { verbosity: 'low' },
+        max_output_tokens: 800,
+        instructions: generateSystemInstruction(projectContext),
+        input: [
+          ...input.history.map((turn) => ({
+            role: turn.role === 'model' ? 'assistant' : 'user',
+            content: turn.text,
+          })),
+          { role: 'user', content: input.message },
+        ],
+      }),
+    })
+    if (
+      !upstream.ok ||
+      !upstream.body ||
+      !upstream.headers.get('content-type')?.includes('text/event-stream')
+    ) {
+      await upstream.body?.cancel()
+      abort.abort()
+      cleanup()
+      // Never log provider response bodies, prompts, exception objects or headers.
+      return fail(
+        'Der KI-Dienst ist vorübergehend nicht verfügbar. Bitte versuche es später erneut.',
+        upstream.status === 429 ? 429 : 502,
+        upstream.status === 429 ? 60 : undefined,
+      )
+    }
+    const iterator = readOpenAIText(upstream.body)
+    const encoder = new TextEncoder()
+    let cancelled = false
+    let finished = false
+    const stream = new ReadableStream<Uint8Array>({
+      async pull(controller) {
+        if (finished) return
+        const emit = (event: ChatEvent) =>
+          controller.enqueue(encoder.encode(`${JSON.stringify(event)}\n`))
+        try {
+          const next = await iterator.next()
+          if (cancelled) return
+          if (next.done) {
+            finished = true
+            emit({ type: 'done' })
+            controller.close()
+            cleanup()
+          } else emit({ type: 'delta', text: next.value })
+        } catch {
+          if (!cancelled) {
+            emit({
+              type: 'error',
+              message: 'Die Antwort wurde unterbrochen. Bitte versuche es erneut.',
+            })
+            controller.close()
+          }
+          finished = true
+          abort.abort()
+          cleanup()
+        }
+      },
+      cancel() {
+        cancelled = true
+        finished = true
+        abort.abort()
+        cleanup()
+        void iterator.return(undefined).catch(() => {})
+      },
+    })
+    return new Response(stream, {
+      headers: {
+        ...headers,
+        'Content-Type': 'application/x-ndjson; charset=utf-8',
+        'X-Accel-Buffering': 'no',
+      },
+    })
+  } catch {
+    abort.abort()
+    cleanup()
+    return fail(
+      'Der KI-Chat ist vorübergehend nicht verfügbar. Bitte versuche es später erneut.',
+      timedOut ? 504 : 502,
+    )
+  }
 }

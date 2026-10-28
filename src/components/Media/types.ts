@@ -13,6 +13,7 @@ export interface Props {
   onClick?: () => void
   onLoad?: () => void
   loading?: 'lazy' | 'eager' // for NextImage only
+  quality?: 75 | 85 | 100
   priority?: boolean // for NextImage only
   ref?: Ref<HTMLImageElement | HTMLVideoElement | null>
   resource?: MediaType | string | number | null // for Payload media
@@ -20,3 +21,4 @@ export interface Props {
   src?: StaticImageData // for static media
   videoClassName?: string
 }
+

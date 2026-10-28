@@ -1,43 +1,40 @@
 'use client'
 
 import { cn } from '@/utilities/ui'
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 
 import type { Props as MediaProps } from '../types'
 
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 export const VideoMedia: React.FC<MediaProps> = (props) => {
-  const { onClick, resource, videoClassName } = props
-
-  const videoRef = useRef<HTMLVideoElement>(null)
-  // const [showFallback] = useState<boolean>()
-
-  useEffect(() => {
-    const { current: video } = videoRef
-    if (video) {
-      video.addEventListener('suspend', () => {
-        // setShowFallback(true);
-        // console.warn('Video was suspended, rendering fallback image.')
-      })
-    }
-  }, [])
+  const { onClick, resource, videoClassName, fill } = props
 
   if (resource && typeof resource === 'object') {
-    const { filename } = resource
+    if (!resource.url) return null
 
     return (
       <video
-        autoPlay
-        className={cn(videoClassName)}
-        controls={false}
-        loop
-        muted
+        className={cn('w-full', fill ? 'h-full object-contain' : 'h-auto', videoClassName)}
+        controls
+        preload="none"
+        width={resource.width || undefined}
+        height={resource.height || undefined}
+        style={
+          resource.width && resource.height
+            ? { aspectRatio: `${resource.width}/${resource.height}` }
+            : undefined
+        }
+        aria-label={resource.alt || resource.filename || 'Video'}
         onClick={onClick}
         playsInline
-        ref={videoRef}
       >
-        <source src={getMediaUrl(`/media/${filename}`)} />
+        <source
+          src={getMediaUrl(resource.url, resource.updatedAt)}
+          type={resource.mimeType || undefined}
+        />
+        Dein Browser kann dieses Video nicht wiedergeben.{' '}
+        <a href={getMediaUrl(resource.url, resource.updatedAt)}>Video herunterladen</a>.
       </video>
     )
   }

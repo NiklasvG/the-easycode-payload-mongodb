@@ -1,5 +1,7 @@
 // src\utilities\generatePreviewPath.ts
 import { PayloadRequest, CollectionSlug } from 'payload'
+import type { Page, Project } from '@/payload-types'
+import { getPagePath } from './contentPaths'
 
 const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
 	posts: '/posts',
@@ -11,7 +13,7 @@ type Props = {
 	collection: CollectionSlug
 	slug: string
 	req: PayloadRequest
-	data?: any // Neu: Wir brauchen die Daten des Dokuments
+	data?: Partial<Project> | Partial<Page>
 }
 
 export const generatePreviewPath = async ({
@@ -26,6 +28,7 @@ export const generatePreviewPath = async ({
 
 	const encodedSlug = encodeURIComponent(slug)
 	let path = ''
+	const client = data && 'client' in data ? data.client : null
 
 	// Spezifische Logik für Projects
 	if (collection === 'projects') {
@@ -33,19 +36,21 @@ export const generatePreviewPath = async ({
 
 		// Fall 1: Client ist bereits im Objekt populated (z.B. durch afterRead)
 		if (
-			data?.client &&
-			typeof data.client === 'object' &&
-			'slug' in data.client
+			client &&
+			typeof client === 'object' &&
+			'slug' in client
 		) {
-			clientSlug = data.client.slug
+			clientSlug = client.slug
 		}
 		// Fall 2: Client ist nur eine ID -> Wir müssen fetchen
-		else if (data?.client) {
+		else if (typeof client === 'string') {
 			try {
 				const clientDoc = await req.payload.findByID({
 					collection: 'clients',
-					id: data.client,
-					depth: 0
+					id: client,
+					depth: 0,
+					req,
+					overrideAccess: false,
 				})
 				clientSlug = clientDoc.slug
 			} catch (error) {
@@ -56,7 +61,7 @@ export const generatePreviewPath = async ({
 
 		// Wenn wir einen Client Slug haben, bauen wir den Pfad
 		if (clientSlug) {
-			path = `/projekte/${clientSlug}/${encodedSlug}`
+			path = `/projekte/${encodeURIComponent(clientSlug)}/${encodedSlug}`
 		} else {
 			// Fallback, falls noch kein Client gewählt wurde
 			return null
@@ -64,7 +69,7 @@ export const generatePreviewPath = async ({
 	}
 	// Standard Logik für Pages, Posts, etc.
 	else if (collectionPrefixMap[collection] !== undefined) {
-		path = `${collectionPrefixMap[collection]}/${encodedSlug}`
+		path = collection === 'pages' ? getPagePath({ slug, breadcrumbs: data && 'breadcrumbs' in data ? data.breadcrumbs : undefined }) : `${collectionPrefixMap[collection]}/${encodedSlug}`
 	} else {
 		// Wenn Collection nicht bekannt, kein Preview
 		return null

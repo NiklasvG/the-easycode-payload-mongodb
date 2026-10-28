@@ -1,7 +1,6 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 
-import { cn } from '@/utilities/ui'
-import { Gabarito, Geist_Mono } from 'next/font/google'
+import localFont from 'next/font/local'
 import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
@@ -13,68 +12,82 @@ import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { draftMode } from 'next/headers'
 
 import './globals.css'
-import { getServerSideURL } from '@/utilities/getURL'
-import { AIChat } from '@/components/Chat/AIChat'
-import { GoogleAnalytics } from '@/components/GoogleAnalytics'
+import { getSitemapOrigin } from '@/utilities/getSitemapOrigin'
+import { siteName, siteDescription } from '@/utilities/seo'
+import { StructuredData } from '@/components/StructuredData'
+import { getSiteStructuredData } from '@/utilities/structuredData'
+import { ChatLauncher } from '@/components/Chat/ChatLauncher'
+import { UmamiAnalytics } from '@/components/UmamiAnalytics'
 import { CookieBanner } from '@/components/CookieBanner'
 
-const geistSans = Gabarito({
-	variable: '--font-geist-sans',
-	subsets: ['latin']
+// Published CMS pages are prerendered during the build and refreshed by CMS hooks.
+export const revalidate = 3600
+
+const geistMono = localFont({
+  src: '../../fonts/GeistMono-variable.woff2',
+  preload: false,
+  weight: '100 900',
+  display: 'swap',
+  variable: '--font-geist-mono',
 })
 
-const geistMono = Geist_Mono({
-	variable: '--font-geist-mono',
-	subsets: ['latin']
-})
-
-export default async function RootLayout({
-	children
-}: {
-	children: React.ReactNode
-}) {
-	const { isEnabled } = await draftMode()
-
-	return (
-		<html
-			className={cn(geistSans.variable, geistMono.variable)}
-			lang="en"
-			suppressHydrationWarning
-		>
-			<head>
-				<InitTheme />
-				<link href="/favicon.ico" rel="icon" sizes="32x32" />
-				<link href="/favicon.svg" rel="icon" type="image/svg+xml" />
-			</head>
-			<body>
-				{/* Background Gradients */}
-				<div className="absolute top-0 left-0 w-full h-full pointer-events-none z-30 overflow-hidden">
-					<div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/10 rounded-full blur-[120px]" />
-				</div>
-				<Providers>
-					<AdminBar
-						adminBarProps={{
-							preview: isEnabled
-						}}
-					/>
-
-					<Header />
-					{children}
-					<Footer />
-					<AIChat />
-					<GoogleAnalytics />
-					<CookieBanner />
-				</Providers>
-			</body>
-		</html>
-	)
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html className={geistMono.variable} lang="de" suppressHydrationWarning>
+      <head>
+        <InitTheme />
+        <link href="/favicon.ico" rel="icon" sizes="32x32" />
+        <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+      </head>
+      <body>
+        <a href="#main-content" className="skip-link">
+          Zum Inhalt springen
+        </a>
+        <StructuredData data={getSiteStructuredData()} />
+        {/* Background Gradients */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-30 overflow-hidden">
+          <div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/10 rounded-full blur-[120px]" />
+        </div>
+        <Providers>
+          <PreviewBar />
+          <Header />
+          <main id="main-content" tabIndex={-1}>
+            {children}
+          </main>
+          <Footer />
+          <ChatLauncher />
+          <UmamiAnalytics
+            scriptUrl={process.env.UMAMI_SCRIPT_URL}
+            websiteId={process.env.UMAMI_WEBSITE_ID}
+          />
+          <CookieBanner />
+        </Providers>
+      </body>
+    </html>
+  )
 }
 
 export const metadata: Metadata = {
-	metadataBase: new URL(getServerSideURL()),
-	openGraph: mergeOpenGraph(),
-	twitter: {
-		card: 'summary_large_image',
-		creator: '@the_easycode'
-	}
+  metadataBase: new URL(getSitemapOrigin()),
+  title: siteName,
+  description: siteDescription,
+  ...(process.env.APP_ENV === 'staging' ? { robots: { index: false, follow: false } } : {}),
+  openGraph: mergeOpenGraph(),
+  twitter: {
+    card: 'summary_large_image',
+    creator: '@the_easycode',
+  },
+}
+
+async function PreviewBar() {
+  const { isEnabled } = await draftMode()
+  return <AdminBar adminBarProps={{ preview: isEnabled }} />
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  interactiveWidget: 'resizes-content',
+  themeColor: '#090a0c',
 }

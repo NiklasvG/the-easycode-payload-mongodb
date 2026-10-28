@@ -1,16 +1,17 @@
 import type { Metadata } from 'next'
-import { getServerSideURL } from './getURL'
+import { absoluteSEOURL, siteDescription, siteName } from './seo'
 
 const defaultOpenGraph: Metadata['openGraph'] = {
 	type: 'website',
-	description: 'Ihr Freelancer für Webentwicklung aus Dresden!',
+	description: siteDescription,
+	locale: 'de_DE',
 	images: [
 		{
-			url: `${getServerSideURL()}/website-template-OG.webp`
+			url: absoluteSEOURL('/website-template-OG.webp')
 		}
 	],
-	siteName: 'The-EasyCode',
-	title: 'The-EasyCode'
+	siteName,
+	title: siteName
 }
 
 export const mergeOpenGraph = (

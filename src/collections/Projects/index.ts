@@ -8,9 +8,11 @@ import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { revalidateDelete, revalidateProject } from './hooks/revalidateProject'
 import { populatePublishedAt } from '@/hooks/populatePublishedAt'
+import { seoFields } from '@/fields/seo'
 
 export const Projects: CollectionConfig = {
 	slug: 'projects',
+  disableBulkDelete: true,
 	// 1. Versions aktivieren (Drafts)
 	versions: {
 		drafts: {
@@ -308,6 +310,7 @@ export const Projects: CollectionConfig = {
 						}
 					]
 				},
+				{ name: 'meta', label: 'SEO', fields: seoFields },
 				{
 					label: 'Metriken & Tech',
 					fields: [
@@ -398,3 +401,5 @@ export const Projects: CollectionConfig = {
 		}
 	]
 }
+
+

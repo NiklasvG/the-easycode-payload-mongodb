@@ -251,6 +251,10 @@ export interface Page {
      */
     image?: (string | null) | Media;
     description?: string | null;
+    /**
+     * Setzt noindex und entfernt die URL aus Sitemap und llms.txt. Die Seite bleibt öffentlich erreichbar; dies ist kein Zugriffsschutz.
+     */
+    noIndex?: boolean | null;
   };
   publishedAt?: string | null;
   /**
@@ -303,6 +307,10 @@ export interface Post {
      */
     image?: (string | null) | Media;
     description?: string | null;
+    /**
+     * Setzt noindex und entfernt die URL aus Sitemap und llms.txt. Die Seite bleibt öffentlich erreichbar; dies ist kein Zugriffsschutz.
+     */
+    noIndex?: boolean | null;
   };
   publishedAt?: string | null;
   authors?: (string | User)[] | null;
@@ -328,6 +336,10 @@ export interface Post {
 export interface Media {
   id: string;
   alt?: string | null;
+  /**
+   * Zeigt bei diesem Bild im Frontend einen KI-Hinweis an.
+   */
+  isAIGenerated?: boolean | null;
   caption?: {
     root: {
       type: string;
@@ -478,6 +490,7 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -779,9 +792,6 @@ export interface Form {
       )[]
     | null;
   submitButtonLabel?: string | null;
-  /**
-   * Choose whether to display an on-page message or redirect to a different page after they submit the form.
-   */
   confirmationType?: ('message' | 'redirect') | null;
   confirmationMessage?: {
     root: {
@@ -801,9 +811,6 @@ export interface Form {
   redirect?: {
     url: string;
   };
-  /**
-   * Send custom emails when the form submits. Use comma separated lists to send the same email to multiple recipients. To reference a value from this form, wrap that field's name with double curly brackets, i.e. {{firstName}}. You can use a wildcard {{*}} to output all data and {{*:table}} to format it as an HTML table in the email.
-   */
   emails?:
     | {
         emailTo?: string | null;
@@ -812,9 +819,6 @@ export interface Form {
         replyTo?: string | null;
         emailFrom?: string | null;
         subject: string;
-        /**
-         * Enter the message that should be sent in this email.
-         */
         message?: {
           root: {
             type: string;
@@ -1364,6 +1368,18 @@ export interface Project {
     };
     [k: string]: unknown;
   } | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+    description?: string | null;
+    /**
+     * Setzt noindex und entfernt die URL aus Sitemap und llms.txt. Die Seite bleibt öffentlich erreichbar; dies ist kein Zugriffsschutz.
+     */
+    noIndex?: boolean | null;
+  };
   stats?:
     | {
         value: string;
@@ -1399,7 +1415,7 @@ export interface Project {
 export interface Redirect {
   id: string;
   /**
-   * You will need to rebuild the website when changing this field.
+   * Änderungen werden beim nächsten Seitenaufruf berücksichtigt.
    */
   from: string;
   to?: {
@@ -1773,6 +1789,7 @@ export interface PagesSelect<T extends boolean = true> {
         title?: T;
         image?: T;
         description?: T;
+        noIndex?: T;
       };
   publishedAt?: T;
   generateSlug?: T;
@@ -2154,6 +2171,7 @@ export interface PostsSelect<T extends boolean = true> {
         title?: T;
         image?: T;
         description?: T;
+        noIndex?: T;
       };
   publishedAt?: T;
   authors?: T;
@@ -2175,6 +2193,7 @@ export interface PostsSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  isAIGenerated?: T;
   caption?: T;
   folder?: T;
   updatedAt?: T;
@@ -2296,6 +2315,7 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
+  resetPasswordRequestedAt?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -2360,6 +2380,14 @@ export interface ProjectsSelect<T extends boolean = true> {
   theSolution?: T;
   theOutcome?: T;
   theNerdDetails?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+        noIndex?: T;
+      };
   stats?:
     | T
     | {
@@ -2856,7 +2884,10 @@ export interface TaskSchedulePublish {
           value: string | Project;
         } | null);
     global?: string | null;
-    user?: (string | null) | User;
+    user?: {
+      relationTo: 'users';
+      value: string | User;
+    } | null;
   };
   output?: unknown;
 }

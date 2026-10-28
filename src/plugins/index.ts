@@ -6,8 +6,6 @@ import { searchPlugin } from '@payloadcms/plugin-search'
 import { Plugin } from 'payload'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
-import { sentryPlugin } from '@payloadcms/plugin-sentry'
-import * as Sentry from '@sentry/nextjs'
 import {
 	FixedToolbarFeature,
 	HeadingFeature,
@@ -16,23 +14,31 @@ import {
 import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
 
-import { Page, Post } from '@/payload-types'
-import { getServerSideURL } from '@/utilities/getURL'
+import { Page, Post, Project } from '@/payload-types'
+import { absoluteSEOURL, getSEOTitle } from '@/utilities/seo'
+import { getContentPath } from '@/utilities/generateMeta'
+import { authenticated } from '@/access/authenticated'
+import { validateFormSubmission } from '@/hooks/validateFormSubmission'
 
-const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
-	return doc?.title ? `${doc.title} | The-EasyCode` : 'The-EasyCode'
+const generateTitle: GenerateTitle<Post | Page | Project> = ({ doc }) => {
+	return getSEOTitle(doc?.title)
 }
 
-const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
-	const url = getServerSideURL()
-
-	return doc?.slug ? `${url}/${doc.slug}` : url
+const generateURL: GenerateURL<Post | Page | Project> = async ({ doc, collectionSlug, req }) => {
+  const collection = collectionSlug === 'posts' || collectionSlug === 'projects' ? collectionSlug : 'pages'
+  let resolved = doc
+  if (collection === 'projects' && 'client' in doc && typeof doc.client === 'string') {
+    const client = await req.payload.findByID({ collection: 'clients', id: doc.client, depth: 0, overrideAccess: false, req })
+    resolved = { ...doc, client }
+  }
+  return absoluteSEOURL(getContentPath(resolved, collection))
 }
 
 export const plugins: Plugin[] = [
 	redirectsPlugin({
 		collections: ['pages', 'posts'],
 		overrides: {
+			access: { read: () => true, create: authenticated, update: authenticated, delete: authenticated },
 			// @ts-expect-error - This is a valid override, mapped fields don't resolve to the same type
 			fields: ({ defaultFields }) => {
 				return defaultFields.map((field) => {
@@ -41,7 +47,7 @@ export const plugins: Plugin[] = [
 							...field,
 							admin: {
 								description:
-									'You will need to rebuild the website when changing this field.'
+									'Änderungen werden beim nächsten Seitenaufruf berücksichtigt.'
 							}
 						}
 					}
@@ -49,7 +55,8 @@ export const plugins: Plugin[] = [
 				})
 			},
 			hooks: {
-				afterChange: [revalidateRedirects]
+				afterChange: [revalidateRedirects],
+                afterDelete: [revalidateRedirects]
 			}
 		}
 	}),
@@ -67,8 +74,10 @@ export const plugins: Plugin[] = [
 			payment: false
 		},
 		formOverrides: {
+			access: { read: () => true, create: authenticated, update: authenticated, delete: authenticated },
 			fields: ({ defaultFields }) => {
 				return defaultFields.map((field) => {
+					if ('name' in field && field.name === 'emails' && field.type === 'array') return { ...field, access: { ...field.access, read: ({ req }) => Boolean(req.user) } }
 					// Editor-Override für confirmationMessage beibehalten
 					if ('name' in field && field.name === 'confirmationMessage') {
 						return {
@@ -94,7 +103,7 @@ export const plugins: Plugin[] = [
 						'type' in field &&
 						field.type === 'blocks'
 					) {
-						const blocks = (field as any).blocks?.map((block: any) => {
+						const blocks = field.blocks?.map((block) => {
 							if (
 								['text', 'number', 'email', 'textarea'].includes(block.slug)
 							) {
@@ -104,7 +113,7 @@ export const plugins: Plugin[] = [
 										...block.fields,
 										{
 											name: 'placeholder',
-											type: 'text',
+											type: 'text' as const,
 											label: 'Placeholder',
 											required: false
 										}
@@ -120,16 +129,23 @@ export const plugins: Plugin[] = [
 					return field
 				})
 			}
-		}
+		},
+		formSubmissionOverrides: {
+			access: { create: () => true, read: authenticated, update: () => false, delete: authenticated },
+			hooks: { beforeValidate: [validateFormSubmission] },
+		},
 	}),
 	searchPlugin({
 		collections: ['posts', 'projects', 'clients', 'pages'],
 		beforeSync: beforeSyncWithSearch,
+		syncDrafts: false,
+		deleteDrafts: true,
 		searchOverrides: {
+			access: { read: () => true, create: authenticated, update: authenticated, delete: authenticated },
 			fields: ({ defaultFields }) => {
 				return [...defaultFields, ...searchFields]
 			}
 		}
-	}),
-	sentryPlugin({ Sentry })
+	})
 ]
+

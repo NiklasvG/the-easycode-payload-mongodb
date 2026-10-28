@@ -13,6 +13,11 @@ import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { getPreviewAccess } from '@/utilities/getPreviewAccess'
+import { getPagePath } from '@/utilities/contentPaths'
+import { StructuredData } from '@/components/StructuredData'
+import { getContentStructuredData } from '@/utilities/structuredData'
+import { CreditsPage } from '@/components/Credits/Page'
 
 // Helper um Params korrekt zu typisieren
 type Args = {
@@ -21,45 +26,14 @@ type Args = {
 	}>
 }
 
-export async function generateStaticParams() {
-	const payload = await getPayload({ config: configPromise })
-	const pages = await payload.find({
-		collection: 'pages',
-		draft: false,
-		limit: 1000,
-		overrideAccess: false,
-		pagination: false,
-		select: {
-			slug: true,
-			breadcrumbs: true // Wir brauchen die Breadcrumbs für den vollen Pfad
-		}
-	})
-
-	const params = pages.docs
-		?.filter((doc) => {
-			return doc.slug !== 'home'
-		})
-		.map(({ breadcrumbs }) => {
-			// Wir nehmen die URL vom letzten Breadcrumb, da dieser den vollen Pfad enthält
-			const url = breadcrumbs?.[breadcrumbs.length - 1]?.url
-			if (!url) return null
-
-			// Entferne führenden Slash und splitte in Segmente
-			const slug = url.replace(/^\/|\/$/g, '').split('/')
-
-			return { slug }
-		})
-		.filter(Boolean)
-
-	return params || []
-}
 
 export default async function Page({ params: paramsPromise }: Args) {
 	const { isEnabled: draft } = await draftMode()
-	const { slug = ['home'] } = await paramsPromise
+	const { slug: requestedSlug } = await paramsPromise
+	const slug = requestedSlug?.length ? requestedSlug : ['home']
 
 	// 1. URL aus Params rekonstruieren (z.B. "/leistungen/web-entwicklung")
-	const urlPath = '/' + slug.join('/')
+	const urlPath = requestedSlug?.length ? '/' + requestedSlug.join('/') : '/'
 
 	// 2. Letztes Segment für DB-Suche nutzen
 	const lastSegment = slug[slug.length - 1]
@@ -75,26 +49,27 @@ export default async function Page({ params: paramsPromise }: Args) {
 
 	// Wir prüfen, ob die Seite Breadcrumbs hat und ob die URL übereinstimmt.
 	// Das nestedDocs Plugin speichert die volle URL im letzten Breadcrumb.
-	if (page.breadcrumbs && page.breadcrumbs.length > 0) {
-		const correctURL = page.breadcrumbs[page.breadcrumbs.length - 1]?.url
-
-		// Wenn die aufgerufene URL (urlPath) nicht der korrekten URL entspricht -> Redirect
-		if (correctURL && correctURL !== urlPath) {
-			permanentRedirect(correctURL)
-		}
-	}
+	const correctURL = getPagePath(page)
+	if (correctURL !== urlPath) permanentRedirect(correctURL)
 
 	const { hero, layout } = page
 
 	return (
 		<article>
+			{!draft && <StructuredData data={getContentStructuredData(page, 'pages')} />}
 			<PageClient />
 			<PayloadRedirects disableNotFound url={urlPath} />
 
 			{draft && <LivePreviewListener />}
 
-			<RenderHero {...hero} />
-			<RenderBlocks blocks={layout} />
+			{page.slug === 'credits' ? (
+				<CreditsPage hero={hero} layout={layout} />
+			) : (
+				<>
+					<RenderHero {...hero} />
+					<RenderBlocks blocks={layout} />
+				</>
+			)}
 		</article>
 	)
 }
@@ -110,13 +85,30 @@ export async function generateMetadata({
 		slug: decodedSlug
 	})
 
-	return generateMeta({ doc: page })
+	const { isEnabled: preview } = await draftMode()
+	return generateMeta({ doc: page, preview })
+}
+
+export async function generateStaticParams() {
+	const payload = await getPayload({ config: configPromise })
+	const { docs } = await payload.find({
+		collection: 'pages',
+		draft: false,
+		overrideAccess: false,
+		pagination: false,
+		depth: 0,
+		where: { _status: { equals: 'published' } },
+		select: { slug: true, breadcrumbs: true },
+	})
+
+	return docs.filter((page) => page.slug !== 'home').map((page) => ({
+		slug: getPagePath(page).split('/').filter(Boolean).map(decodeURIComponent),
+	}))
 }
 
 const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
-	const { isEnabled: draft } = await draftMode()
-
 	const payload = await getPayload({ config: configPromise })
+	const draft = await getPreviewAccess(payload)
 
 	const result = await payload.find({
 		collection: 'pages',

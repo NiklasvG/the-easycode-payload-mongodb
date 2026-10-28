@@ -1,9 +1,5 @@
 import type { CheckboxField } from '@payloadcms/plugin-form-builder/types'
-import type {
-	FieldErrorsImpl,
-	FieldValues,
-	UseFormRegister
-} from 'react-hook-form'
+import type { FieldErrorsImpl, FieldValues, UseFormRegister } from 'react-hook-form'
 
 import { useFormContext } from 'react-hook-form'
 
@@ -12,46 +8,49 @@ import { Label } from '@/components/ui/label'
 import React from 'react'
 
 import { Error } from '../Error'
-import { Width } from '../Width'
 
 export const Checkbox: React.FC<
-	CheckboxField & {
-		errors: Partial<FieldErrorsImpl>
-		register: UseFormRegister<FieldValues>
-	}
-> = ({ name, defaultValue, errors, label, register, required, width }) => {
-	const props = register(name, {
-		required: required,
-		validate: (value) => {
-			if (required && value !== true) {
-				return 'Bitte aktiviere das Kontrollkästchen.'
-			}
-			return true
-		}
-	})
-	const { setValue } = useFormContext()
+  CheckboxField & {
+    errors: Partial<FieldErrorsImpl>
+    register: UseFormRegister<FieldValues>
+  }
+> = ({ name, defaultValue, errors, label, register, required }) => {
+  const props = register(name, {
+    required: required,
+    validate: (value) => {
+      if (required && value !== true) {
+        return 'Bitte aktiviere das Kontrollkästchen.'
+      }
+      return true
+    },
+  })
+  const { setValue } = useFormContext()
 
-	return (
-		<div>
-			<div className="flex items-center gap-2">
-				<CheckboxUi
-					defaultChecked={defaultValue}
-					id={name}
-					{...props}
-					onCheckedChange={(checked) => {
-						setValue(props.name, checked, { shouldValidate: true })
-					}}
-				/>
-				<Label htmlFor={name} className="form-checkbox-label">
-					{required && (
-						<span className="required">
-							* <span className="sr-only">(required)</span>
-						</span>
-					)}
-					<span dangerouslySetInnerHTML={{ __html: label || '' }} />
-				</Label>
-			</div>
-			{errors[name] && <Error name={name} />}
-		</div>
-	)
+  return (
+    <div>
+      <div className="flex items-start gap-3">
+        <CheckboxUi
+          defaultChecked={defaultValue}
+          id={name}
+          aria-required={!!required}
+          aria-invalid={!!errors[name]}
+          aria-describedby={errors[name] ? `${name}-error` : undefined}
+          className="mt-2"
+          {...props}
+          onCheckedChange={(checked) => {
+            setValue(props.name, checked, { shouldValidate: true })
+          }}
+        />
+        <Label htmlFor={name} className="form-checkbox-label min-w-0 min-h-11 py-1 cursor-pointer">
+          {required && (
+            <span className="required">
+              * <span className="sr-only">(Pflichtfeld)</span>
+            </span>
+          )}
+          <span dangerouslySetInnerHTML={{ __html: label || name }} />
+        </Label>
+      </div>
+      {errors[name] && <Error name={name} />}
+    </div>
+  )
 }

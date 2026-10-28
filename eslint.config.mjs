@@ -1,18 +1,17 @@
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
-import { FlatCompat } from '@eslint/eslintrc'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-})
+import nextVitals from 'eslint-config-next/core-web-vitals'
+import nextTypescript from 'eslint-config-next/typescript'
 
 const eslintConfig = [
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  ...nextVitals,
+  ...nextTypescript,
   {
+    files: ['**/*.{js,jsx,mjs,ts,tsx,mts,cts}'],
     rules: {
+      // Compiler correctness rules are enforced after removing render mutations and effect state copies.
+      'react-hooks/set-state-in-effect': 'error',
+      'react-hooks/immutability': 'error',
+      'react-hooks/refs': 'error',
+      'react-hooks/static-components': 'error',
       '@typescript-eslint/ban-ts-comment': 'warn',
       '@typescript-eslint/no-empty-object-type': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
@@ -31,8 +30,9 @@ const eslintConfig = [
     },
   },
   {
-    ignores: ['.next/'],
+    ignores: ['.next/**', '.quality-*/**', 'src/payload-types.ts', 'src/app/(payload)/admin/importMap.js', 'playwright-report/**', 'test-results/**'],
   },
 ]
 
 export default eslintConfig
+

@@ -1,3 +1,5 @@
+import { connection } from 'next/server'
+import { Suspense } from 'react'
 /* THIS FILE WAS GENERATED AUTOMATICALLY BY PAYLOAD. */
 /* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
 import type { Metadata } from 'next'
@@ -15,10 +17,15 @@ type Args = {
   }>
 }
 
-export const generateMetadata = ({ params, searchParams }: Args): Promise<Metadata> =>
-  generatePageMetadata({ config, params, searchParams })
+export const generateMetadata = async ({ params, searchParams }: Args): Promise<Metadata> => {
+  await connection()
+  return generatePageMetadata({ config, params, searchParams })
+}
 
-const Page = ({ params, searchParams }: Args) =>
-  RootPage({ config, params, searchParams, importMap })
+const Page = (props: Args) => <Suspense fallback={null}><RuntimePage {...props} /></Suspense>
+async function RuntimePage({ params, searchParams }: Args) {
+  await connection()
+  return RootPage({ config, params, searchParams, importMap })
+}
 
 export default Page

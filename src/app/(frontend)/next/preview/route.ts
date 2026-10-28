@@ -4,13 +4,11 @@ import { getPayload } from 'payload'
 
 import { draftMode } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { NextRequest } from 'next/server'
+import { connection, NextRequest } from 'next/server'
 
 import configPromise from '@payload-config'
 
 export async function GET(req: NextRequest): Promise<Response> {
-	const payload = await getPayload({ config: configPromise })
-
 	const { searchParams } = new URL(req.url)
 
 	const path = searchParams.get('path')
@@ -18,7 +16,7 @@ export async function GET(req: NextRequest): Promise<Response> {
 	const slug = searchParams.get('slug')
 	const previewSecret = searchParams.get('previewSecret')
 
-	if (previewSecret !== process.env.PREVIEW_SECRET) {
+	if (!process.env.PREVIEW_SECRET || previewSecret !== process.env.PREVIEW_SECRET) {
 		return new Response('You are not allowed to preview this page', {
 			status: 403
 		})
@@ -27,14 +25,19 @@ export async function GET(req: NextRequest): Promise<Response> {
 	if (!path || !collection || !slug) {
 		return new Response('Insufficient search params', { status: 404 })
 	}
+	if (!['pages', 'posts', 'projects'].includes(collection)) {
+		return new Response('Unsupported preview collection', { status: 400 })
+	}
 
-	if (!path.startsWith('/')) {
+	if (!path.startsWith('/') || path.startsWith('//') || /[\\\x00-\x1f\x7f]|%2f|%5c/i.test(path)) {
 		return new Response(
 			'This endpoint can only be used for relative previews',
 			{ status: 500 }
 		)
 	}
 
+	await connection()
+	const payload = await getPayload({ config: configPromise })
 	let user
 
 	try {
@@ -54,7 +57,7 @@ export async function GET(req: NextRequest): Promise<Response> {
 
 	const draft = await draftMode()
 
-	if (!user) {
+	if (!user?.user) {
 		draft.disable()
 		return new Response('You are not allowed to preview this page', {
 			status: 403

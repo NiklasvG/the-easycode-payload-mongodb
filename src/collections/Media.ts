@@ -1,3 +1,5 @@
+import { validateMediaUpload } from '@/hooks/validateMediaUpload'
+import { revalidateRelatedContent } from '@/hooks/revalidateRelatedContent'
 import type { CollectionConfig } from 'payload'
 
 import {
@@ -6,16 +8,13 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 import path from 'path'
-import { fileURLToPath } from 'url'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 
-const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
-
 export const Media: CollectionConfig = {
   slug: 'media',
+  disableBulkDelete: true,
   folders: true,
   access: {
     create: authenticated,
@@ -23,11 +22,22 @@ export const Media: CollectionConfig = {
     read: anyone,
     update: authenticated,
   },
+  hooks: { beforeOperation: [validateMediaUpload], afterChange: [revalidateRelatedContent], afterDelete: [revalidateRelatedContent] },
   fields: [
     {
       name: 'alt',
       type: 'text',
       //required: true,
+    },
+    {
+      name: 'isAIGenerated',
+      label: 'Mit KI generiert oder angepasst',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description: 'Zeigt bei diesem Bild im Frontend einen KI-Hinweis an.',
+        condition: (data) => Boolean(data?.mimeType?.startsWith('image/')),
+      },
     },
     {
       name: 'caption',
@@ -40,8 +50,11 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
-    staticDir: path.resolve(dirname, '../../public/media'),
+    allowRestrictedFileTypes: false,
+    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif', 'video/mp4', 'video/webm', 'application/pdf'],
+    // Payload serves these files through /api/media/file/<filename>.
+    // Mount persistent storage at this path in Coolify.
+    staticDir: path.resolve(process.cwd(), process.env.PAYLOAD_UPLOAD_DIR || 'media'),
     adminThumbnail: 'thumbnail',
     focalPoint: true,
     imageSizes: [
@@ -79,3 +92,6 @@ export const Media: CollectionConfig = {
     ],
   },
 }
+
+
+

@@ -148,7 +148,7 @@ If you are migrating an existing site or moving content to a new URL, you can us
 
 We have configured [Scheduled Publish](https://payloadcms.com/docs/versions/drafts#scheduled-publish) which uses the [jobs queue](https://payloadcms.com/docs/jobs-queue/jobs) in order to publish or unpublish your content on a scheduled time. The tasks are run on a cron schedule and can also be run as a separate instance if needed.
 
-> Note: When deployed on Vercel, depending on the plan tier, you may be limited to daily cron only.
+> Scheduled jobs require an external scheduler. Authenticate requests with the configured CRON_SECRET.
 
 ## Website
 
@@ -242,52 +242,9 @@ To run Payload in production, you need to build and start the Admin panel. To do
 1. Finally run `pnpm start` or `npm run start` to run Node in production and serve Payload from the `.build` directory.
 1. When you're ready to go live, see Deployment below for more details.
 
-### Deploying to Vercel
+### Deploying with Coolify on Hetzner
 
-This template can also be deployed to Vercel for free. You can get started by choosing the Vercel DB adapter during the setup of the template or by manually installing and configuring it:
-
-```bash
-pnpm add @payloadcms/db-vercel-postgres
-```
-
-```ts
-// payload.config.ts
-import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
-
-export default buildConfig({
-  // ...
-  db: vercelPostgresAdapter({
-    pool: {
-      connectionString: process.env.POSTGRES_URL || '',
-    },
-  }),
-  // ...
-```
-
-We also support Vercel's blob storage:
-
-```bash
-pnpm add @payloadcms/storage-vercel-blob
-```
-
-```ts
-// payload.config.ts
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
-
-export default buildConfig({
-  // ...
-  plugins: [
-    vercelBlobStorage({
-      collections: {
-        [Media.slug]: true,
-      },
-      token: process.env.BLOB_READ_WRITE_TOKEN || '',
-    }),
-  ],
-  // ...
-```
-
-There is also a simplified [one click deploy](https://github.com/payloadcms/payload/tree/templates/with-vercel-postgres) to Vercel should you need it.
+See [the deployment guide](docs/deployment-coolify.md) for Docker, MongoDB and persistent uploads, and [monitoring alternatives](docs/monitoring-coolify.md) for self-hosted analytics and performance monitoring.
 
 ### Self-hosting
 

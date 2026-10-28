@@ -1,0 +1,289 @@
+{
+  "measuredAt": "2026-10-03T15:14:30.829Z",
+  "origin": "http://localhost:3002",
+  "results": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 1,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 1584,
+      "cls": 0,
+      "ttfb": 448.1999999284744,
+      "responseMs": 917.1999999284744,
+      "transferredBytes": 492728,
+      "labInteractionCandidateMs": 16,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 1,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 436,
+      "cls": 0,
+      "ttfb": 3,
+      "responseMs": 51.89999997615814,
+      "transferredBytes": 18235,
+      "labInteractionCandidateMs": 16,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 1,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 7.900000095367432,
+      "responseMs": 79.10000002384186
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 2,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 1572,
+      "cls": 0,
+      "ttfb": 468.7000000476837,
+      "responseMs": 872.7000000476837,
+      "transferredBytes": 492722,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 2,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 352,
+      "cls": 0,
+      "ttfb": 3.100000023841858,
+      "responseMs": 71,
+      "transferredBytes": 18235,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 2,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 7.800000071525574,
+      "responseMs": 83.5
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 3,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 1500,
+      "cls": 0,
+      "ttfb": 458.7000000476837,
+      "responseMs": 871.2999999523163,
+      "transferredBytes": 492722,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 3,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 328,
+      "cls": 0,
+      "ttfb": 3,
+      "responseMs": 51.5,
+      "transferredBytes": 18232,
+      "labInteractionCandidateMs": 16,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "path": "/",
+      "run": 3,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 9.399999976158142,
+      "responseMs": 87.39999997615814
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 1,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 1928,
+      "cls": 0.0015310656386638374,
+      "ttfb": 524.6000000238419,
+      "responseMs": 1064.3999999761581,
+      "transferredBytes": 496700,
+      "labInteractionCandidateMs": 32,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 1,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 140,
+      "cls": 0,
+      "ttfb": 3.399999976158142,
+      "responseMs": 52,
+      "transferredBytes": 22991,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 1,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 7.199999928474426,
+      "responseMs": 94.59999990463257
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 2,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 1620,
+      "cls": 0.0015310656386638374,
+      "ttfb": 443.5,
+      "responseMs": 902.6000000238419,
+      "transferredBytes": 495860,
+      "labInteractionCandidateMs": 32,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 2,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 128,
+      "cls": 0,
+      "ttfb": 3.200000047683716,
+      "responseMs": 53.200000047683716,
+      "transferredBytes": 22982,
+      "labInteractionCandidateMs": 32,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 2,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 9.600000023841858,
+      "responseMs": 119.10000002384186
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 3,
+      "cache": "fresh-browser",
+      "server": "new-process",
+      "lcp": 2136,
+      "cls": 0.0015310656386638374,
+      "ttfb": 524.1999999284744,
+      "responseMs": 1223,
+      "transferredBytes": 496714,
+      "labInteractionCandidateMs": 40,
+      "recordedInteractions": 4
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 3,
+      "cache": "repeat-browser",
+      "server": "running-process",
+      "lcp": 148,
+      "cls": 0,
+      "ttfb": 3.1999999284744263,
+      "responseMs": 51.5,
+      "transferredBytes": 22994,
+      "labInteractionCandidateMs": 24,
+      "recordedInteractions": 2
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "path": "/",
+      "run": 3,
+      "cache": "fresh-browser",
+      "server": "running-process",
+      "ttfb": 11.399999976158142,
+      "responseMs": 93.19999992847443
+    }
+  ],
+  "limitations": [
+    "Unthrottled local Chromium",
+    "New process does not clear persistent data caches or OS caches",
+    "Scripted Event Timing is a lab candidate, not real-user INP",
+    "Event durations below 16 ms are not reported",
+    "Final homepage recheck ran while Docker compilation was active: use it for layout validation, not comparative latency claims"
+  ]
+}

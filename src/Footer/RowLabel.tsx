@@ -2,9 +2,10 @@
 import { RowLabelProps, useRowLabel } from '@payloadcms/ui'
 
 export const RowLabel: React.FC<RowLabelProps> = () => {
-  const data = useRowLabel<any>()
+  const data = useRowLabel<{ label?: string; link?: { label?: string } }>()
 
   const label = data?.data?.label || data?.data?.link?.label || `Entry ${data.rowNumber !== undefined ? data.rowNumber + 1 : ''}`
 
   return <div>{label}</div>
 }
+

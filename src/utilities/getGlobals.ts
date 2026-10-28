@@ -1,4 +1,4 @@
-import type { Config } from 'src/payload-types'
+import type { Config } from '@/payload-types'
 
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -12,6 +12,8 @@ async function getGlobal(slug: Global, depth = 0) {
   const global = await payload.findGlobal({
     slug,
     depth,
+    overrideAccess: false,
+    draft: false,
   })
 
   return global
@@ -21,6 +23,6 @@ async function getGlobal(slug: Global, depth = 0) {
  * Returns a unstable_cache function mapped with the cache tag for the slug
  */
 export const getCachedGlobal = (slug: Global, depth = 0) =>
-  unstable_cache(async () => getGlobal(slug, depth), [slug], {
-    tags: [`global_${slug}`],
+  unstable_cache(async () => getGlobal(slug, depth), ['globals', slug, String(depth)], {
+    tags: ['public-cms', `global_${slug}`],
   })

@@ -23,6 +23,7 @@ import { ContactIntroBlock } from '@/blocks/ContactIntro/config'
 import { ContactLinksBlock } from '@/blocks/ContactLinks/config'
 
 import { hero } from '@/heros/config'
+import { noIndexField } from '@/fields/seo'
 
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { revalidateDelete, revalidatePage } from './hooks/revalidatePage'
@@ -39,6 +40,7 @@ import {
 
 export const Pages: CollectionConfig<'pages'> = {
 	slug: 'pages',
+  disableBulkDelete: true,
 	access: {
 		create: authenticated,
 		delete: authenticated,
@@ -133,6 +135,7 @@ export const Pages: CollectionConfig<'pages'> = {
 						}),
 
 						MetaDescriptionField({}),
+						noIndexField,
 						PreviewField({
 							// if the `generateUrl` function is configured
 							hasGenerateFn: true,
@@ -169,3 +172,5 @@ export const Pages: CollectionConfig<'pages'> = {
 		maxPerDoc: 50
 	}
 }
+
+

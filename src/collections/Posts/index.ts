@@ -26,9 +26,11 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { slugField } from 'payload'
+import { noIndexField } from '@/fields/seo'
 
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
+  disableBulkDelete: true,
   access: {
     create: authenticated,
     delete: authenticated,
@@ -149,6 +151,7 @@ export const Posts: CollectionConfig<'posts'> = {
             }),
 
             MetaDescriptionField({}),
+            noIndexField,
             PreviewField({
               // if the `generateUrl` function is configured
               hasGenerateFn: true,
@@ -231,3 +234,5 @@ export const Posts: CollectionConfig<'posts'> = {
     maxPerDoc: 50,
   },
 }
+
+

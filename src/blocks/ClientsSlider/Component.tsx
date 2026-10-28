@@ -25,6 +25,7 @@ export const ClientsSliderBlock: React.FC<Props> = async ({
 
 	const { docs: clients } = await payload.find({
 		collection: 'clients',
+		overrideAccess: false,
 		where: {
 			logo: {
 				exists: true
@@ -37,8 +38,8 @@ export const ClientsSliderBlock: React.FC<Props> = async ({
 	const logos =
 		clients
 			?.map((client) => {
-				const media = client.logo as any
-				const url: string | undefined = media?.url
+				const media = typeof client.logo === 'object' ? client.logo : null
+				const url = media?.url
 				const companyName: string = client.companyName
 
 				if (!url) return null
@@ -47,6 +48,9 @@ export const ClientsSliderBlock: React.FC<Props> = async ({
 					src: url,
 					alt: companyName,
 					companyName,
+					imageWidth: media?.width ?? undefined,
+					imageHeight: media?.height ?? undefined,
+					isAIGenerated: media?.isAIGenerated,
 					height: 80
 				}
 			})
@@ -68,6 +72,9 @@ export const ClientsSliderBlock: React.FC<Props> = async ({
 						src: string
 						alt: string
 						companyName: string
+						imageWidth?: number
+						imageHeight?: number
+						isAIGenerated?: boolean | null
 						height?: number
 					}[]
 				}

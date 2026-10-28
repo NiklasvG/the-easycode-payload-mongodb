@@ -1,10 +1,11 @@
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 
 import sharp from 'sharp' // sharp-import
 import path from 'path'
-import { buildConfig, PayloadRequest } from 'payload'
+import { buildConfig } from 'payload'
+import { runJobs } from './access/runJobs'
+import { authenticated } from './access/authenticated'
 import { fileURLToPath } from 'url'
 
 import { Categories } from './collections/Categories'
@@ -22,6 +23,21 @@ import { getServerSideURL } from './utilities/getURL'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+// Payload types transportOptions as connection options; authentication belongs
+// to the SMTP transport and is passed through to Nodemailer's createTransport.
+const smtpTransportOptions = {
+	host: process.env.SMTP_HOST,
+	port: Number(process.env.SMTP_PORT),
+	auth: {
+		user: process.env.SMTP_USER,
+		pass: process.env.SMTP_PASS
+	}
+}
+
+// Local snapshot imports select an in-memory transport: no SMTP connection or delivery.
+const localEmail = process.env.EMAIL_TRANSPORT === 'json'
+const localTransportOptions = { host: '127.0.0.1', jsonTransport: true }
 
 const mongoURL = process.env.MONGODB_URI
 if (!mongoURL) {
@@ -49,6 +65,7 @@ export default buildConfig({
 		},
 		user: Users.slug,
 		livePreview: {
+            openByDefault: true,
 			breakpoints: [
 				{
 					label: 'Mobile',
@@ -78,7 +95,7 @@ export default buildConfig({
 		connectOptions: {
 			// weniger lange „hängen“, wenn ein Node in der Replica-Set mal zickt
 			serverSelectionTimeoutMS: 5000,
-			// verlässlicher Pool, aber nicht zu groß für Vercel Lambdas
+			// Limit connections per application instance.
 			maxPoolSize: 10,
 			minPoolSize: 0,
 			maxIdleTimeMS: 60000,
@@ -88,31 +105,17 @@ export default buildConfig({
 	}),
 	collections: [Pages, Posts, Media, Categories, Users, Clients, Projects],
 	cors: [getServerSideURL()].filter(Boolean),
+	csrf: [getServerSideURL()],
+	maxDepth: 5,
+	graphQL: { maxComplexity: 500, disablePlaygroundInProduction: true },
 	globals: [Header, Footer],
-	plugins: [
-		...plugins,
-		vercelBlobStorage({
-			enabled: true, // Optional, defaults to true
-			// Specify which collections should use Vercel Blob
-			collections: {
-				media: true
-			},
-			// Token provided by Vercel once Blob storage is added to your Vercel project
-			token: process.env.BLOB_READ_WRITE_TOKEN
-		})
-	],
+	plugins: [...plugins],
 	email: nodemailerAdapter({
 		defaultFromAddress: 'no-reply@the-easycode.eu',
 		defaultFromName: 'EasyCode',
 		// Nodemailer transportOptions
-		transportOptions: {
-			host: process.env.SMTP_HOST,
-			port: Number(process.env.SMTP_PORT),
-			auth: {
-				user: process.env.SMTP_USER,
-				pass: process.env.SMTP_PASS
-			}
-		}
+		transportOptions: localEmail ? localTransportOptions : smtpTransportOptions,
+		skipVerify: localEmail
 	}),
 	secret: process.env.PAYLOAD_SECRET,
 	sharp,
@@ -121,17 +124,11 @@ export default buildConfig({
 	},
 	jobs: {
 		access: {
-			run: ({ req }: { req: PayloadRequest }): boolean => {
-				// Allow logged in users to execute this endpoint (default)
-				if (req.user) return true
-
-				// If there is no logged in user, then check
-				// for the Vercel Cron secret to be present as an
-				// Authorization header:
-				const authHeader = req.headers.get('authorization')
-				return authHeader === `Bearer ${process.env.CRON_SECRET}`
-			}
+			run: runJobs,
+			queue: authenticated,
+			cancel: authenticated,
 		},
 		tasks: []
 	}
 })
+

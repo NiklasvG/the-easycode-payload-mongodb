@@ -1,0 +1,16 @@
+[
+  {
+    "width": 390,
+    "cls": 0,
+    "lcp": 268,
+    "ttfb": 2.6999999284744263,
+    "transferBytes": 389709
+  },
+  {
+    "width": 1440,
+    "cls": 0,
+    "lcp": 160,
+    "ttfb": 9.5,
+    "transferBytes": 27344
+  }
+]
