@@ -93,6 +93,8 @@ class Coordinator {
   }
   async step(name, target) {
     const s = this.store.state[name];
+    const publicOrigin = new URL(target.publicUrl).origin;
+    const verificationOrigin = new URL(target.verificationUrl || target.publicUrl).origin;
     if (s.active) {
       const a = s.active;
       if (a.phase === 'attention') return;
@@ -128,12 +130,20 @@ class Coordinator {
           const health = await response.json();
           success = response.ok && health.status === 'ready' && health.revision === a.sha && health.buildId === a.buildId;
           if (success) {
-            const home = await this.fetchImpl(target.publicUrl, { signal: AbortSignal.timeout(10000), cache: 'no-store', redirect: 'error' });
-            success = home.status === 200 && (await home.text()).includes('<html');
-            if (target.appEnv === 'production' && /noindex/i.test(home.headers.get('x-robots-tag') || '')) success = false;
+            const verificationOptions = { signal: AbortSignal.timeout(10000), cache: 'no-store', redirect: 'error',
+              headers: target.healthAuthorization ? { Authorization: target.healthAuthorization } : {} };
+            const home = await this.fetchImpl(verificationOrigin, verificationOptions);
+            const html = await home.text();
+            const canonicalTag = html.match(/<link\b(?=[^>]*\brel=["']canonical["'])[^>]*>/i)?.[0];
+            const canonicalHref = canonicalTag?.match(/\bhref=["']([^"']+)["']/i)?.[1];
+            const canonical = canonicalHref ? new URL(canonicalHref, publicOrigin) : null;
+            success = home.status === 200 && html.includes('<html') && canonical?.origin === publicOrigin && canonical.pathname === '/';
+            if (target.appEnv === 'production' && verificationOrigin === publicOrigin && /noindex/i.test(home.headers.get('x-robots-tag') || '')) success = false;
             if (success && target.appEnv === 'production') {
-              const chat = await this.fetchImpl(new URL('/api/ai-chat', target.publicUrl), { signal: AbortSignal.timeout(10000), cache: 'no-store', redirect: 'error' });
-              success = chat.ok && (await chat.json()).available === true;
+              const robots = await this.fetchImpl(new URL('/robots.txt', verificationOrigin), { ...verificationOptions, signal: AbortSignal.timeout(10000) });
+              success = robots.ok && !/^\s*Disallow:\s*\/\s*$/im.test(await robots.text());
+              const chat = await this.fetchImpl(new URL('/api/ai-chat', verificationOrigin), { ...verificationOptions, signal: AbortSignal.timeout(10000) });
+              success = success && chat.ok && (await chat.json()).available === true;
             }
           }
         } catch { success = false; }
@@ -166,12 +176,19 @@ class Coordinator {
       s.pending = null; this.store.save(); return;
     }
     const application = await this.api(`/applications/${target.uuid}`);
+      const publicUrl = new URL(target.publicUrl);
+      const health = new URL(target.healthUrl);
+    const verification = new URL(target.verificationUrl || target.publicUrl);
+      if (publicUrl.protocol !== 'https:' || publicUrl.username || publicUrl.password || publicUrl.search || publicUrl.hash || publicUrl.pathname !== '/' || verification.protocol !== 'https:' ||
+        verification.username || verification.password || verification.search || verification.hash || verification.pathname !== '/' ||
+        health.origin !== verificationOrigin || health.pathname !== '/api/health/ready' || health.search || health.hash || health.username || health.password)
+      throw error('Invalid public or verification origin', 409);
     if (application.git_repository?.replace(/\.git$/, '').replace(/^https:\/\/github.com\//, '').replace(/^git@github.com:/, '').toLowerCase() !== target.repository.toLowerCase() ||
         application.git_branch !== target.branch || application.build_pack !== 'dockerfile' ||
         application.settings?.is_auto_deploy_enabled !== false || application.settings?.is_build_server_enabled !== true ||
         application.docker_registry_image_name !== target.image ||
         application.destination?.server?.uuid !== target.server ||
-        !String(application.fqdn || '').split(',').includes(target.publicUrl)) throw error('Application identity or release configuration mismatch', 409);
+        ![publicOrigin, verificationOrigin].every(origin => String(application.fqdn || '').split(',').includes(origin))) throw error('Application identity or release configuration mismatch', 409);
     const verifiedRun = await this.verifyRun(target, s.approved.runId);
     if (verifiedRun.head_sha !== sha || Number(verifiedRun.run_attempt) !== s.approved.attempt) throw error('Approved run attempt changed; request the current successful attempt', 409);
     const settings = await this.api(`/applications/${target.uuid}/envs`);

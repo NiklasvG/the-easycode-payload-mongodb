@@ -1,6 +1,23 @@
 # Belege und offene Angaben zur Datenschutzerklärung
 
-Stand: 4. Oktober 2026.
+Stand: 5. November 2026. Ältere Abschnitte bleiben als historische Belege erhalten.
+
+## Fortschritt der Livegang-Vorbereitung am 5. November
+
+- Der Betreiber bestätigt für Kontaktinhalte eine zweckbezogene Speicherung bis
+  zum Abschluss der Bearbeitung. Der Entwurf beschreibt Abschluss, fehlenden
+  weiteren Bedarf und gesetzliche beziehungsweise rechtliche Ausnahmen.
+  Dies bestätigt keine technische Rotation von Mailserver-Logs oder Mailbackups.
+- Die 180-Tage-Bereinigung der eigenen Umami-Website wurde eingerichtet und
+  einmal erfolgreich ausgeführt; Details und Grenzen in `umami-retention.md`.
+- Konsistente Website-DB-/Medien-Sicherung mit zwei lokalen und vierzehn S3-
+  Ständen eingerichtet, Erstlauf und isolierter S3-Restore bestanden.
+  S3 liegt in Nürnberg; die frühere pauschale Standortangabe Falkenstein ist
+  für dieses Ziel falsch. Anzahlrotation ist keine feste Tagesfrist.
+- Mailcow-Protokolle, Postfach- und Umami-Datenbank-Sicherungsrotation sind noch
+  nicht vollständig bestätigt. Der Entwurf enthält dafür offene Prüfpunkte und
+  ist noch nicht zur Veröffentlichung freigegeben. Die bestehende CMS-Seite
+  wird durch Änderungen an dieser Markdown-Datei nicht aktualisiert.
 
 ## Aktualisierung: aktiver globaler OpenAI-Staging-Test
 

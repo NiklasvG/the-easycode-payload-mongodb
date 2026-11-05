@@ -63,7 +63,11 @@ function fixture(overrides = {}) {
   };
   const fetchImpl = async url => {
     const active = store.state.website.active;
-    if (url === target.publicUrl) return new Response('<html>Site</html>');
+    calls.push({ public: String(url) });
+    if (new URL(url).pathname === '/') return new Response(`<html><head><link rel="canonical" href="${overrides.wrongCanonical || target.publicUrl}"/></head></html>`, {
+      headers: overrides.verificationNoindex ? { 'x-robots-tag': 'noindex, nofollow' } : {},
+    });
+    if (new URL(url).pathname === '/robots.txt') return new Response(overrides.stagingRobots ? 'User-agent: *\nDisallow: /\n' : 'User-agent: *\nAllow: /\n');
     if (new URL(url).pathname === '/api/ai-chat') return Response.json({ available: true });
     return Response.json({ status: 'ready', revision: sha, buildId: overrides.wrongBuild ? 'old-build' : active.buildId });
   };
@@ -123,6 +127,39 @@ test('production releases work with redacted env values and explicitly set the s
   await h.coordinator.step('website', production);
   assert.equal(h.store.state.website.published.success, true);
 });
+test('verifies a production build before DNS cutover through an owned temporary domain', async () => {
+  const alias = 'https://pilot.site.test';
+  const h = fixture({ app: { fqdn: `${target.publicUrl},${alias}` }, verificationNoindex: true });
+  const production = { ...target, appEnv: 'production', chatRegion: 'global', verificationUrl: alias, healthUrl: `${alias}/api/health/ready` };
+  h.coordinator.targets.website = production;
+  await h.coordinator.approve('website', 42);
+  await h.coordinator.step('website', production);
+  await h.coordinator.step('website', production);
+  assert.equal(h.store.state.website.published.success, true);
+  assert(h.calls.filter(x => x.public).every(x => new URL(x.public).origin === alias));
+});
+test('rejects an unrelated verification hostname before any configuration mutation', async () => {
+  const h = fixture();
+  const wrong = { ...target, verificationUrl: 'https://foreign.test', healthUrl: 'https://foreign.test/api/health/ready' };
+  h.coordinator.targets.website = wrong;
+  await h.coordinator.approve('website', 42);
+  await assert.rejects(h.coordinator.step('website', wrong), /configuration mismatch/);
+  assert.equal(h.calls.some(x => x.method === 'PATCH'), false);
+});
+
+for (const [name, options] of [['wrong canonical domain', { wrongCanonical: 'https://old.test' }], ['staging robots', { stagingRobots: true }]])
+  test(`rejects production readiness with ${name}`, async () => {
+    const h = fixture(options);
+    const production = { ...target, appEnv: 'production', chatRegion: 'global' };
+    h.coordinator.targets.website = production;
+    await h.coordinator.approve('website', 42);
+    await h.coordinator.step('website', production);
+    await h.coordinator.step('website', production);
+    h.advance(61000);
+    await h.coordinator.step('website', production);
+    assert.equal(h.store.state.website.last.success, false);
+    assert.equal(h.store.state.website.published, null);
+  });
 test('a later run attempt must be verified and explicitly approved before dispatch', async () => {
   const h = fixture();
   await h.coordinator.approve('website', 42);

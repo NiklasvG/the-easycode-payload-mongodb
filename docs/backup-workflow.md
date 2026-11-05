@@ -1,16 +1,17 @@
 # Konsistente Easycode-Sicherungen
 
-## Bisheriger Nachweis und vorbereitete Ablösung
+## Eingerichteter Betrieb und Erstnachweis
 
-Am 5. November 2026 sind MongoDB und Medien mit erfolgreichen lokalen/S3-
-Ausführungen bestätigt. Die bisherigen unabhängigen Kalender (02:15 und 02:30 UTC)
-stellen bei laufenden CMS-Schreibzugriffen noch keinen gemeinsamen Restorepunkt dar.
+Am 5. November 2026 wurde das konsistente Paar
+`ccc702da-df9d-4f04-8062-93ca0d059aba` aus MongoDB, Medien und Releasezustand
+erfolgreich lokal und in S3 erstellt. Die vorherigen unabhängigen Kalender sind
+deaktiviert; der gemeinsame Hosttimer ist aktiviert.
 
 Die projektgebundene Ablösung liegt unter `ops/backup/`. Sie baut auf dem
 verwendeten Coolify-4.6-Verfahren der gemeinsamen Betriebsablage auf, ist hier
 jedoch ausschließlich auf die integrierte Easycode-Website angepasst. Die
-Installation und ihr tatsächlicher Erstlauf sind getrennt von den fünf
-bestandenen Offline-Fehlertests nachzuweisen.
+Installation und tatsächlicher Erstlauf wurden zusätzlich zu den fünf
+bestandenen Offline-Fehlertests nachgewiesen.
 
 ## Feste Zuordnung
 
@@ -24,10 +25,10 @@ bestandenen Offline-Fehlertests nachzuweisen.
 | Releasekoordinator | `87bn9vgwdcdelqo8tnsmlgef` |
 | Koordinatorzustand-Unterplan | `54iegz3fcx3xd9ik8kc55i4w` |
 
-Der neue Zustands-Unterplan ist deaktiviert angelegt, mit 2 lokalen und 14
-S3-Ständen ohne zusätzliche Alters-/Größenlimits. Vorhandene DB-/Medien-Retention
-wird durch den Koordinator nicht verändert. Die native Kalenderabschaltung der
-alten Unterpläne erfolgt erst im Rahmen der kontrollierten Ablösung.
+Alle drei nativen Unterpläne sind nur als Kalender deaktiviert und werden vom
+gemeinsamen Hostdienst aufgerufen. Sie behalten 2 lokale und 14 S3-Stände ohne
+zusätzliche Alters-/Größenlimits. S3-Ziel ist Hetzner Object Storage in Nürnberg;
+das sind Anzahlgrenzen und keine garantierten 2 beziehungsweise 14 Tage.
 
 ## Ablauf
 
@@ -57,7 +58,7 @@ liegen unter `/srv/the-easycode-backups`, privater Zustand unter
 Coolify-Modelle und Operationen auf; es ist kein allgemeiner Remote-Command-Endpunkt.
 Kein Zugangsschlüssel wird in das Skript oder in Sicherungsbelege kopiert.
 
-Der vorgesehene tägliche Timer ist 02:15 UTC (03:15 Uhr Berlin im Winter), mit
+Der aktivierte tägliche Timer ist 02:15 UTC (03:15 Uhr Berlin im Winter), mit
 Nachholung. Die nativen Teilpläne bleiben nach erfolgter Ablösung deaktiviert;
 deren Abschaltung ist dann kein Fehler und soll nicht einzeln zurückgenommen werden.
 
@@ -66,3 +67,17 @@ wiederherstellen: passende MongoDB-Version, dokumentierte Namespace-Auswahl,
 unveränderte IDs/Beziehungen und SHA-256-Vergleich aller Mediendateien. Keine
 Produktivports, SMTP-Zugänge oder KI-Aufrufe in der Restoreinstanz aktivieren.
 Ein erfolgreiches S3-Uploadfeld allein belegt keinen Restore.
+
+Der konkrete isolierte S3-Restore auf dem Controller war erfolgreich: ausschließlich
+`easycode_import.*` nach `easycode_restore.*`, kein Produktionsport, kein Netzwerk
+und keine Mail-/KI-Zugänge. Ergebnis: 10 Seiten, 5 Projekte, 35 Mediendatensätze,
+2 CMS-Benutzer, 6 Kunden, 1 Formular und 12 Formularübermittlungen; 202 archivierte
+Mediendateien, alle 197 referenzierten Dateien vorhanden, keine fehlerhaften
+Kunden-/Seitenbeziehungen. SHA-256 der heruntergeladenen S3-Archive stimmt mit den
+nativen Sicherungen überein. Privater Prüfbeleg:
+`/srv/the-easycode-restore-20261105/verification.json` auf dem Controller.
+
+Die Website wird während der konsistenten Sicherung kurz pausiert; dadurch kann
+sie für einige Sekunden nicht erreichbar sein. Der erfolgreiche manuelle Erstlauf
+belegt noch keinen abgeschlossenen nächtlichen Automatiklauf. Den ersten Termin
+und mögliche Fehler im systemd-Status kontrollieren.

@@ -345,14 +345,18 @@ Mitwirkende und die dort genannten Dienstleister. Die Auftragsverarbeitung durch
 Hetzner ist durch den in Abschnitt 2 beschriebenen Vertrag geregelt. Für weitere
 Dienstleister sind die jeweils erforderlichen Auftragsverarbeitungsvereinbarungen
 zu beachten. Zur Wiederherstellung nach Datenverlust oder technischen Störungen
-werden Sicherungskopien auf Servern bei Hetzner in Falkenstein, Deutschland,
-gespeichert. Sie umfassen insbesondere die Anwendungsdatenbanken, Maildaten
-und persistent gespeicherten Dateien. Rechtsgrundlage für die Verarbeitung
+werden Sicherungskopien bei Hetzner in Deutschland gespeichert. Die Website-
+Datenbank und Mediendateien werden täglich gemeinsam gesichert. Es bleiben
+höchstens zwei lokale Sicherungsstände und vierzehn zusätzliche Stände im
+Hetzner Object Storage am Standort Nürnberg erhalten. Bei neuen Sicherungen
+werden ältere Stände entsprechend dieser Anzahlgrenzen ersetzt; diese Grenzen
+sind keine festen Fristen in Tagen. Maildaten und weitere Systeme unterliegen
+gesonderten Sicherungsregeln. Rechtsgrundlage für die Verarbeitung
 personenbezogener Daten in diesen Sicherungen ist Art. 6 Abs. 1 lit. f DSGVO;
 mein berechtigtes Interesse liegt in der Sicherung und Wiederherstellbarkeit
 der betriebenen Systeme.
-Für Sicherungskopien gilt folgende Aufbewahrung: [tatsächliche Speicherdauer
-oder konkrete Kriterien für die Löschung alter Sicherungen ergänzen].
+[Aufbewahrung von Mail- und Statistikdatenbank-Sicherungen anhand der tatsächlich
+eingerichteten Rotation ergänzen. Die Website-Regel gilt hierfür nicht automatisch.]
 
 ## 10. Ihre Rechte
 
