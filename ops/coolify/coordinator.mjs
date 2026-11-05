@@ -131,6 +131,10 @@ class Coordinator {
             const home = await this.fetchImpl(target.publicUrl, { signal: AbortSignal.timeout(10000), cache: 'no-store', redirect: 'error' });
             success = home.status === 200 && (await home.text()).includes('<html');
             if (target.appEnv === 'production' && /noindex/i.test(home.headers.get('x-robots-tag') || '')) success = false;
+            if (success && target.appEnv === 'production') {
+              const chat = await this.fetchImpl(new URL('/api/ai-chat', target.publicUrl), { signal: AbortSignal.timeout(10000), cache: 'no-store', redirect: 'error' });
+              success = chat.ok && (await chat.json()).available === true;
+            }
           }
         } catch { success = false; }
       }
@@ -171,15 +175,10 @@ class Coordinator {
     const verifiedRun = await this.verifyRun(target, s.approved.runId);
     if (verifiedRun.head_sha !== sha || Number(verifiedRun.run_attempt) !== s.approved.attempt) throw error('Approved run attempt changed; request the current successful attempt', 409);
     const settings = await this.api(`/applications/${target.uuid}/envs`);
-    const value = key => settings.find(v => v.key === key && !v.is_preview && v.is_runtime)?.value;
-    if (value('APP_ENV') !== target.appEnv || value('NEXT_PUBLIC_SERVER_URL') !== target.publicUrl ||
-        !settings.some(v => v.key === 'APP_ENV' && !v.is_preview && v.is_buildtime) ||
-        !settings.some(v => v.key === 'NEXT_PUBLIC_SERVER_URL' && !v.is_preview && v.is_buildtime)) throw error('Release environment or public URL mismatch', 409);
+    const hasRuntime = key => settings.some(v => v.key === key && !v.is_preview && v.is_runtime);
     if (target.appEnv === 'production') {
-      if (value('EMAIL_TRANSPORT') === 'json' || !value('SMTP_HOST')) throw error('Production email transport not configured', 409);
-      if (value('AI_CHAT_ENABLED') !== 'true' || !value('OPENAI_API_KEY') || !value('PUBLIC_TRUSTED_CLIENT_IP_HEADER') ||
-          !((value('OPENAI_CHAT_REGION') === 'global' && value('OPENAI_GLOBAL_APPROVED') === 'true') ||
-            (value('OPENAI_CHAT_REGION') === 'eu' && value('OPENAI_EU_APPROVED') === 'true'))) throw error('Required production chat not configured', 409);
+      if (!hasRuntime('SMTP_HOST') || !hasRuntime('OPENAI_API_KEY') || !hasRuntime('PUBLIC_TRUSTED_CLIENT_IP_HEADER') ||
+          !['global', 'eu'].includes(target.chatRegion)) throw error('Required production integrations not configured', 409);
     }
     const buildId = randomUUID();
     const imageTag = `${sha}-${buildId}`;
@@ -188,12 +187,21 @@ class Coordinator {
     await this.api(`/applications/${target.uuid}/envs/bulk`, 'PATCH', { data: [
       { key: 'SOURCE_COMMIT', value: sha, is_buildtime: true, is_runtime: true, is_preview: false },
       { key: 'BUILD_ID', value: buildId, is_buildtime: true, is_runtime: true, is_preview: false },
+      { key: 'APP_ENV', value: target.appEnv, is_buildtime: true, is_runtime: true, is_preview: false },
+      { key: 'NEXT_PUBLIC_SERVER_URL', value: target.publicUrl, is_buildtime: true, is_runtime: true, is_preview: false },
+      ...(target.appEnv === 'production' ? [
+        { key: 'EMAIL_TRANSPORT', value: '', is_buildtime: false, is_runtime: true, is_preview: false },
+        { key: 'AI_CHAT_ENABLED', value: 'true', is_buildtime: false, is_runtime: true, is_preview: false },
+        { key: 'OPENAI_CHAT_REGION', value: target.chatRegion, is_buildtime: false, is_runtime: true, is_preview: false },
+        { key: 'OPENAI_GLOBAL_APPROVED', value: String(target.chatRegion === 'global'), is_buildtime: false, is_runtime: true, is_preview: false },
+        { key: 'OPENAI_EU_APPROVED', value: String(target.chatRegion === 'eu'), is_buildtime: false, is_runtime: true, is_preview: false },
+      ] : []),
     ] });
     const pinned = await this.api(`/applications/${target.uuid}`);
     const variables = await this.api(`/applications/${target.uuid}/envs`);
     if (pinned.git_commit_sha !== sha || pinned.docker_registry_image_tag !== imageTag ||
-        !variables.some(v => v.key === 'BUILD_ID' && !v.is_preview && v.value === buildId && v.is_buildtime && v.is_runtime) ||
-        !variables.some(v => v.key === 'SOURCE_COMMIT' && !v.is_preview && v.value === sha && v.is_buildtime && v.is_runtime)) throw error('Release pin or build variables not retained', 409);
+        !variables.some(v => v.key === 'BUILD_ID' && !v.is_preview && v.is_buildtime && v.is_runtime) ||
+        !variables.some(v => v.key === 'SOURCE_COMMIT' && !v.is_preview && v.is_buildtime && v.is_runtime)) throw error('Release pin or build variable metadata not retained', 409);
     s.active = { ...s.pending, sha, buildId, imageTag, started: this.now(), phase: 'unknown' };
     s.pending = null;
     this.store.save();

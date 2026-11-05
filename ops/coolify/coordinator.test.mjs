@@ -26,6 +26,7 @@ function fixture(overrides = {}) {
   let variables = [
     { key: 'APP_ENV', value: 'staging', is_preview: false, is_buildtime: true, is_runtime: true },
     { key: 'NEXT_PUBLIC_SERVER_URL', value: target.publicUrl, is_preview: false, is_buildtime: true, is_runtime: true },
+    ...['SMTP_HOST', 'OPENAI_API_KEY', 'PUBLIC_TRUSTED_CLIENT_IP_HEADER'].map(key => ({ key, value: 'test-only-value', is_runtime: true, is_preview: false })),
   ];
   const run = {
     event: 'push', name: 'Quality', path: target.workflow, head_branch: 'main',
@@ -47,7 +48,7 @@ function fixture(overrides = {}) {
       return { ...app, ...(overrides.lostPin && method === 'GET' ? { git_commit_sha: 'HEAD' } : {}) };
     }
     if (path.endsWith('/envs/bulk')) { variables = [...variables.filter(v => !body.data.some(x => x.key === v.key)), ...body.data]; return {}; }
-    if (path.endsWith('/envs')) return variables;
+    if (path.endsWith('/envs')) return overrides.redactValues ? variables.map(v => ({ ...v, value: null })) : variables;
     if (path === '/deploy') {
       if (overrides.dispatchUnknown) throw new Error('connection lost');
       return { deployments: [{ resource_uuid: 'app', deployment_uuid: 'deployment' }] };
@@ -63,6 +64,7 @@ function fixture(overrides = {}) {
   const fetchImpl = async url => {
     const active = store.state.website.active;
     if (url === target.publicUrl) return new Response('<html>Site</html>');
+    if (new URL(url).pathname === '/api/ai-chat') return Response.json({ available: true });
     return Response.json({ status: 'ready', revision: sha, buildId: overrides.wrongBuild ? 'old-build' : active.buildId });
   };
   const coordinator = new Coordinator({ store, targets: { website: { ...target } }, api, github, fetchImpl, now: () => now });
@@ -105,6 +107,21 @@ test('rechecks branch HEAD after queuing and ignores a superseded release', asyn
   await h.coordinator.step('website', target);
   assert.equal(h.calls.some(x => x.path), false);
   assert.equal(h.store.state.website.pending, null);
+});
+test('production releases work with redacted env values and explicitly set the selected global chat', async () => {
+  const h = fixture({ redactValues: true });
+  const production = { ...target, appEnv: 'production', chatRegion: 'global' };
+  h.coordinator.targets.website = production;
+  await h.coordinator.approve('website', 42);
+  await h.coordinator.step('website', production);
+  const values = Object.fromEntries(h.calls.find(x => x.path?.endsWith('/envs/bulk')).body.data.map(x => [x.key, x.value]));
+  assert.equal(values.APP_ENV, 'production');
+  assert.equal(values.OPENAI_CHAT_REGION, 'global');
+  assert.equal(values.OPENAI_GLOBAL_APPROVED, 'true');
+  assert.equal(values.OPENAI_EU_APPROVED, 'false');
+  assert.equal(values.OPENAI_API_KEY, undefined, 'The coordinator must not read or replace the provider credential');
+  await h.coordinator.step('website', production);
+  assert.equal(h.store.state.website.published.success, true);
 });
 test('a later run attempt must be verified and explicitly approved before dispatch', async () => {
   const h = fixture();

@@ -9,6 +9,7 @@
     "enabled": false,
     "cachedBuilds": false,
     "appEnv": "staging",
+    "chatRegion": "global",
     "server": "ymz0a1hyeqyxjxzeyertbhpy",
     "image": "cxcr.eu/the-easycode.eu/website",
     "publicUrl": "https://staging.the-easycode.eu",

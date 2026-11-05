@@ -79,7 +79,9 @@ jobs:
   container:
     needs: [changes, checks]
     if: needs.changes.outputs.release == 'true'
-    runs-on: ubuntu-24.04
+    # MongoDB 8.0 currently rejects the 7.0 Azure kernel of ubuntu-24.04.
+    # Keep the compatible 6.8 runner until the upstream MongoDB fix is available.
+    runs-on: ubuntu-22.04
     timeout-minutes: 20
     concurrency:
       group: container-${{ github.ref }}
@@ -96,8 +98,10 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Isolated MongoDB replica set
         run: |
+          uname -r
           docker run -d --name mongo-test -p 127.0.0.1:27017:27017 mongo:8.0 --replSet rs0 --bind_ip_all
           for attempt in $(seq 1 60); do
+            if [ "$(docker inspect --format '{{.State.Running}}' mongo-test)" != true ]; then docker logs mongo-test; exit 1; fi
             if docker exec mongo-test mongosh --quiet --eval 'try { rs.status() } catch (e) { rs.initiate({_id:"rs0",members:[{_id:0,host:"localhost:27017"}]}) }; quit(db.hello().isWritablePrimary ? 0 : 1)'; then exit 0; fi
             sleep 1
           done

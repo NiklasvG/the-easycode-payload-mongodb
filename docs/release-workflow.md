@@ -101,8 +101,12 @@ parallelen manuellen Deployments starten.
 ## Artefakt und Fehlerfälle
 
 Jeder Release bekommt ein neues `<SHA>-<BUILD_ID>`-Tag. `SOURCE_COMMIT` und
-`BUILD_ID` werden vor dem Build als Build- und Runtime-Werte gesetzt und
-zurückgelesen. Next.js bindet die öffentlichen Release-Metadaten beim Build ein.
+`BUILD_ID` werden vor dem Build als Build- und Runtime-Werte gesetzt.
+Commit und Image-Tag werden zurückgelesen; bei ENV-Werten werden nur Existenz
+und Build-/Runtime-Metadaten geprüft. Der Betriebszugang hat bewusst keine
+sensiblen Leserechte. Die tatsächlichen Werte werden durch die aus dem gebauten
+Image ausgelieferte Readiness nachgewiesen. Next.js bindet die öffentlichen
+Release-Metadaten beim Build ein.
 Readiness verweigert eine zur gebauten SHA widersprüchliche Runtime-Revision.
 Der Koordinator akzeptiert nur die erwartete SHA und gebaute ID, eine erreichbare
 Startseite und einen aus dem konkreten Buildlog erfassten Manifest-Digest.
