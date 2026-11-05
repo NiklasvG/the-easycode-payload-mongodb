@@ -1,5 +1,9 @@
 # Releaseablauf für The-EasyCode
 
+**Ablösung auf Betreiberwunsch:** Der bedarfsweise Ersatz ist in
+[release-job.md](release-job.md) beschrieben. Die folgende Beschreibung hält den
+bisherigen Webkoordinator fest; Umschalt- und Abnahmebeleg separat beachten.
+
 Stand: 5. November 2026. Gemeinsame Grundlage sind die Betriebsregeln in der
 übergeordneten Coolify-Ablage (`docs/best-practice/03-build-release-staging.md`,
 `04-daten-backup-restore.md` und `06-zugaenge-und-secrets.md`). Die dortigen

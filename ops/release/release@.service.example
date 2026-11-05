@@ -1,0 +1,16 @@
+[Unit]
+Description=PROJECT verified one-shot release %i
+After=network-online.target docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /srv/PROJECT-release/release.py --config /srv/PROJECT-release/config.json --run-id %i
+TimeoutStartSec=3h
+MemoryMax=128M
+CPUQuota=25%
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/PROJECT-release
