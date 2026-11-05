@@ -1,5 +1,41 @@
 # Automatische Prüfungen
 
+## Aktueller Ablauf ab 5. November 2026
+
+Maßgeblich sind `.github/workflows/quality.yml` und
+[release-workflow.md](release-workflow.md). Der Workflow prüft main und PRs nach
+main. `checks` führt Typprüfung, ESLint, Produktions-Audit ab Schweregrad hoch
+sowie die alten Deployment- und neuen Koordinatortests aus. Für Anwendungscode
+folgt genau ein Linux-Testimage mit isolierter MongoDB/Mailpit, Integrationstests
+und Browserfällen. Die Browser laufen im offiziellen, zur Paketversion passenden
+Image `mcr.microsoft.com/playwright:v1.63.0-noble`; eine wechselnde apt-Installation
+der Browserbibliotheken auf dem MongoDB-kompatiblen Host entfällt. Testpakete
+kommen aus dem eingefrorenen Lockfile, die lokale Testanwendung wird über das
+Linux-Hostnetz erreicht. Reine Markdown-/docs-Änderungen überspringen diesen Containerjob
+bewusst, behalten aber den erforderlichen `Quality gate`.
+
+Nur ein Code-Push auf main kann nach bestandenen Pflichtprüfungen seine Run-ID
+an den getrennten Easycode-Koordinator melden. Der Job hat keinen Checkout und
+keine direkten Coolify-Zugangsdaten. Aktivierung und echte Releaseabnahme sind
+in der Betriebsanleitung getrennt vom implementierten Workflow beschrieben.
+
+## Historische Einrichtungsnotizen
+
+Die folgenden Angaben beschreiben den bisherigen Aufbau; insbesondere `verify`,
+staging als Workflowbranch und ein zusätzlicher pnpm-start-Build sind keine
+aktuellen Anforderungen des Workflows.
+
+Der Containerjob verwendet vorübergehend `ubuntu-22.04` mit dem dokumentierten
+Kernel 6.8: Der aktuelle Ubuntu-24.04-Runner hat einen Azure-7.0-Kernel, den das
+verfügbare MongoDB-8.0-Testimage wegen der bekannten TCMalloc-Inkompatibilität
+ablehnt. Es wird keine Schutzprüfung im Datenbankimage umgangen und keine
+Produktionsdatenbank aktualisiert. Nach Verfügbarkeit eines korrigierten
+8.0-Images den Runner erneut prüfen; Ubuntu-22.04-Runner nicht über ihr
+angekündigtes Supportende im April 2027 hinaus verwenden.
+Quellen: [MongoDB SERVER-131779](https://jira.mongodb.org/browse/SERVER-131779),
+[GitHub 22.04](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2204-Readme.md),
+[GitHub 24.04](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md).
+
 `.github/workflows/quality.yml` prüft PRs und Änderungen an main/staging mit Node 24 und pnpm 10.23.0. Installation erfolgt mit frozen Lockfile. Typprüfung, ESLint, Vitest, Produktionsbuild, Playwright gegen `pnpm start` sowie Docker-Build, HTTP-Startprüfung und dieselben Browserfälle gegen das Standalone-Image sind verpflichtende Schritte.
 
 MongoDB läuft als Wegwerfcontainer mit Replica Set rs0. Der Seed verweigert andere Hosts, Datenbanknamen und nicht leere Datenbanken. Uploads werden synthetisch erzeugt. SMTP verwendet das lokale Mailpit; der Docker-Build verwendet JSON-Transport. Gemini bekommt keinen gültigen Schlüssel. CI enthält keine Produktions-Secrets. Beide Produktionsbuilds lesen veröffentlichte CMS-Daten aus der Testdatenbank; Docker erhält die Zugangsdaten als BuildKit-Secrets und nutzt in der Linux-CI das Hostnetzwerk.

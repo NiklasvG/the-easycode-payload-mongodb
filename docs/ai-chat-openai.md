@@ -1,6 +1,51 @@
 # OpenAI-Chat: Betrieb und Datenschutzvorbereitung
 
-Stand: 4. Oktober 2026. Globaler Staging-Betrieb laut Betreiber getestet; keine rechtliche Freigabe für den Produktivbetrieb.
+Stand: 5. November 2026. Globaler Providerzugang erneut technisch getestet;
+Produktionsumschaltung und Veröffentlichung der passenden Datenschutzseite stehen aus.
+
+## Produktionsvorbereitung vom 5. November 2026
+
+Der Betreiber möchte den KI-Chat zum Livegang weiterverwenden. Eine synthetische
+Anfrage mit dem derzeitigen Runtime-Schlüssel und `gpt-6-luna` lieferte am globalen
+Endpunkt HTTP 200, `status=completed` und Text. Derselbe Schlüssel lieferte am
+EU-Endpunkt HTTP 401 mit `incorrect_hostname`. Das ist keine Aussage darüber,
+welche zusätzlichen Freigaben die Organisation besitzt; mit diesem Schlüssel ist
+EU-Verarbeitung derzeit nicht erfolgreich nachgewiesen.
+
+Für den gewünschten globalen Produktionsbetrieb sind folgende Runtime-Werte vorgesehen:
+
+```dotenv
+APP_ENV=production
+NEXT_PUBLIC_SERVER_URL=https://the-easycode.eu
+AI_CHAT_ENABLED=true
+OPENAI_CHAT_REGION=global
+OPENAI_GLOBAL_APPROVED=true
+OPENAI_EU_APPROVED=false
+PUBLIC_TRUSTED_CLIENT_IP_HEADER=x-real-ip
+```
+
+`OPENAI_API_KEY` bleibt ausschließlich als Runtime-Secret in Coolify. Kein Schlüssel
+in Repository, Browservariablen oder Docker-Buildargumenten. `x-real-ip` ist nur
+zulässig, solange ausschließlich der vertrauenswürdige Proxy diesen Header setzt
+und kein direkter Anwendungsport öffentlich erreichbar ist.
+
+Der neue Schalter `OPENAI_GLOBAL_APPROVED` ist eine ausdrückliche Betriebsentscheidung,
+kein Vertrags- oder Rechtsnachweis. Ohne ihn bleibt der globale Endpunkt außerhalb
+von Staging gesperrt. Die Auswahl `eu` fällt bei fehlenden Voraussetzungen niemals
+automatisch auf `global` zurück. Der Provider-Test bestätigt den Schlüssel und
+Endpunkt; die Chat-Einwilligung, Folgefragen und Abbrüche auf der aktualisierten
+Website müssen zusätzlich abgenommen werden.
+
+Die öffentliche Datenschutzerklärung muss OpenAI, den globalen Betriebsmodus,
+tatsächliche Speicherregeln und anwendbare Übermittlungsgarantien beschreiben.
+Kein Versprechen ausschließlicher EU-Verarbeitung oder Zero Data Retention aus
+`store=false` ableiten. Maßgeblich sind die
+[offiziellen OpenAI-Datenkontrollen](https://developers.openai.com/api/docs/guides/your-data)
+und die tatsächlich geltenden Verträge. Der Markdown-Entwurf wird nicht automatisch
+im CMS veröffentlicht.
+
+Die folgenden Betreiberangaben und Detailnotizen stammen überwiegend vom Oktober;
+die obige datierte Prüfung ergänzt sie.
 
 ## Status
 
@@ -8,7 +53,7 @@ Der Chat wurde von Gemini auf GPT-6 Luna über die OpenAI Responses API umgestel
 Der Betreiber bestätigt erfolgreiche Antworten auf `staging.the-easycode.eu`
 mit `OPENAI_CHAT_REGION=global`. Der produktive Betrieb ist nicht bestätigt.
 Es erfolgt kein automatischer Rückfall auf Gemini oder einen globalen OpenAI-Endpunkt.
-Der explizite globale Staging-Modus ist unten beschrieben.
+Globaler Produktionsbetrieb ist nur mit zusätzlichem `OPENAI_GLOBAL_APPROVED=true` möglich.
 Ohne explizite Aktivierung, passende Region-Konfiguration, API-Key und Proxy-IP-Header
 antwortet die Route mit 503, ohne CMS-Inhalte abzurufen oder OpenAI aufzurufen.
 

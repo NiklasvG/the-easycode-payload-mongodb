@@ -8,10 +8,22 @@ import { GET } from '@/app/api/health/ready/route'
 beforeEach(() => {
   vi.unstubAllEnvs()
   vi.stubEnv('SOURCE_COMMIT', '')
+  vi.stubEnv('RELEASE_COMMIT_SHA', '')
+  vi.stubEnv('RELEASE_BUILD_ID', '')
   command.mockReset().mockResolvedValue({ ok: 1 })
   getPayload.mockReset().mockResolvedValue({
     db: { connection: { readyState: 1, db: { admin: () => ({ command }) } } },
   })
+})
+it('identifies the built artifact and refuses a runtime revision that differs from the build', async () => {
+  vi.stubEnv('SOURCE_COMMIT', 'a'.repeat(40))
+  vi.stubEnv('RELEASE_COMMIT_SHA', 'a'.repeat(40))
+  vi.stubEnv('RELEASE_BUILD_ID', 'release-123')
+  expect(await (await GET()).json()).toEqual({
+    status: 'ready', revision: 'a'.repeat(40), buildId: 'release-123',
+  })
+  vi.stubEnv('SOURCE_COMMIT', 'b'.repeat(40))
+  expect((await GET()).status).toBe(503)
 })
 it('identifies the runtime revision without exposing arbitrary environment values', async () => {
   vi.stubEnv('SOURCE_COMMIT', 'a'.repeat(40))

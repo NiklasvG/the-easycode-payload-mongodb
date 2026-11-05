@@ -20,3 +20,5 @@ tests/
 experiments/
 scripts/
 .github/
+.verification-config/
+ops/

@@ -18,6 +18,7 @@ env:
   NEXT_PUBLIC_SERVER_URL: http://localhost:3000
   APP_ENV: staging
   SOURCE_COMMIT: ${{ github.sha }}
+  BUILD_ID: ci-${{ github.run_id }}-${{ github.run_attempt }}
   AI_CHAT_ENABLED: 'false'
   EMAIL_TRANSPORT: ''
   SMTP_HOST: 127.0.0.1
@@ -27,6 +28,32 @@ env:
   PAYLOAD_UPLOAD_DIR: ./.test-media
 
 jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    outputs:
+      release: ${{ steps.scope.outputs.release }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - id: scope
+        env:
+          BEFORE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { execFileSync } from 'node:child_process'
+          import { appendFileSync } from 'node:fs'
+          const before = process.env.BEFORE
+          let release = true
+          if (/^[a-f0-9]{40}$/.test(before || '') && !/^0+$/.test(before)) {
+            const files = execFileSync('git', ['diff', '--name-only', '-z', before, process.env.AFTER], { encoding: 'utf8' }).split('\0').filter(Boolean)
+            release = files.some(file => !file.endsWith('.md') && !file.startsWith('docs/'))
+          }
+          appendFileSync(process.env.GITHUB_OUTPUT, `release=${release}\n`)
+          NODE
+
   checks:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -43,13 +70,19 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm audit:prod
       - run: pnpm typecheck
       - run: pnpm lint
       - run: pnpm test:deployment
+      - run: node --test ops/coolify/coordinator.test.mjs
+      - run: python3 -m unittest discover -s ops/backup -p 'test_*.py'
 
   container:
-    needs: checks
-    runs-on: ubuntu-24.04
+    needs: [changes, checks]
+    if: needs.changes.outputs.release == 'true'
+    # MongoDB 8.0 currently rejects the 7.0 Azure kernel of ubuntu-24.04.
+    # Keep the compatible 6.8 runner until the upstream MongoDB fix is available.
+    runs-on: ubuntu-22.04
     timeout-minutes: 20
     concurrency:
       group: container-${{ github.ref }}
@@ -66,8 +99,10 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Isolated MongoDB replica set
         run: |
+          uname -r
           docker run -d --name mongo-test -p 127.0.0.1:27017:27017 mongo:8.0 --replSet rs0 --bind_ip_all
           for attempt in $(seq 1 60); do
+            if [ "$(docker inspect --format '{{.State.Running}}' mongo-test)" != true ]; then docker logs mongo-test; exit 1; fi
             if docker exec mongo-test mongosh --quiet --eval 'try { rs.status() } catch (e) { rs.initiate({_id:"rs0",members:[{_id:0,host:"localhost:27017"}]}) }; quit(db.hello().isWritablePrimary ? 0 : 1)'; then exit 0; fi
             sleep 1
           done
@@ -97,6 +132,8 @@ jobs:
           build-args: |
             NEXT_PUBLIC_SERVER_URL=http://localhost:3000
             APP_ENV=staging
+            SOURCE_COMMIT=${{ github.sha }}
+            BUILD_ID=ci-${{ github.run_id }}-${{ github.run_attempt }}
           secret-envs: |
             MONGODB_URI=MONGODB_URI
             PAYLOAD_SECRET=PAYLOAD_SECRET
@@ -110,11 +147,19 @@ jobs:
           done
           docker logs app-test
           exit 1
-      - run: pnpm exec playwright install --with-deps chromium
       - name: Required browser tests against the container
-        env:
-          PLAYWRIGHT_EXTERNAL_SERVER: 'true'
-        run: pnpm test:e2e
+        run: |
+          docker run --rm --init --network host --ipc host \
+            --volume "$PWD:/workspace" --workdir /workspace \
+            --env CI --env TEST_DATABASE --env TEST_MAILPIT \
+            --env MONGODB_URI --env PAYLOAD_SECRET --env PREVIEW_SECRET \
+            --env NEXT_PUBLIC_SERVER_URL --env APP_ENV --env SOURCE_COMMIT --env BUILD_ID \
+            --env AI_CHAT_ENABLED --env EMAIL_TRANSPORT --env SMTP_HOST \
+            --env SMTP_USER --env SMTP_PASS --env SMTP_PORT --env PAYLOAD_UPLOAD_DIR \
+            --env PLAYWRIGHT_EXTERNAL_SERVER=true \
+            --env NODE_OPTIONS='--no-deprecation --no-experimental-strip-types' \
+            mcr.microsoft.com/playwright:v1.63.0-noble \
+            node node_modules/@playwright/test/cli.js test --config=playwright.config.ts --project=core
       - uses: actions/upload-artifact@v6
         if: always()
         with:
@@ -135,7 +180,7 @@ jobs:
 
   quality:
     name: Quality gate
-    needs: [checks, container]
+    needs: [changes, checks, container]
     if: always()
     runs-on: ubuntu-24.04
     timeout-minutes: 1
@@ -144,33 +189,38 @@ jobs:
         env:
           CHECKS_RESULT: ${{ needs.checks.result }}
           CONTAINER_RESULT: ${{ needs.container.result }}
-        run: test "$CHECKS_RESULT" = success && test "$CONTAINER_RESULT" = success
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          RELEASE: ${{ needs.changes.outputs.release }}
+        run: |
+          test "$CHANGES_RESULT" = success
+          test "$CHECKS_RESULT" = success
+          if [ "$RELEASE" = true ]; then
+            test "$CONTAINER_RESULT" = success
+          else
+            test "$CONTAINER_RESULT" = skipped
+          fi
 
-  deploy:
-    needs: quality
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.COOLIFY_DEPLOY_ENABLED == 'true'
+  request:
+    needs: [changes, quality]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.changes.outputs.release == 'true' && vars.COOLIFY_PRODUCTION_ENABLED == 'true'
     runs-on: ubuntu-24.04
-    timeout-minutes: 27
+    timeout-minutes: 2
     concurrency:
       group: coolify-main
       cancel-in-progress: false
-    environment: staging
+    environment: production
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 24
-      - name: Deploy the verified commit and wait for readiness
+      - name: Request release of this verified workflow run
         env:
-          COOLIFY_URL: ${{ vars.COOLIFY_URL }}
-          COOLIFY_APPLICATION_UUID: ${{ vars.COOLIFY_APPLICATION_UUID }}
-          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
-          DEPLOY_PUBLIC_URL: ${{ vars.DEPLOY_PUBLIC_URL }}
-          GH_TOKEN: ${{ github.token }}
-        run: node scripts/deploy-coolify.mjs
-      - uses: actions/upload-artifact@v6
-        if: always()
-        with:
-          name: deployment-record
-          path: deployment-record.json
-          retention-days: 90
+          COORDINATOR_URL: ${{ vars.COOLIFY_COORDINATOR_URL }}
+          RELEASE_TOKEN: ${{ secrets.COOLIFY_PRODUCTION_RELEASE_TOKEN }}
+        run: |
+          test -n "$COORDINATOR_URL"
+          test -n "$RELEASE_TOKEN"
+          case "$COORDINATOR_URL" in https://*) ;; *) exit 1 ;; esac
+          curl --fail --silent --show-error --max-time 60 \
+            --request POST \
+            --header "Authorization: Bearer $RELEASE_TOKEN" \
+            --header 'Content-Type: application/json' \
+            --data "{\"runId\":\"$GITHUB_RUN_ID\"}" \
+            "${COORDINATOR_URL%/}/v1/approve/production-website"

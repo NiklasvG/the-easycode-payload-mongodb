@@ -17,8 +17,12 @@ ARG APP_ENV=production
 ARG NEXT_BUNDLER=webpack
 ARG UMAMI_SCRIPT_URL
 ARG UMAMI_WEBSITE_ID
+ARG SOURCE_COMMIT
+ARG BUILD_ID
 ENV NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
 ENV APP_ENV=${APP_ENV}
+ENV SOURCE_COMMIT=${SOURCE_COMMIT}
+ENV BUILD_ID=${BUILD_ID}
 # Read published CMS content during static generation. Supply credentials as
 # BuildKit secrets; they are not persisted as build arguments or image ENV.
 RUN --mount=type=secret,id=MONGODB_URI,env=MONGODB_URI,required=true \
@@ -28,6 +32,8 @@ RUN --mount=type=secret,id=MONGODB_URI,env=MONGODB_URI,required=true \
     --mount=type=secret,id=NEXT_BUNDLER,env=BUILD_NEXT_BUNDLER \
     --mount=type=secret,id=UMAMI_SCRIPT_URL,env=BUILD_UMAMI_SCRIPT_URL \
     --mount=type=secret,id=UMAMI_WEBSITE_ID,env=BUILD_UMAMI_WEBSITE_ID \
+    --mount=type=secret,id=SOURCE_COMMIT,env=BUILD_SOURCE_COMMIT \
+    --mount=type=secret,id=BUILD_ID,env=BUILD_RELEASE_ID \
     normalize_secret() { \
       case "$1" in \'*\') value="${1#\'}"; printf '%s' "${value%\'}" ;; *) printf '%s' "$1" ;; esac; \
     } \
@@ -38,6 +44,8 @@ RUN --mount=type=secret,id=MONGODB_URI,env=MONGODB_URI,required=true \
     NEXT_BUNDLER="$(normalize_secret "${BUILD_NEXT_BUNDLER:-$NEXT_BUNDLER}")" \
     UMAMI_SCRIPT_URL="$(normalize_secret "${BUILD_UMAMI_SCRIPT_URL:-$UMAMI_SCRIPT_URL}")" \
     UMAMI_WEBSITE_ID="$(normalize_secret "${BUILD_UMAMI_WEBSITE_ID:-$UMAMI_WEBSITE_ID}")" \
+    SOURCE_COMMIT="$(normalize_secret "${BUILD_SOURCE_COMMIT:-$SOURCE_COMMIT}")" \
+    BUILD_ID="$(normalize_secret "${BUILD_RELEASE_ID:-$BUILD_ID}")" \
     && if [ -z "$NEXT_PUBLIC_SERVER_URL" ]; then \
       echo 'Missing NEXT_PUBLIC_SERVER_URL: set a build variable or build argument.' >&2; exit 1; \
     fi \

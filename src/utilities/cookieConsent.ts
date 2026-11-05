@@ -1,6 +1,7 @@
 'use client'
 
-export const COOKIE_CONSENT_KEY = 'cookie-consent-settings'
+// The former website's analytics consent must not activate the new Umami service.
+export const COOKIE_CONSENT_KEY = 'cookie-consent-settings-umami-v2'
 
 export type ConsentSettings = {
 	necessary: boolean
@@ -15,7 +16,7 @@ export const getConsent = (): ConsentSettings | null => {
 		if (!stored) return null
 		const parsed = JSON.parse(stored) as ConsentSettings | null
 		if (!parsed || typeof parsed.analytics !== 'boolean') return null
-		// Keep existing analytics choices while ignoring obsolete consent categories.
+		// Only settings saved for the current Umami notice are read from the versioned key.
 		return {
 			necessary: true,
 			analytics: parsed.analytics,

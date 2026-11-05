@@ -36,6 +36,12 @@ describe('Umami consent integration', () => {
     rerender(React.createElement(UmamiAnalytics, { scriptUrl: props.scriptUrl }))
     expect(container.querySelector('script')).toBeNull()
   })
+  it('does not inherit analytics approval from the previous website', () => {
+    localStorage.setItem('cookie-consent-settings', JSON.stringify({ necessary: true, analytics: true }))
+    const { container } = render(React.createElement(UmamiAnalytics, props))
+    expect(container.querySelector('script')).toBeNull()
+    expect(window.umamiBeforeSend?.('event', {})).toBe(false)
+  })
 
   it('loads configured tracking and performance only after consent', () => {
     const { container } = render(React.createElement(UmamiAnalytics, props))

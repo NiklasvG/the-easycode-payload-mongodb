@@ -1,6 +1,6 @@
 # Datenschutzerklärung
 
-Stand: 4. Oktober 2026
+Stand: 5. November 2026
 
 **Entwurf für die Hetzner-/Umami-Version der Website. Die verbleibenden
 markierten Stellen betreffen noch nicht bestätigte Angaben zur Speicherung
@@ -94,7 +94,7 @@ erforderlich ist.
 Insbesondere werden folgende Einstellungen lokal in Ihrem Browser gespeichert:
 
 - Ihre Entscheidung zur Nutzungsanalyse einschließlich des Auswahlzeitpunkts
-  unter `cookie-consent-settings`;
+  unter `cookie-consent-settings-umami-v2`;
 - eine gewählte Darstellungseinstellung unter `payload-theme`;
 - nach Ihrer aktiven Zustimmung die KI-Chat-Einwilligung mit Version, Zeitpunkt
   und zufälliger Bestätigungs-ID im Session Storage unter `easycode-ai-chat-consent`;
@@ -156,8 +156,12 @@ dahin erfolgten Verarbeitung bleibt unberührt. Bereits übertragene Daten werde
 durch die Änderung der Browsereinstellung nicht automatisch gelöscht.
 
 Die Analyse respektiert die Do-Not-Track-Einstellung Ihres Browsers.
-Für Analysedaten gilt folgende Aufbewahrung: [tatsächlich umgesetzte
-Speicherdauer oder konkrete Kriterien für die Löschung ergänzen].
+Ereignisdaten der Nutzungsanalyse werden für 180 Tage aufbewahrt. Eine tägliche
+automatische Bereinigung entfernt ältere Ereignisse und zugehörige Zusatzdaten.
+Sitzungsmetadaten werden entfernt, sobald sie älter als 180 Tage sind und für
+keine verbleibenden aktuellen Analyseeinträge mehr benötigt werden. Die
+Bereinigung erfolgt im nächsten täglichen Lauf nach Fristablauf; Sicherungskopien
+unterliegen den gesonderten Regeln in Abschnitt 9.
 
 Weitere Informationen: [Umami-Dokumentation](https://docs.umami.is/docs/metric-definitions)
 und [Performance-Messungen](https://docs.umami.is/docs/performance).
@@ -194,8 +198,8 @@ erforderlichen Kontaktangaben kann ich Ihre Anfrage gegebenenfalls nicht bearbei
 
 ## 7. KI-gestützter Chat „EasyCode AI“
 
-**[OpenAI ist nach Betreiberbestätigung auf Staging über den globalen Endpunkt
-aktiv und getestet. Der produktive Betrieb ist nicht bestätigt. Vor Veröffentlichung
+**[Der globale OpenAI-Zugang wurde am 5. November 2026 mit einer synthetischen
+Anfrage erfolgreich getestet und ist für den Livegang vorgesehen. Vor Veröffentlichung
 Verträge, tatsächliche Verarbeitungsregion, Rechtsgrundlage, Drittlandgarantien
 und Speicherregeln belegen und diesen Bearbeitungshinweis entfernen. Diese
 Markdown-Datei aktualisiert nicht automatisch die Datenschutzerklärung im CMS.]**
@@ -249,12 +253,14 @@ möglich, wenn sie gesetzlich erforderlich oder zum Schutz des Dienstes oder
 Dritter vor Schäden angemessen notwendig ist. Zusätzlich kann Prompt-Caching
 verschlüsselte Zwischenzustände der Modellverarbeitung auf GPU-Systemen
 vorhalten; OpenAI nennt dafür eine maximale Aufbewahrung von 24 Stunden.
-Eine besondere Freigabe für Zero Data Retention oder Modified Abuse Monitoring
-liegt derzeit nicht vor. Das deaktivierte API-Logging im Dashboard und
+Für den hier beschriebenen globalen Betrieb wird keine besondere Zusicherung
+für Zero Data Retention oder Modified Abuse Monitoring abgegeben.
+Das deaktivierte API-Logging im Dashboard und
 `store=false` deaktivieren diese Anbieter-Speicherwege nicht insgesamt.
 
-Der aktuelle Staging-Test verwendet den globalen OpenAI-Endpunkt. Eine
-ausschließliche Verarbeitung in der EU wird für diesen Betrieb nicht zugesagt.
+Der KI-Chat verwendet den globalen OpenAI-Endpunkt. Eine ausschließliche
+Verarbeitung in der Europäischen Union wird für diesen Betrieb nicht zugesagt;
+eine Verarbeitung außerhalb des Europäischen Wirtschaftsraums ist möglich.
 Der abgeschlossene DPA sieht für Übermittlungen von EWR-Daten durch OpenAI
 Ireland an Empfänger außerhalb des EWR beziehungsweise der Schweiz
 Standardvertragsklauseln oder einen Angemessenheitsbeschluss der Europäischen

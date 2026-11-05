@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily Easycode Umami retention
+
+[Timer]
+OnCalendar=*-*-* 03:10:00 UTC
+Persistent=true
+AccuracySec=1m
+
+[Install]
+WantedBy=timers.target

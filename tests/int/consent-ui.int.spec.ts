@@ -36,6 +36,12 @@ describe('consent UI external storage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Auswahl bestätigen' }))
     expect(JSON.parse(localStorage.getItem(COOKIE_CONSENT_KEY)!).analytics).toBe(false)
   })
+  it('requests a new choice when only a consent from the former website exists', () => {
+    localStorage.setItem('cookie-consent-settings', JSON.stringify({ necessary: true, analytics: true }))
+    render(React.createElement(CookieBanner))
+    expect(screen.getByRole('button', { name: 'Alle akzeptieren' })).toBeTruthy()
+    expect(localStorage.getItem(COOKIE_CONSENT_KEY)).toBeNull()
+  })
   it('closes without throwing when storage writes are denied', () => {
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
       throw new Error('Denied')

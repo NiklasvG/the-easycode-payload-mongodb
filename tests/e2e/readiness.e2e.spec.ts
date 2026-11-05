@@ -6,6 +6,7 @@ test('container is ready and staging is excluded from indexing', async ({ reques
   expect(await response.json()).toEqual({
     status: 'ready',
     ...(process.env.SOURCE_COMMIT ? { revision: process.env.SOURCE_COMMIT } : {}),
+    ...(process.env.BUILD_ID ? { buildId: process.env.BUILD_ID } : {}),
   })
   expect(response.headers()['cache-control']).toContain('no-store')
   const home = await request.get('/')

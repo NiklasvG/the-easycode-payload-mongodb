@@ -1,0 +1,20 @@
+{
+  "production-website": {
+    "uuid": "rwzukgdnukwmpkgu0fyubgau",
+    "repository": "NiklasvG/the-easycode-payload-mongodb",
+    "branch": "main",
+    "workflow": ".github/workflows/quality.yml",
+    "workflowName": "Quality",
+    "requiredJob": "Quality gate",
+    "enabled": false,
+    "cachedBuilds": false,
+    "appEnv": "staging",
+    "chatRegion": "global",
+    "server": "ymz0a1hyeqyxjxzeyertbhpy",
+    "image": "cxcr.eu/the-easycode.eu/website",
+    "publicUrl": "https://staging.the-easycode.eu",
+    "healthUrl": "https://staging.the-easycode.eu/api/health/ready",
+    "releaseTokenEnv": "EASYCODE_PRODUCTION_RELEASE_TOKEN",
+    "operationsTokenEnv": "EASYCODE_OPERATIONS_TOKEN"
+  }
+}
