@@ -17,6 +17,7 @@ export const Users: CollectionConfig = {
     useAsTitle: 'name',
   },
   auth: {
+    useAPIKey: true,
     maxLoginAttempts: 5,
     lockTime: 10 * 60 * 1000,
     cookies: { sameSite: 'Lax', secure: process.env.NEXT_PUBLIC_SERVER_URL?.startsWith('https://') },

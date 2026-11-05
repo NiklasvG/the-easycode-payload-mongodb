@@ -5,6 +5,19 @@ export type SEOCollection = 'pages' | 'posts' | 'projects'
 export type SEODocument = Partial<Page> | Partial<Post> | Partial<Project>
 export const siteName = 'The-EasyCode'
 export const siteDescription = 'Ihr Freelancer für Webentwicklung aus Dresden!'
+export const defaultSocialImage = { url: '/favicon.png', alt: 'The-EasyCode', width: 192, height: 192 }
+
+// Social previews use the editorial SEO image, independently of visible content images.
+export function getSocialImage(doc?: SEODocument) {
+  const media = doc && 'meta' in doc ? doc.meta?.image : undefined
+  if (media && typeof media === 'object' && media.url && (!media.mimeType || media.mimeType.startsWith('image/'))) {
+    return {
+      url: absoluteSEOURL(media.sizes?.og?.url || media.url),
+      alt: media.alt || doc?.title || siteName,
+    }
+  }
+  return { ...defaultSocialImage, url: absoluteSEOURL(defaultSocialImage.url) }
+}
 
 export function getSEOTitle(title?: string | null): string {
   const value = title?.trim()

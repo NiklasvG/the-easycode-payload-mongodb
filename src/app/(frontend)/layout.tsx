@@ -13,7 +13,7 @@ import { draftMode } from 'next/headers'
 
 import './globals.css'
 import { getSitemapOrigin } from '@/utilities/getSitemapOrigin'
-import { siteName, siteDescription } from '@/utilities/seo'
+import { siteName, siteDescription, getSocialImage } from '@/utilities/seo'
 import { StructuredData } from '@/components/StructuredData'
 import { getSiteStructuredData } from '@/utilities/structuredData'
 import { ChatLauncher } from '@/components/Chat/ChatLauncher'
@@ -36,8 +36,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html className={geistMono.variable} lang="de" suppressHydrationWarning>
       <head>
         <InitTheme />
-        <link href="/favicon.ico" rel="icon" sizes="32x32" />
-        <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
       </head>
       <body>
         <a href="#main-content" className="skip-link">
@@ -76,6 +74,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     creator: '@the_easycode',
+    images: [getSocialImage()],
   },
 }
 
