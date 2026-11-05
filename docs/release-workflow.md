@@ -12,10 +12,10 @@ Coolify verwendet bereits `main`, die Website läuft weiterhin unter
 `https://staging.the-easycode.eu`. Die bisherige Hauptdomain auf einem anderen
 Server bleibt bis zur abschließenden Abnahme unverändert.
 
-Der hier beschriebene neue Koordinator ist im Repository implementiert. Seine
-Installation, Zugänge, Aktivierung und ein echter Release müssen gesondert
-nachgewiesen werden. Das Vorhandensein von Dateien oder Variablen ist kein
-Nachweis einer bereits umgestellten Betriebskette.
+Der Koordinator ist unter `https://easycode-release.ec-host.de` installiert.
+Gesundheitsprüfung, projektbegrenzter Zugang, Ablehnung unautorisierter Requests
+und eines PR-Laufs wurden tatsächlich geprüft. Der vollständige Releasepilot
+über GitHub wird gesondert abgenommen.
 
 ## Ein Veröffentlichungsweg
 
@@ -73,14 +73,25 @@ Ein Prozesslock verhindert zwei Koordinatorprozesse auf demselben Zustand.
 Kein Docker-Socket, keine Root-Laufzeit und keine gemeinsame Datenablage mit der Website.
 
 `targets.example.json` ist absichtlich deaktiviert und zeigt noch auf die
-Staging-Domain. Bei Einrichtung die tatsächlichen Werte abgleichen. Für den
-Live-Wechsel `publicUrl`, `healthUrl` und `appEnv` gemeinsam mit Coolify umstellen.
+Staging-Domain. Bei Einrichtung die tatsächlichen Werte abgleichen.
+Für den Produktionsbuild vor DNS-Umschaltung `publicUrl` auf die Hauptdomain und
+`appEnv` auf `production` setzen. `verificationUrl` und `healthUrl` dürfen noch
+auf die eigene temporäre Domain zeigen; beide Ursprünge müssen in der festen
+Coolify-Anwendung eingetragen sein. Readiness, Startseite, kanonische Hauptdomain,
+freigegebene robots.txt und Chat werden dann über diese Domain geprüft.
+Ein ausschließlich auf der temporären Domain gesetztes Proxy-`noindex` ist erlaubt.
+Nach DNS-Umschaltung auch Verifikation und Health auf die Hauptdomain umstellen.
 
 Private Runtime-Variablen des Dienstes:
 
 - `COOLIFY_API_URL`: API-Ursprung inklusive `/api/v1`.
-- `COOLIFY_API_TOKEN`: eigener auf das Easycode-Projekt beschränkter Betriebszugang;
-  benötigte Lese-/Schreib-/Deployrechte einzeln prüfen, keine Löschrechte.
+- `COOLIFY_API_TOKEN`: eigener ausschließlich auf das Easycode-Projekt beschränkter
+  Zugang mit `read`, `read:sensitive`, `write` und `deploy`.
+  Coolify 4.6 blendet Buildlogs ohne `read:sensitive` aus; der Digestnachweis benötigt
+  diese Logs. Die am 5. November ausdrücklich freigegebene Erweiterung erlaubt
+  innerhalb dieses Projekts auch das Lesen von Secrets. `write` umfasst bei Coolify
+  ebenfalls Löschen; der Koordinator implementiert selbst keine Löschoperationen.
+  Fremde Projektressourcen wurden mit diesem Zugang als nicht erreichbar geprüft.
 - `GITHUB_READ_TOKEN`: nur Repository-/Actions-Leserechte für dieses Repository.
 - `EASYCODE_PRODUCTION_RELEASE_TOKEN`: zufälliger Schlüssel für GitHub-Requests.
 - `EASYCODE_OPERATIONS_TOKEN`: anderer Schlüssel für Status, Pause, Resume und
@@ -91,6 +102,13 @@ GitHub-Variable `COOLIFY_COORDINATOR_URL` zeigt auf den eigenen HTTPS-Dienst.
 werden; der Schalter ist eine Repository-Variable. Im Environment `production`
 das Secret `COOLIFY_PRODUCTION_RELEASE_TOKEN` hinterlegen. Bestehende main-Regel
 `Quality gate` beibehalten. Tokenlaufzeit und rechtzeitige Rotation dokumentieren.
+Der eingerichtete Betriebszugang läuft am 3. Februar 2027 um 16:57:33 UTC ab.
+
+Updates dieses Dienstes benötigen einen kurzen Dienstwechsel: Releases pausieren,
+`active=null` und `pending=null` prüfen, nur den Koordinator stoppen und die zuvor
+geprüfte neue Version auf demselben persistenten Zustand starten. Danach Health,
+Zustand und Resume prüfen. Ein überlappender Rolling-Neustart scheitert absichtlich
+am Prozesslock. Die Website wird für den Koordinatorwechsel nicht gestoppt.
 
 Den bisherigen direkten `COOLIFY_DEPLOY_ENABLED`-/`COOLIFY_TOKEN`-Weg nach der
 Umstellung deaktivieren und unbenutzte CI-Zugänge gezielt entfernen. Der alte
@@ -103,8 +121,8 @@ parallelen manuellen Deployments starten.
 Jeder Release bekommt ein neues `<SHA>-<BUILD_ID>`-Tag. `SOURCE_COMMIT` und
 `BUILD_ID` werden vor dem Build als Build- und Runtime-Werte gesetzt.
 Commit und Image-Tag werden zurückgelesen; bei ENV-Werten werden nur Existenz
-und Build-/Runtime-Metadaten geprüft. Der Betriebszugang hat bewusst keine
-sensiblen Leserechte. Die tatsächlichen Werte werden durch die aus dem gebauten
+und Build-/Runtime-Metadaten geprüft. Secretwerte werden weder protokolliert noch
+ersetzt. Die tatsächlichen Releasewerte werden durch die aus dem gebauten
 Image ausgelieferte Readiness nachgewiesen. Next.js bindet die öffentlichen
 Release-Metadaten beim Build ein.
 Readiness verweigert eine zur gebauten SHA widersprüchliche Runtime-Revision.
@@ -128,9 +146,10 @@ verwendet, ersetzt diesen Abnahmetest aber nicht.
 ## Sicherung und Rückweg
 
 Bestätigte native Pläne: MongoDB `yalqgutj3zvfvdjoymsjirhv`, Dateien
-`ztcmdo9mufusjyywkdqzty6a`. Beide hatten am 5. November erfolgreiche Ausführungen
-mit bestätigtem S3-Upload. Sie laufen aktuell unabhängig um 02:15 bzw. 02:30 UTC;
-das ist noch kein nachgewiesen konsistentes Paar bei laufenden CMS-Schreibzugriffen.
+`ztcmdo9mufusjyywkdqzty6a`. Am 5. November wurde das koordinierte Paar
+`ccc702da-df9d-4f04-8062-93ca0d059aba` einschließlich Releasezustand erfolgreich
+erstellt und aus S3 isoliert wiederhergestellt. Die unabhängigen Kalender sind
+deaktiviert; der gemeinsame Hosttimer läuft täglich um 02:15 UTC.
 
 Vor Produktionsfreigabe müssen Release und konsistentes Backup denselben
 Projektslot verwenden. Der Koordinator bietet dazu mit dem **Betriebsschlüssel**
@@ -138,8 +157,7 @@ Projektslot verwenden. Der Koordinator bietet dazu mit dem **Betriebsschlüssel*
 `active=null` abwarten; erst danach CMS-Schreiber kontrolliert anhalten, Mount-UUID
 prüfen und DB/Medien zusammen sichern. Unabhängige native Kalender erst nach
 funktionierender koordinierter Ablösung umstellen. Bestehende Sicherungen nicht löschen.
-Die Backupintegration und der isolierte Restore sind nicht allein durch diese
-Endpunkte als eingerichtet oder bestanden nachgewiesen.
+Der konkrete Erstlauf und Restore sind in `backup-workflow.md` dokumentiert.
 
 Vor DNS-Umschaltung einen aktuellen gemeinsamen Restorepunkt und das bisherige
 Image am unveränderlichen Digest festhalten. Nach neuen CMS-Änderungen oder
