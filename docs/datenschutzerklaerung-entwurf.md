@@ -94,7 +94,7 @@ erforderlich ist.
 Insbesondere werden folgende Einstellungen lokal in Ihrem Browser gespeichert:
 
 - Ihre Entscheidung zur Nutzungsanalyse einschließlich des Auswahlzeitpunkts
-  unter `cookie-consent-settings`;
+  unter `cookie-consent-settings-umami-v2`;
 - eine gewählte Darstellungseinstellung unter `payload-theme`;
 - nach Ihrer aktiven Zustimmung die KI-Chat-Einwilligung mit Version, Zeitpunkt
   und zufälliger Bestätigungs-ID im Session Storage unter `easycode-ai-chat-consent`;
