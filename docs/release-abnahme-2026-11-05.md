@@ -26,6 +26,15 @@ einschließlich Folgefrage, nach Widerruf Zustimmung entfernt und Eingabe gesper
 Ohne Analytics-Zustimmung wurde keine Verbindung zum Analytics-Dienst aufgebaut.
 SMTP-TLS-Verbindung und Anmeldung vom Appserver bestanden; keine Testmail versandt.
 
+Die anschließende Codeergänzung für die Produktionsprüfung vor DNS-Umschaltung
+bestand ebenfalls alle Pflichtprüfungen und den echten Release:
+[Main-Lauf 42083056004](https://github.com/NiklasvG/the-easycode-payload-mongodb/actions/runs/42083056004),
+SHA `c752fcfe5a0b5b83cb1d54368034977508004713`, Build-ID
+`acfa309f-cfc7-4f5f-bb12-482c2ab35e5e`, Deployment `qe9m2ermnk9mvnuehxpnnqj8`,
+Digest `sha256:a804039d05c44a9a3762506d0b763680b6d8f6867689ae54115980aeca82702b`.
+Auf dieser ausgelieferten Version wurden die 15 Seiten, Readiness, 404 und
+anonymen Zugriffssperren erneut erfolgreich geprüft.
+
 ## Betrieb
 
 Der Release-Dienst läuft unter `https://easycode-release.ec-host.de`. Der eigene
