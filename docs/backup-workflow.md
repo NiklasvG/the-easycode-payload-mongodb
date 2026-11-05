@@ -1,5 +1,14 @@
 # Konsistente Easycode-Sicherungen
 
+## Aktuelle Jobintegration
+
+Am 5. November wurde die Webkoordinator-Abhängigkeit durch ein gemeinsames
+Controller-Hostlock mit dem bedarfsweisen Releasejob ersetzt. Der neue Erstlauf
+`5e4d2b73-cf51-4963-92ee-70d341d6aab4` war erfolgreich, einschließlich DB/Medien,
+S3-Rückleseprüfung des Releasezustands und Wiederfreigabe der Website.
+Details: [Releasejob](release-job.md). Die bisherigen nativen Releasezustands-
+Sicherungen bleiben erhalten; ihr alter Kalender wird nicht mehr benutzt.
+
 ## Eingerichteter Betrieb und Erstnachweis
 
 Am 5. November 2026 wurde das konsistente Paar
@@ -25,8 +34,10 @@ bestandenen Offline-Fehlertests nachgewiesen.
 | Releasekoordinator | `87bn9vgwdcdelqo8tnsmlgef` |
 | Koordinatorzustand-Unterplan | `54iegz3fcx3xd9ik8kc55i4w` |
 
-Alle drei nativen Unterpläne sind nur als Kalender deaktiviert und werden vom
-gemeinsamen Hostdienst aufgerufen. Sie behalten 2 lokale und 14 S3-Stände ohne
+Die nativen DB-/Medien-Unterpläne sind als Kalender deaktiviert und werden vom
+gemeinsamen Hostdienst aufgerufen. Der bisherige Koordinatorzustands-Unterplan
+bleibt deaktiviert erhalten; neue Releasezustandskopien werden direkt auf dem
+Controller aus dem geheimnisfreien Jobzustand erstellt und nach S3 hochgeladen. Sie behalten 2 lokale und 14 S3-Stände ohne
 zusätzliche Alters-/Größenlimits. S3-Ziel ist Hetzner Object Storage in Nürnberg;
 das sind Anzahlgrenzen und keine garantierten 2 beziehungsweise 14 Tage.
 
@@ -36,14 +47,16 @@ das sind Anzahlgrenzen und keine garantierten 2 beziehungsweise 14 Tage.
    oder blinde Wiederholungen. Ein unklarer vorheriger Auftrag verlangt einen Operator.
 2. Vor jeder Veränderung die Backup-Mount-UUID auf dem Appserver prüfen:
    `3e8d94be-3910-4b03-8017-e2b02742ff6f`. Fehlender/falscher Mount bricht ab.
-3. Neue Easycode-Releases mit dem eigenen Betriebsschlüssel pausieren und
-   einen bereits aktiven Release abwarten. Fremde Projekte bleiben unberührt.
+3. Dasselbe Hostlock wie der Releasejob halten. Ein laufender Release wird
+   zuerst beendet; ein unvollständiger gespeicherter Release blockiert die
+   Sicherung bis zur Operatorabstimmung. Jobzustand nach S3 hochladen und
+   per SHA-256 rücklesen. Fremde Projekte bleiben unberührt.
 4. Genau einen Website-Schreiber anhand des Coolify-Labels ermitteln; einen
    bereits vom Operator pausierten Container unverändert lassen und abbrechen.
-5. Den Website-Container kurz pausieren und native DB-, Medien- und
-   Koordinatorzustands-Sicherungen nacheinander ausführen. Echte Ausführungs-IDs,
+5. Den Website-Container kurz pausieren und native DB- und
+   Mediendateisicherungen nacheinander ausführen. Echte Ausführungs-IDs,
    Status, Größe und erfolgreiche S3-Replikation zusammen erfassen.
-6. Website und zuvor offene Releases auch bei Fehlern kontrolliert freigeben.
+6. Website auch bei Fehlern kontrolliert freigeben und das Hostlock lösen.
    Ein Fehler wird sichtbar protokolliert; ein unklarer Dispatch wird nicht wiederholt.
 
 Der Datensatz hält außerdem die Laufzeit-Image-ID fest. Diese ist nicht mit dem

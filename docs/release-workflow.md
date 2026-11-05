@@ -1,8 +1,9 @@
 # Releaseablauf für The-EasyCode
 
-**Ablösung auf Betreiberwunsch:** Der bedarfsweise Ersatz ist in
-[release-job.md](release-job.md) beschrieben. Die folgende Beschreibung hält den
-bisherigen Webkoordinator fest; Umschalt- und Abnahmebeleg separat beachten.
+**Historischer Ablauf, am 5. November 2026 abgelöst:** Der aktuelle bedarfsweise
+Releaseweg steht in [release-job.md](release-job.md), seine Abnahme im
+[Umschaltbeleg](release-job-abnahme-2026-11-05.md). Die folgende Beschreibung
+hält den früheren Webkoordinator fest; dessen Auslöser nicht parallel aktivieren.
 
 Stand: 5. November 2026. Gemeinsame Grundlage sind die Betriebsregeln in der
 übergeordneten Coolify-Ablage (`docs/best-practice/03-build-release-staging.md`,
