@@ -1,15 +1,11 @@
 import type { Metadata } from 'next'
-import { absoluteSEOURL, siteDescription, siteName } from './seo'
+import { getSocialImage, siteDescription, siteName } from './seo'
 
 const defaultOpenGraph: Metadata['openGraph'] = {
 	type: 'website',
 	description: siteDescription,
 	locale: 'de_DE',
-	images: [
-		{
-			url: absoluteSEOURL('/website-template-OG.webp')
-		}
-	],
+	images: [getSocialImage()],
 	siteName,
 	title: siteName
 }

@@ -24,13 +24,28 @@ describe('CMS SEO metadata and structured data', () => {
     expect((await generateMeta({ doc: { title: 'Page' } })).robots).toMatchObject({ index: false })
   })
 
-  it('uses CMS hero images and descriptions when SEO fields are empty', async () => {
+  it('uses the favicon for social previews when only content images are set', async () => {
     const image = { url: '/api/media/file/hero.webp', mimeType: 'image/webp', alt: 'Projektansicht' } as Media
     const meta = await generateMeta({ doc: { title: 'Case Study', slug: 'project', client: { slug: 'client' } as Project['client'], shortDescription: 'Ergebnis', heroImage: image }, collection: 'projects' })
     expect(meta.description).toBe('Ergebnis')
-    expect(meta.openGraph).toMatchObject({ images: [{ url: 'https://example.test/api/media/file/hero.webp', alt: 'Projektansicht' }] })
+    expect(meta.openGraph).toMatchObject({ images: [{ url: 'https://example.test/favicon.png', alt: 'The-EasyCode', width: 192, height: 192 }] })
+    expect(meta.twitter).toMatchObject({ images: [{ url: 'https://example.test/favicon.png' }] })
     expect(meta.alternates?.canonical).toBe('https://example.test/projekte/client/project')
     expect(getSEODescription({ hero: { description: 'Aus dem sichtbaren Hero' } } as Partial<Page>)).toBe('Aus dem sichtbaren Hero')
+  })
+
+  it('prefers the explicitly authored SEO image and its social crop', async () => {
+    const image = { url: '/api/media/file/seo.png', mimeType: 'image/png', alt: 'SEO-Vorschau', sizes: { og: { url: '/api/media/file/seo-1200x630.png' } } } as Media
+    const meta = await generateMeta({ doc: { title: 'Seite', meta: { image } } })
+    const images = [{ url: 'https://example.test/api/media/file/seo-1200x630.png', alt: 'SEO-Vorschau' }]
+    expect(meta.openGraph).toMatchObject({ images })
+    expect(meta.twitter).toMatchObject({ images })
+  })
+
+  it.each([undefined, null, 'unresolved-media-id', { url: '/file.pdf', mimeType: 'application/pdf' }])('falls back for missing or unusable SEO media: %s', async (image) => {
+    const meta = await generateMeta({ doc: { title: 'Seite', meta: { image } } as Partial<Page> })
+    expect(meta.openGraph).toMatchObject({ images: [{ url: 'https://example.test/favicon.png' }] })
+    expect(meta.twitter).toMatchObject({ images: [{ url: 'https://example.test/favicon.png' }] })
   })
 
   it('extracts only visible Lexical text without relation data', () => {

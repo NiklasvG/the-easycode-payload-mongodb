@@ -3,7 +3,7 @@ import type { Page, Project } from '@/payload-types'
 import { mergeOpenGraph } from './mergeOpenGraph'
 import { getPagePath, getProjectPath } from './contentPaths'
 import {
-  absoluteSEOURL, getSEODescription, getSEOImage, getSEOTitle, isNoIndex,
+  absoluteSEOURL, getSEODescription, getSocialImage, getSEOTitle, isNoIndex,
   type SEOCollection, type SEODocument,
 } from './seo'
 
@@ -23,11 +23,7 @@ export const generateMeta = async ({ doc, collection = 'pages', preview = false 
   const title = getSEOTitle(('meta' in doc ? doc.meta?.title : undefined) || doc.title)
   const description = getSEODescription(doc)
   const canonical = absoluteSEOURL(getContentPath(doc, collection))
-  const media = getSEOImage(doc)
-  const image = {
-    url: absoluteSEOURL(media?.sizes?.og?.url || media?.url || '/website-template-OG.webp'),
-    alt: media?.alt || doc.title || 'The-EasyCode',
-  }
+  const image = getSocialImage(doc)
   const noIndex = preview || process.env.APP_ENV === 'staging' || doc._status === 'draft' || isNoIndex(doc)
   const publishedAt = collection === 'posts' && 'publishedAt' in doc ? doc.publishedAt : undefined
   return {

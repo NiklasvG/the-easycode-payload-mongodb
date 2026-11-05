@@ -3,13 +3,21 @@ import { expect, test } from '@playwright/test'
 test.describe('SEO in the initial HTML', () => {
   test.use({ javaScriptEnabled: false })
 
-  test('homepage metadata and structured data work without JavaScript', async ({ page }) => {
+  test('homepage metadata and structured data work without JavaScript', async ({ page, request }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' })
     const title = await page.title()
     expect(title.match(/The-EasyCode/g)?.length).toBe(1)
     const canonical = await page.locator('link[rel="canonical"]').getAttribute('href')
     expect(new URL(canonical!).pathname).toBe('/')
     await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/)
+    await expect(page.locator('link[rel="icon"][href="/favicon.ico"]')).toHaveCount(1)
+    await expect(page.locator('link[rel="icon"][type="image/png"]')).toHaveAttribute('sizes', '192x192')
+    const favicon = await request.get('/favicon.ico')
+    expect(favicon.status()).toBe(200)
+    expect((await favicon.body()).subarray(0, 4)).toEqual(Buffer.from([0, 0, 1, 0]))
+    const socialImage = await request.get('/favicon.png')
+    expect(socialImage.status()).toBe(200)
+    expect(socialImage.headers()['content-type']).toContain('image/png')
     const graphs = await page.locator('script[type="application/ld+json"]').allTextContents()
     const entities = graphs.flatMap(value => JSON.parse(value)['@graph'])
     expect(entities.map(entity => entity['@type'])).toEqual(expect.arrayContaining(['WebSite', 'Organization', 'WebPage']))
