@@ -75,6 +75,7 @@ jobs:
       - run: pnpm lint
       - run: pnpm test:deployment
       - run: node --test ops/coolify/coordinator.test.mjs
+      - run: python3 -m unittest discover -s ops/backup -p 'test_*.py'
 
   container:
     needs: [changes, checks]
@@ -146,11 +147,19 @@ jobs:
           done
           docker logs app-test
           exit 1
-      - run: pnpm exec playwright install --with-deps chromium
       - name: Required browser tests against the container
-        env:
-          PLAYWRIGHT_EXTERNAL_SERVER: 'true'
-        run: pnpm test:e2e
+        run: |
+          docker run --rm --init --network host --ipc host \
+            --volume "$PWD:/workspace" --workdir /workspace \
+            --env CI --env TEST_DATABASE --env TEST_MAILPIT \
+            --env MONGODB_URI --env PAYLOAD_SECRET --env PREVIEW_SECRET \
+            --env NEXT_PUBLIC_SERVER_URL --env APP_ENV --env SOURCE_COMMIT --env BUILD_ID \
+            --env AI_CHAT_ENABLED --env EMAIL_TRANSPORT --env SMTP_HOST \
+            --env SMTP_USER --env SMTP_PASS --env SMTP_PORT --env PAYLOAD_UPLOAD_DIR \
+            --env PLAYWRIGHT_EXTERNAL_SERVER=true \
+            --env NODE_OPTIONS='--no-deprecation --no-experimental-strip-types' \
+            mcr.microsoft.com/playwright:v1.63.0-noble \
+            node node_modules/@playwright/test/cli.js test --config=playwright.config.ts --project=core
       - uses: actions/upload-artifact@v6
         if: always()
         with:

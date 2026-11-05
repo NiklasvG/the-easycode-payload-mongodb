@@ -1,0 +1,14 @@
+[Unit]
+Description=Consistent Easycode MongoDB and media backup pair
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/flock --nonblock /var/lib/the-easycode-backups/process.lock /usr/bin/python3 /srv/the-easycode-backups/production-backup-pair.py --config /srv/the-easycode-backups/config.json
+TimeoutStartSec=2h
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/the-easycode-backups

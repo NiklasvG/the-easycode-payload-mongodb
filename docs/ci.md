@@ -7,7 +7,11 @@ Maßgeblich sind `.github/workflows/quality.yml` und
 main. `checks` führt Typprüfung, ESLint, Produktions-Audit ab Schweregrad hoch
 sowie die alten Deployment- und neuen Koordinatortests aus. Für Anwendungscode
 folgt genau ein Linux-Testimage mit isolierter MongoDB/Mailpit, Integrationstests
-und Browserfällen. Reine Markdown-/docs-Änderungen überspringen diesen Containerjob
+und Browserfällen. Die Browser laufen im offiziellen, zur Paketversion passenden
+Image `mcr.microsoft.com/playwright:v1.63.0-noble`; eine wechselnde apt-Installation
+der Browserbibliotheken auf dem MongoDB-kompatiblen Host entfällt. Testpakete
+kommen aus dem eingefrorenen Lockfile, die lokale Testanwendung wird über das
+Linux-Hostnetz erreicht. Reine Markdown-/docs-Änderungen überspringen diesen Containerjob
 bewusst, behalten aber den erforderlichen `Quality gate`.
 
 Nur ein Code-Push auf main kann nach bestandenen Pflichtprüfungen seine Run-ID

@@ -1,0 +1,11 @@
+{
+  "project": "wwfukl2ylvs9rrjqcfbcm03k",
+  "server": "ymz0a1hyeqyxjxzeyertbhpy",
+  "backend": "rwzukgdnukwmpkgu0fyubgau",
+  "database_plan": "yalqgutj3zvfvdjoymsjirhv",
+  "file_plans": ["ztcmdo9mufusjyywkdqzty6a"],
+  "coordinator": "87bn9vgwdcdelqo8tnsmlgef",
+  "coordinator_file_plans": ["54iegz3fcx3xd9ik8kc55i4w"],
+  "enabled": false,
+  "state_file": "/var/lib/the-easycode-backups/state.json"
+}

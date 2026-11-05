@@ -28,3 +28,4 @@ node_modules/
 /playwright/.cache/
 
 .test-media/
+__pycache__/
