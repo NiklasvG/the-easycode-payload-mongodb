@@ -14,8 +14,12 @@ Stand: 5. November 2026. Ältere Abschnitte bleiben als historische Belege erhal
   Ständen eingerichtet, Erstlauf und isolierter S3-Restore bestanden.
   S3 liegt in Nürnberg; die frühere pauschale Standortangabe Falkenstein ist
   für dieses Ziel falsch. Anzahlrotation ist keine feste Tagesfrist.
-- Mailcow-Protokolle, Postfach- und Umami-Datenbank-Sicherungsrotation sind noch
-  nicht vollständig bestätigt. Der Entwurf enthält dafür offene Prüfpunkte und
+- Die Umami-Datenbank hat einen eigenen täglichen 02:45-UTC-Plan mit zwei lokalen
+  und vierzehn S3-Ständen ohne zusätzliche Alters-/Größenlimits; die Ausführung
+  vom 5. November mit erfolgreichem S3-Upload wurde bestätigt.
+- Mailcow-Protokolle und Postfach-Sicherungsrotation sind noch nicht vollständig
+  bestätigt; der vorhandene Betreiber-SSH-Zugang erreicht den Mailserver nicht.
+  Der Entwurf enthält dafür offene Prüfpunkte und
   ist noch nicht zur Veröffentlichung freigegeben. Die bestehende CMS-Seite
   wird durch Änderungen an dieser Markdown-Datei nicht aktualisiert.
 

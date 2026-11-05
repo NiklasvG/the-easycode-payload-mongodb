@@ -15,7 +15,14 @@ Server bleibt bis zur abschließenden Abnahme unverändert.
 Der Koordinator ist unter `https://easycode-release.ec-host.de` installiert.
 Gesundheitsprüfung, projektbegrenzter Zugang, Ablehnung unautorisierter Requests
 und eines PR-Laufs wurden tatsächlich geprüft. Der vollständige Releasepilot
-über GitHub wird gesondert abgenommen.
+über GitHub-Lauf `42075269196`, Attempt 2, wurde erfolgreich abgenommen:
+SHA `1e370e53cb071117067b9260055710a1db18df03`, Build-ID
+`1eb4df01-f2e5-4607-8f18-e33da0539f03`, Registry-Manifest-Digest
+`sha256:396658d25733915d29fb7dc8f1fc534796e28a9a0e6cb796dbfd5c1f128dff08`.
+152 Integrationstests und 25 Browser-Kerntests bestanden. Auf Staging wurden
+15 Seiten, anonyme Zugriffssperren, echter Chat mit Folgefrage und Widerruf sowie
+SMTP-Anmeldung ohne Versand geprüft. Die aktuelle weitere Abnahme steht in
+`release-abnahme-2026-11-05.md`.
 
 ## Ein Veröffentlichungsweg
 
@@ -120,6 +127,11 @@ parallelen manuellen Deployments starten.
 
 Jeder Release bekommt ein neues `<SHA>-<BUILD_ID>`-Tag. `SOURCE_COMMIT` und
 `BUILD_ID` werden vor dem Build als Build- und Runtime-Werte gesetzt.
+Coolify 4.6 verwendet für den laufenden Container nativ zusätzlich das SHA-Tag;
+`docker_registry_image_tag` wird als weiteres Registry-Tag veröffentlicht.
+Im Pilot stimmten der über dieses eindeutige Tag abgefragte Registry-Digest und
+die tatsächlichen `RepoDigests` des laufenden Containers mit dem Releasebeleg
+überein. Für Rückwege den unveränderlichen Digest verwenden, nicht nur das SHA-Tag.
 Commit und Image-Tag werden zurückgelesen; bei ENV-Werten werden nur Existenz
 und Build-/Runtime-Metadaten geprüft. Secretwerte werden weder protokolliert noch
 ersetzt. Die tatsächlichen Releasewerte werden durch die aus dem gebauten
