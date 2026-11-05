@@ -51,8 +51,10 @@ Der vorhandene tägliche DB-/Medien-Backupjob verwendet dasselbe Hostlock. Er
 sichert den neuen, geheimnisfreien Releasezustand nach S3 und lokal, bevor er
 die Website für das konsistente DB-/Medienpaar kurz pausiert. Zustandskopien:
 zwei lokal, vierzehn in eigenem S3-Präfix `release-job-state/<Projekt-UUID>/`.
-Upload wird durch Rücklesen und SHA-256 geprüft. Alte native Sicherungen bleiben
-erhalten; neue Sicherungen hängen nicht vom gestoppten Koordinatorcontainer ab.
+Upload wird durch Rücklesen und SHA-256 geprüft. Website-DB-/Medien-Sicherungen bleiben erhalten. Die alten Webkoordinator-
+Zustandspläne und Archive wurden nach Betreiberfreigabe entfernt;
+[Nachweis](coordinator-bereinigung-2026-11-05.md). Neue Sicherungen verwenden
+ausschließlich den aktuellen Jobzustand.
 
 GitHub: Variable `RELEASE_SSH_HOST`, Secrets `RELEASE_SSH_KEY` und
 `RELEASE_SSH_KNOWN_HOSTS`; Freigabeschalter `COOLIFY_PRODUCTION_ENABLED`.

@@ -5,6 +5,13 @@ von-grzymala/Barrierescouts vom dauerhaften Release-Webdienst auf projektbezogen
 Einmaljobs umgestellt. Andere Projektkoordinatoren und gemeinsame Serverlimits
 wurden nicht geändert. Die Easycode-Hauptdomain wurde nicht umgeschaltet.
 
+## Nachfolgende Bereinigung
+
+Die hier zunächst als Rückweg erhaltenen Altkoordinatoren und ihre eigenen
+Zustandssicherungen wurden anschließend ausdrücklich zur Löschung freigegeben
+und entfernt. [Lösch- und Abschlussnachweis](coordinator-bereinigung-2026-11-05.md).
+Die folgenden Angaben zum damaligen Rückweg sind historisch.
+
 ## Tatsächlich veröffentlichte Releases
 
 | Projekt | Commit | Build-ID | Coolify-Deployment | Manifest-Digest |
