@@ -1,9 +1,10 @@
 # Bedarfsweiser Easycode-Releasejob
 
-Die auf Betreiberwunsch vorbereitete Ablösung des Release-Webdienstes verwendet
+Die auf Betreiberwunsch eingerichtete Ablösung des Release-Webdienstes verwendet
 Python-Standardbibliothek auf dem Coolify-Controller. Kein dauerhaft laufender
 Releaseprozess, kein zusätzlicher HTTP-Port und keine eigene Release-Domain.
-Die tatsächliche Umschaltung und Releaseabnahme werden separat dokumentiert.
+Die tatsächliche Umschaltung und Releaseabnahme stehen im datierten
+[Umschaltbeleg](release-job-abnahme-2026-11-05.md).
 
 ## Ablauf
 

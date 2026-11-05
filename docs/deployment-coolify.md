@@ -1,9 +1,9 @@
 # Hetzner / Coolify deployment
 
 **Aktualisierung vom 5. November 2026:** Der aktuelle Releaseablauf steht in
-[release-workflow.md](release-workflow.md). Er ersetzt den unten dokumentierten
-direkten GitHub→Coolify-Dispatch durch einen projektspezifischen Koordinator mit
-Run-ID-Prüfung, separaten Zugängen, Build-ID und erforderlichem Digest. Die
+[release-job.md](release-job.md). Ein projektspezifischer Einmaljob ersetzt den
+früheren Release-Webdienst. Run-ID-Prüfung, getrennte Zugänge, Backupsperre,
+Build-ID und Digest bleiben erhalten; eine eigene Release-Domain entfällt. Die
 folgenden Einrichtungs-/Importnotizen beschreiben den bisherigen Stand und sind
 keine Anweisung, den alten Veröffentlichungsweg parallel weiterzubetreiben.
 

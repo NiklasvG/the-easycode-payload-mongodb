@@ -2,6 +2,12 @@
 
 Prüfung: 5. November 2026, 20:40 Uhr Europe/Berlin. Ausschließlich lesende Server-/API-Prüfungen; keine Releases, Backups, Neustarts oder Konfigurationsänderungen ausgelöst.
 
+## Umsetzung nach Betreiberfreigabe
+
+Die anschließende Ablösung bei Easycode und Barrierescouts wird im
+[Umschaltbeleg](release-job-abnahme-2026-11-05.md) festgehalten. Die folgenden
+Messwerte beschreiben ausdrücklich den Zustand vor der Umstellung.
+
 ## Ergebnis
 
 Ein Staging-System erfordert keinen ständig laufenden Release-Webdienst. Die Koordinationsaufgaben müssen erhalten bleiben, ihre Ausführung kann jedoch als bedarfsweise gestartetes, zustandsbehaftetes Skript erfolgen. Easycode und Barrierescouts sind die einfachsten Kandidaten. Shopware nutzt bereits dieses Skriptmodell in einem schlafenden Operationscontainer. Die Destille benötigt zusätzlich eine dauerhafte Annahme und Speicherung von CMS-Inhaltsereignissen oder einen entsprechend zuverlässigen Ersatz.
