@@ -173,8 +173,6 @@ export async function deploy(
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  deploy(process.env).catch((error) => {
-    console.error(error.message)
-    process.exitCode = 1
-  })
+  console.error('Direct deployment is retired. Request the verified run through the Easycode release coordinator; see docs/release-workflow.md.')
+  process.exitCode = 1
 }

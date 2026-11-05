@@ -10,7 +10,10 @@ const limiter = createChatLimiter()
 const headers = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }
 const providerEndpoint = () => {
   const region = process.env.OPENAI_CHAT_REGION || 'eu'
-  if (region === 'global' && process.env.APP_ENV === 'staging')
+  if (
+    region === 'global' &&
+    (process.env.APP_ENV === 'staging' || process.env.OPENAI_GLOBAL_APPROVED === 'true')
+  )
     return 'https://api.openai.com/v1/responses'
   if (region === 'eu' && process.env.OPENAI_EU_APPROVED === 'true')
     return 'https://eu.api.openai.com/v1/responses'

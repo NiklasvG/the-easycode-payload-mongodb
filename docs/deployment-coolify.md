@@ -1,5 +1,12 @@
 # Hetzner / Coolify deployment
 
+**Aktualisierung vom 5. November 2026:** Der aktuelle Releaseablauf steht in
+[release-workflow.md](release-workflow.md). Er ersetzt den unten dokumentierten
+direkten GitHub→Coolify-Dispatch durch einen projektspezifischen Koordinator mit
+Run-ID-Prüfung, separaten Zugängen, Build-ID und erforderlichem Digest. Die
+folgenden Einrichtungs-/Importnotizen beschreiben den bisherigen Stand und sind
+keine Anweisung, den alten Veröffentlichungsweg parallel weiterzubetreiben.
+
 For self-hosted analytics, performance and uptime alternatives, see
 [Monitoring on Coolify](monitoring-coolify.md).
 For the configured Umami integration and runtime variables, see

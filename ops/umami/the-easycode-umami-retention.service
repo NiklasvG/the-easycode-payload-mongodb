@@ -1,0 +1,13 @@
+[Unit]
+Description=Easycode Umami website statistics retention (180 days)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh /srv/the-easycode-umami-retention/retention.sh
+TimeoutStartSec=120
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true

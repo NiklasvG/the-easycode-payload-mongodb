@@ -8,6 +8,11 @@ const NEXT_PUBLIC_SERVER_URL =
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	output: 'standalone',
+	// Captured in the built server, so a runtime variable cannot impersonate a new build.
+	env: {
+		RELEASE_BUILD_ID: process.env.BUILD_ID || '',
+		RELEASE_COMMIT_SHA: process.env.SOURCE_COMMIT || '',
+	},
 	distDir: process.env.NEXT_BUILD_DIR || '.next',
 	outputFileTracingExcludes: { '/*': ['./test-results/**/*', './playwright-report/**/*', './tests/**/*', './experiments/**/*', './docs/**/*', './.quality-*'] },
 	// Use static generation and ISR without streaming a partially rendered loading shell.

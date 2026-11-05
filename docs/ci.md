@@ -1,5 +1,26 @@
 # Automatische Prüfungen
 
+## Aktueller Ablauf ab 5. November 2026
+
+Maßgeblich sind `.github/workflows/quality.yml` und
+[release-workflow.md](release-workflow.md). Der Workflow prüft main und PRs nach
+main. `checks` führt Typprüfung, ESLint, Produktions-Audit ab Schweregrad hoch
+sowie die alten Deployment- und neuen Koordinatortests aus. Für Anwendungscode
+folgt genau ein Linux-Testimage mit isolierter MongoDB/Mailpit, Integrationstests
+und Browserfällen. Reine Markdown-/docs-Änderungen überspringen diesen Containerjob
+bewusst, behalten aber den erforderlichen `Quality gate`.
+
+Nur ein Code-Push auf main kann nach bestandenen Pflichtprüfungen seine Run-ID
+an den getrennten Easycode-Koordinator melden. Der Job hat keinen Checkout und
+keine direkten Coolify-Zugangsdaten. Aktivierung und echte Releaseabnahme sind
+in der Betriebsanleitung getrennt vom implementierten Workflow beschrieben.
+
+## Historische Einrichtungsnotizen
+
+Die folgenden Angaben beschreiben den bisherigen Aufbau; insbesondere `verify`,
+staging als Workflowbranch und ein zusätzlicher pnpm-start-Build sind keine
+aktuellen Anforderungen des Workflows.
+
 `.github/workflows/quality.yml` prüft PRs und Änderungen an main/staging mit Node 24 und pnpm 10.23.0. Installation erfolgt mit frozen Lockfile. Typprüfung, ESLint, Vitest, Produktionsbuild, Playwright gegen `pnpm start` sowie Docker-Build, HTTP-Startprüfung und dieselben Browserfälle gegen das Standalone-Image sind verpflichtende Schritte.
 
 MongoDB läuft als Wegwerfcontainer mit Replica Set rs0. Der Seed verweigert andere Hosts, Datenbanknamen und nicht leere Datenbanken. Uploads werden synthetisch erzeugt. SMTP verwendet das lokale Mailpit; der Docker-Build verwendet JSON-Transport. Gemini bekommt keinen gültigen Schlüssel. CI enthält keine Produktions-Secrets. Beide Produktionsbuilds lesen veröffentlichte CMS-Daten aus der Testdatenbank; Docker erhält die Zugangsdaten als BuildKit-Secrets und nutzt in der Linux-CI das Hostnetzwerk.

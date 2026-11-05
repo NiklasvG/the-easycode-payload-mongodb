@@ -1,5 +1,10 @@
 # Umami in Coolify einrichten
 
+Aktueller Betriebsnachweis vom 5. November 2026:
+[180-Tage-Aufbewahrung](umami-retention.md). Umami 3.4.0 läuft auf dem
+Coolify-Controller; die folgenden Schritte sind Einrichtungsanleitung, kein
+Auftrag zur erneuten Anlage oder zu einem Serverumzug.
+
 Die Website ersetzt Google Analytics durch selbst gehostetes Umami. Der Tracker
 laedt erst nach Zustimmung zu "Nutzungsanalyse" im Cookie-Banner. Umami misst
 Seitenaufrufe und SPA-Navigation automatisch. `data-performance="true"` aktiviert
