@@ -72,6 +72,24 @@ class BackupPairTest(unittest.TestCase):
                 with self.assertRaises(RuntimeError): module.run(self.config(), state)
                 php.assert_not_called()
 
+    def test_oneshot_mode_blocks_an_unfinished_release_before_writer_pause(self):
+        with tempfile.TemporaryDirectory(dir=TEMP_ROOT) as directory:
+            root = Path(directory)
+            (root / 'state.json').write_text(json.dumps({'active': {'phase': 'unknown'}}))
+            config_path = root / 'config.json'
+            config_path.write_text(json.dumps({'state_directory': str(root)}))
+            config = self.config()
+            config.update(coordinator='', release_job_config=str(config_path))
+            calls = []
+            def php(config, action, extra=None):
+                calls.append(action)
+                if action == 'mount': return module.EXPECTED_MOUNT
+            with patch.object(module, 'php', php), patch.object(module, 'coordinator') as coordinator:
+                with self.assertRaisesRegex(RuntimeError, 'Unfinished release'):
+                    module.run(config, root / 'backup.json')
+                coordinator.assert_not_called()
+            self.assertEqual(calls, ['mount'])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -76,6 +76,7 @@ jobs:
       - run: pnpm test:deployment
       - run: node --test ops/coolify/coordinator.test.mjs
       - run: python3 -m unittest discover -s ops/backup -p 'test_*.py'
+      - run: python3 -m unittest discover -s ops/release -p 'test_*.py'
 
   container:
     needs: [changes, checks]
@@ -204,23 +205,64 @@ jobs:
     needs: [changes, quality]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.changes.outputs.release == 'true' && vars.COOLIFY_PRODUCTION_ENABLED == 'true'
     runs-on: ubuntu-24.04
-    timeout-minutes: 2
+    timeout-minutes: 45
     concurrency:
       group: coolify-main
       cancel-in-progress: false
     environment: production
     steps:
-      - name: Request release of this verified workflow run
+      - name: Run the restricted server release job and verify its result
         env:
-          COORDINATOR_URL: ${{ vars.COOLIFY_COORDINATOR_URL }}
-          RELEASE_TOKEN: ${{ secrets.COOLIFY_PRODUCTION_RELEASE_TOKEN }}
+          RELEASE_SSH_HOST: ${{ vars.RELEASE_SSH_HOST }}
+          RELEASE_SSH_KEY: ${{ secrets.RELEASE_SSH_KEY }}
+          RELEASE_SSH_KNOWN_HOSTS: ${{ secrets.RELEASE_SSH_KNOWN_HOSTS }}
+        shell: python
         run: |
-          test -n "$COORDINATOR_URL"
-          test -n "$RELEASE_TOKEN"
-          case "$COORDINATOR_URL" in https://*) ;; *) exit 1 ;; esac
-          curl --fail --silent --show-error --max-time 60 \
-            --request POST \
-            --header "Authorization: Bearer $RELEASE_TOKEN" \
-            --header 'Content-Type: application/json' \
-            --data "{\"runId\":\"$GITHUB_RUN_ID\"}" \
-            "${COORDINATOR_URL%/}/v1/approve/production-website"
+          """CI client: private temporary SSH identity and exact pinned host key."""
+          import json
+          import os
+          from pathlib import Path
+          import subprocess
+          import tempfile
+          import time
+          
+          
+          def main():
+              run_id = os.environ['GITHUB_RUN_ID']
+              if not run_id.isdigit():
+                  raise RuntimeError('Invalid run ID')
+              host = os.environ['RELEASE_SSH_HOST']
+              if not host or any(x in host for x in [' ', '\n', '\r', '@']):
+                  raise RuntimeError('Invalid release host')
+              with tempfile.TemporaryDirectory() as directory:
+                  key = Path(directory) / 'identity'
+                  known = Path(directory) / 'known_hosts'
+                  key.write_text(os.environ['RELEASE_SSH_KEY'].rstrip() + '\n')
+                  key.chmod(0o600)
+                  known.write_text(os.environ['RELEASE_SSH_KNOWN_HOSTS'].rstrip() + '\n')
+                  command = ['ssh', '-i', str(key), '-o', 'IdentitiesOnly=yes', '-o', 'BatchMode=yes',
+                             '-o', 'StrictHostKeyChecking=yes', '-o', 'UserKnownHostsFile=' + str(known),
+                             '-o', 'ConnectTimeout=15', 'root@' + host]
+          
+                  def call(action):
+                      result = subprocess.run(command + [action + ' ' + run_id], capture_output=True, text=True, timeout=30)
+                      if result.returncode:
+                          raise RuntimeError('Restricted release connection failed')
+                      return json.loads(result.stdout)
+          
+                  if call('release').get('accepted') is not True:
+                      raise RuntimeError('Release request rejected')
+                  deadline = time.monotonic() + 2400
+                  while time.monotonic() < deadline:
+                      time.sleep(10)
+                      result = call('status')
+                      if result.get('status') == 'success':
+                          print(json.dumps(result))
+                          return
+                      if result.get('status') == 'failed':
+                          raise RuntimeError('Server release failed; reconcile stored state before retry')
+                  raise RuntimeError('CI wait ended; server job remains independent. Inspect its stored state.')
+          
+          
+          if __name__ == '__main__':
+              main()

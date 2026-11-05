@@ -16,7 +16,7 @@ TERMINAL = {"success", "failed", "error", "cancelled", "canceled"}
 
 
 def validate(config):
-    for key in ("project", "server", "backend", "database_plan", "coordinator"):
+    for key in ("project", "server", "backend", "database_plan", *( () if config.get('release_job_config') else ('coordinator',) )):
         if not re.fullmatch(r"[a-z0-9]{20,32}", config.get(key, "")):
             raise ValueError("Invalid fixed resource mapping")
     if not config.get("file_plans") or any(
@@ -42,8 +42,10 @@ $a=App\Models\Application::where('uuid',$c['backend'])->firstOrFail();
 if($a->environment->project->uuid!==$c['project']||$a->destination->server->uuid!==$c['server'])throw new Exception('Scope mismatch');
 $db=App\Models\ScheduledDatabaseBackup::where('uuid',$c['database_plan'])->firstOrFail();
 if($db->database->environment->project->uuid!==$c['project']||$db->database->destination->server->uuid!==$c['server'])throw new Exception('Database scope mismatch');
-$co=App\Models\Application::where('uuid',$c['coordinator'])->firstOrFail();
-if($co->environment->project->uuid!==$c['project']||$co->destination->server->uuid!==$c['server'])throw new Exception('Coordinator scope mismatch');
+$co=null;if(!empty($c['coordinator'])){
+ $co=App\Models\Application::where('uuid',$c['coordinator'])->firstOrFail();
+ if($co->environment->project->uuid!==$c['project']||$co->destination->server->uuid!==$c['server'])throw new Exception('Coordinator scope mismatch');
+}
 $plans=[$db];foreach($c['file_plans'] as $id){
  $p=App\Models\ScheduledVolumeBackup::forApplication($a)->where('uuid',$id)->firstOrFail();$plans[]=$p;
 }
@@ -131,14 +133,25 @@ def run(config, state_path):
     restore = []
     paused_container = None
     try:
-        for target in ("production-website",):
+        if config.get("release_job_config"):
+            release_config = json.loads(Path(config['release_job_config']).read_text())
+            release_state = json.loads((Path(release_config['state_directory']) / 'state.json').read_text())
+            if release_state.get('active'):
+                raise RuntimeError('Unfinished release must be reconciled before backup')
+            import importlib.util
+            spec = importlib.util.spec_from_file_location('release_state_backup', str(Path(config['release_job_config']).parent / 'state_backup.py'))
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            state['releaseState'] = module.backup(release_config)
+            atomic_write(state_path, state)
+        for target in (() if config.get("release_job_config") else ("production-website",)):
             status = coordinator(config, target, "status")
             if not status.get("paused"):
                 coordinator(config, target, "pause")
                 restore.append(target)
         deadline = time.monotonic() + 3600
         while any(coordinator(config, target, "status").get("active")
-                  for target in ("production-website",)):
+                  for target in (() if config.get("release_job_config") else ("production-website",))):
             if time.monotonic() >= deadline:
                 raise RuntimeError("Active release did not finish; no writers paused")
             time.sleep(5)
@@ -212,7 +225,14 @@ if __name__ == "__main__":
     if not configuration.get("enabled") and not arguments.initial_check:
         raise SystemExit("Project backup schedule is not enabled")
     try:
-        receipt = run(configuration, configuration["state_file"])
+        if configuration.get('release_job_config'):
+            import fcntl
+            release_config = json.loads(Path(configuration['release_job_config']).read_text())
+            with (Path(release_config['state_directory']) / 'operations.lock').open('a') as release_lock:
+                fcntl.flock(release_lock, fcntl.LOCK_EX)
+                receipt = run(configuration, configuration['state_file'])
+        else:
+            receipt = run(configuration, configuration["state_file"])
         print(json.dumps({"project": configuration["project"], "pair": receipt["pair"],
                           "success": receipt["success"], "s3Verified": True}))
     except Exception as error:
