@@ -6,8 +6,10 @@ Am 5. November wurde die Webkoordinator-Abhängigkeit durch ein gemeinsames
 Controller-Hostlock mit dem bedarfsweisen Releasejob ersetzt. Der neue Erstlauf
 `5e4d2b73-cf51-4963-92ee-70d341d6aab4` war erfolgreich, einschließlich DB/Medien,
 S3-Rückleseprüfung des Releasezustands und Wiederfreigabe der Website.
-Details: [Releasejob](release-job.md). Die bisherigen nativen Releasezustands-
-Sicherungen bleiben erhalten; ihr alter Kalender wird nicht mehr benutzt.
+Details: [Releasejob](release-job.md). Die alten nativen Webkoordinator-Zustands-
+Sicherungen und ihr Plan wurden anschließend auf Betreiberauftrag gelöscht;
+[Nachweis](coordinator-bereinigung-2026-11-05.md). Website-DB-/Medien-Sicherungen
+und neue Jobzustandskopien bleiben erhalten.
 
 ## Eingerichteter Betrieb und Erstnachweis
 
@@ -32,11 +34,11 @@ bestandenen Offline-Fehlertests nachgewiesen.
 | DB-Unterplan | `yalqgutj3zvfvdjoymsjirhv` |
 | Medien-Unterplan | `ztcmdo9mufusjyywkdqzty6a` |
 | Releasekoordinator | `87bn9vgwdcdelqo8tnsmlgef` |
-| Koordinatorzustand-Unterplan | `54iegz3fcx3xd9ik8kc55i4w` |
+| Alter Koordinatorzustands-Unterplan (entfernt) | `54iegz3fcx3xd9ik8kc55i4w` |
 
 Die nativen DB-/Medien-Unterpläne sind als Kalender deaktiviert und werden vom
 gemeinsamen Hostdienst aufgerufen. Der bisherige Koordinatorzustands-Unterplan
-bleibt deaktiviert erhalten; neue Releasezustandskopien werden direkt auf dem
+wurde nach Betreiberfreigabe entfernt; neue Releasezustandskopien werden direkt auf dem
 Controller aus dem geheimnisfreien Jobzustand erstellt und nach S3 hochgeladen. Sie behalten 2 lokale und 14 S3-Stände ohne
 zusätzliche Alters-/Größenlimits. S3-Ziel ist Hetzner Object Storage in Nürnberg;
 das sind Anzahlgrenzen und keine garantierten 2 beziehungsweise 14 Tage.
