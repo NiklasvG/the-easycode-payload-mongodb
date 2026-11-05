@@ -351,12 +351,14 @@ höchstens zwei lokale Sicherungsstände und vierzehn zusätzliche Stände im
 Hetzner Object Storage am Standort Nürnberg erhalten. Bei neuen Sicherungen
 werden ältere Stände entsprechend dieser Anzahlgrenzen ersetzt; diese Grenzen
 sind keine festen Fristen in Tagen. Maildaten und weitere Systeme unterliegen
-gesonderten Sicherungsregeln. Rechtsgrundlage für die Verarbeitung
+gesonderten Sicherungsregeln. Für die Datenbank der Nutzungsanalyse werden
+ebenfalls höchstens zwei lokale und vierzehn S3-Stände ohne zusätzliche feste
+Altersfrist vorgehalten. Rechtsgrundlage für die Verarbeitung
 personenbezogener Daten in diesen Sicherungen ist Art. 6 Abs. 1 lit. f DSGVO;
 mein berechtigtes Interesse liegt in der Sicherung und Wiederherstellbarkeit
 der betriebenen Systeme.
-[Aufbewahrung von Mail- und Statistikdatenbank-Sicherungen anhand der tatsächlich
-eingerichteten Rotation ergänzen. Die Website-Regel gilt hierfür nicht automatisch.]
+[Aufbewahrung von Mail-Sicherungen anhand der tatsächlich eingerichteten Rotation
+ergänzen. Die Website-Regel gilt hierfür nicht automatisch.]
 
 ## 10. Ihre Rechte
 
