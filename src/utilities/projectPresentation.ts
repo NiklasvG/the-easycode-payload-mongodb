@@ -1,5 +1,5 @@
 export const projectTypeLabels = {
-  'brand-webseite': 'Brand Webseite', individualsoftware: 'Individualsoftware',
+  'brand-webseite': 'Unternehmenswebsite', individualsoftware: 'Individualsoftware',
   'e-commerce': 'E-Commerce', 'app-entwicklung': 'App-Entwicklung', hosting: 'Hosting',
 } satisfies Record<string, string>
 

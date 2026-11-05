@@ -30,7 +30,7 @@ export const ClientQuotesBlock: Block = {
 			type: 'text',
 			label: 'Overhead (kleine Überschrift)',
 			required: false,
-			defaultValue: 'Stimmen unserer Kunden'
+			defaultValue: 'Stimmen meiner Kunden'
 		},
 		{
 			name: 'headline',

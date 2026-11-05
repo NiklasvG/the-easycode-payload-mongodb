@@ -103,7 +103,7 @@ export const Projects: CollectionConfig = {
 							},
 							options: [
 								{
-									label: 'Brand Webseite',
+									label: 'Unternehmenswebsite',
 									value: 'brand-webseite'
 								},
 								{

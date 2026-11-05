@@ -38,14 +38,14 @@ export const ProjectsGridBlock: Block = {
 			type: 'text',
 			label: 'Überschrift',
 			required: false,
-			defaultValue: 'Websites. E-Commerce. individuelle Lösungen'
+			defaultValue: 'Websites, E-Commerce und individuelle Software'
 		},
 		{
 			name: 'subhead',
 			type: 'text',
 			label: 'Subheadline',
 			required: false,
-			defaultValue: 'Der Erfolg deiner Projekte treibt uns an.'
+			defaultValue: 'Entdecke, wie ich Websites, Online-Shops und Webanwendungen für meine Kunden umsetze.'
 		},
 		{
 			name: 'enableProjectTypeFilter',
@@ -68,7 +68,7 @@ export const ProjectsGridBlock: Block = {
 					'Wenn gesetzt, werden nur Projekte mit diesen Typen angezeigt.'
 			},
 			options: [
-				{ label: 'Brand Webseite', value: 'brand-webseite' },
+				{ label: 'Unternehmenswebsite', value: 'brand-webseite' },
 				{ label: 'Individualsoftware', value: 'individualsoftware' },
 				{ label: 'E-Commerce', value: 'e-commerce' },
 				{ label: 'App-Entwicklung', value: 'app-entwicklung' },

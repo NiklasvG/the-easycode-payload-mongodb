@@ -40,14 +40,14 @@ export const ServicesBlock: Block = {
 			type: 'text',
 			label: 'Überschrift',
 			required: false,
-			defaultValue: 'Zielgerichtet. Maßgeschneidert. Flexibel.'
+			defaultValue: 'Webentwicklung und DevOps für dein Unternehmen'
 		},
 		{
 			name: 'accentText',
 			type: 'text',
 			label: 'Akzentwort (optional, farbig)',
 			required: false,
-			defaultValue: 'Maßgeschneidert.'
+			defaultValue: 'Webentwicklung'
 		},
 		{
 			name: 'subhead',
@@ -55,7 +55,7 @@ export const ServicesBlock: Block = {
 			label: 'Subheadline',
 			required: false,
 			defaultValue:
-				'Von der Konzeption bis zum Live-Gang: Digitale Projekte, die ins Schwarze treffen.'
+				'Ich begleite dein Projekt von der Konzeption über die Entwicklung bis zum Launch und zur laufenden Betreuung.'
 		},
 		{
 			name: 'enableLink',

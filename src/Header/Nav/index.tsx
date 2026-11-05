@@ -183,7 +183,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
               </span>
             </Link>
             <div className="flex flex-wrap items-center gap-3 mt-10 text-foreground">
-              <span className="mr-2 text-sm font-semibold">Folge uns</span>
+              <span className="mr-2 text-sm font-semibold">Folge mir</span>
               <a
                 href="https://www.linkedin.com/company/the-easycode/"
                 target="_blank"

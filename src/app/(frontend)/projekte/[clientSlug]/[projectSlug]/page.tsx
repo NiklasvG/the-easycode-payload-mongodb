@@ -345,7 +345,7 @@ export default async function ProjectDetailPage({ params: paramsPromise }: Args)
                   <Code className="w-16 h-16 text-accent" />
                 </div>
                 <h2 className="font-bold text-gray-200 mb-4 font-mono text-sm uppercase tracking-widest">
-                  For Developers
+                  Technische Umsetzung
                 </h2>
                 <div className="text-gray-400 text-sm leading-relaxed font-mono">
                   {project.theNerdDetails && <RichText data={project.theNerdDetails} />}
@@ -390,7 +390,7 @@ export default async function ProjectDetailPage({ params: paramsPromise }: Args)
             href="/kontakt"
             className="inline-flex items-center gap-2 text-accent hover:text-white font-bold text-lg transition-colors border-b-2 border-accent hover:border-white pb-1"
           >
-            Let&apos;s talk about it <ArrowRight className="w-5 h-5" />
+            Projekt besprechen <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
       </section>

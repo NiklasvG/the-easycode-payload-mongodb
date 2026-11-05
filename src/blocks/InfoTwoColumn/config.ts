@@ -44,14 +44,14 @@ export const InfoTwoColumnBlock: Block = {
 			type: 'text',
 			label: 'Überschrift',
 			required: false,
-			defaultValue: 'Website Agentur für starke Onlineauftritte'
+			defaultValue: 'Dein Webentwickler für einen starken Onlineauftritt'
 		},
 		{
 			name: 'accentText',
 			type: 'text',
 			label: 'Akzentwort/-phrase (optional, farbig)',
 			required: false,
-			defaultValue: 'starke Onlineauftritte'
+			defaultValue: 'starken Onlineauftritt'
 		},
 		{
 			name: 'body',
@@ -59,14 +59,14 @@ export const InfoTwoColumnBlock: Block = {
 			label: 'Fließtext (rechts, oberhalb der Liste)',
 			required: false,
 			defaultValue:
-				'Eine Website ist oft der erste Eindruck deines Unternehmens. Was, wenn dieser nicht überzeugt? Veraltetes Design oder lange Ladezeiten schrecken ab. Wir setzen auf individuelles Webdesign, responsives Design und Nutzungsfreundlichkeit. Als Website Agentur begleiten wir dich von der Idee bis zur fertigen Seite und sorgen dafür, dass du am Ende auf ein Ergebnis blicken kannst, das deine Zielgruppe begeistert und deren Vertrauen in dein Unternehmen stärkt.'
+				'Ich entwickle eine Website, die dein Unternehmen verständlich präsentiert und auf Smartphone, Tablet und Desktop funktioniert. Von der Konzeption über das Design bis zum Launch hast du einen direkten Ansprechpartner. Inhalte kannst du anschließend selbst im CMS pflegen.'
 		},
 		{
 			name: 'listHeadline',
 			type: 'text',
 			label: 'Überschrift über der Liste',
 			required: false,
-			defaultValue: 'Deine Vorteile mit unserer Website Entwicklung'
+			defaultValue: 'Das bekommst du bei der Zusammenarbeit mit mir'
 		},
 		{
 			name: 'items',
@@ -90,13 +90,13 @@ export const InfoTwoColumnBlock: Block = {
 					text: 'Deine Website wird individuell auf deine Zielgruppe abgestimmt.'
 				},
 				{
-					text: 'Wir kombinieren ansprechendes Design mit optimaler Performance.'
+					text: 'Ich verbinde ansprechendes Design mit schnellen Ladezeiten.'
 				},
 				{
 					text: 'Du profitierst von einer klaren Struktur und hoher Nutzungsfreundlichkeit.'
 				},
 				{
-					text: 'Wir sorgen dafür, dass deine Seite gefunden und geliebt wird.'
+					text: 'Ich berücksichtige technische SEO-Grundlagen und verständliche Inhalte.'
 				}
 			]
 		}
