@@ -66,9 +66,9 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
             {icons && (
               <HeroIcons>
                 <div className="absolute left-1/2 -translate-x-1/2 top-[calc(100%-5rem)] lg:top-auto lg:bottom-24 xl:bottom-28 2xl:bottom-18">
-                  <ul className="flex max-w-[calc(100vw-2rem)] flex-wrap justify-center px-1 py-1 bg-n-9/40 backdrop-blur-sm border rounded-2xl">
+                  <ul className="flex w-max max-w-[calc(100vw-2rem)] flex-nowrap justify-center px-1 py-1 bg-n-9/40 backdrop-blur-sm border rounded-2xl">
                     {icons.map((icon, index) => (
-                      <li key={index} className="p-3 sm:p-5">
+                      <li key={index} className="shrink-0 p-3 sm:p-5">
                         <LucideIcon icon={icon.icon as LucideIconName} className="size-6" />
                       </li>
                     ))}
