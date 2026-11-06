@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-const mocks = vi.hoisted(() => ({ find: vi.fn() }))
+const mocks = vi.hoisted(() => ({ find: vi.fn(), record: vi.fn() }))
+vi.mock('@/utilities/chatConsentReceipts', () => ({ recordChatConsent: mocks.record }))
 vi.mock('@payload-config', () => ({ default: {} }))
 vi.mock('payload', () => ({ getPayload: async () => mocks }))
 let POST: typeof import('@/app/api/ai-chat/route').POST
@@ -21,7 +22,7 @@ const input = {
   message: 'Hallo',
   consent: {
     accepted: true,
-    version: 'openai-consent-v2',
+    version: 'openai-consent-v3',
     acceptedAt: Date.now(),
     id: '11111111-1111-4111-8111-111111111111',
   },
@@ -40,6 +41,7 @@ describe('OpenAI chat region and request contract', () => {
   beforeEach(async () => {
     vi.resetModules()
     vi.clearAllMocks()
+    mocks.record.mockResolvedValue(undefined)
     vi.spyOn(console, 'info').mockImplementation(() => {})
     for (const [key, value] of Object.entries({
       AI_CHAT_ENABLED: 'true',
@@ -68,16 +70,25 @@ describe('OpenAI chat region and request contract', () => {
     expect(fetch).not.toHaveBeenCalled()
     expect(console.info).not.toHaveBeenCalled()
   })
-  it('logs only normalized consent metadata and does not send it to OpenAI', async () => {
+  it('stores only normalized consent metadata and does not send it to OpenAI', async () => {
     const response = await POST(
       request({ ...input, consent: { ...input.consent, privateText: 'PRIVATE' } }),
     )
     await response.text()
-    expect(console.info).toHaveBeenCalledWith('[ai-chat-consent]', JSON.stringify(input.consent))
+    expect(mocks.record).toHaveBeenCalledWith(mocks, input.consent)
+    expect(console.info).not.toHaveBeenCalled()
     const upstream = JSON.parse(vi.mocked(fetch).mock.calls[0][1]?.body as string)
     expect(upstream.consent).toBeUndefined()
     expect(JSON.stringify(upstream)).not.toContain(input.consent.id)
-    expect(JSON.stringify(vi.mocked(console.info).mock.calls)).not.toContain('PRIVATE')
+    expect(JSON.stringify(mocks.record.mock.calls)).not.toContain('PRIVATE')
+  })
+  it('blocks provider requests when consent evidence cannot be stored', async () => {
+    mocks.record.mockRejectedValueOnce(new Error('Database unavailable'))
+    const response = await POST(request(input))
+    expect(response.status).toBe(502)
+    expect(fetch).not.toHaveBeenCalled()
+    expect(mocks.find).not.toHaveBeenCalled()
+    expect(await response.text()).not.toContain('Database unavailable')
   })
   it('is disabled until approval and configuration are confirmed', async () => {
     vi.stubEnv('OPENAI_EU_APPROVED', 'false')

@@ -24,11 +24,11 @@ interface ChatMessage {
   excludeFromContext?: boolean
 }
 
-const CHAT_CONSENT_SUMMARY =
-  'Ich willige ein, dass The-EasyCode meine Nachrichten und den Gesprächsverlauf zur Beantwortung meiner Fragen an OpenAI Ireland Ltd. übermittelt. Die Verarbeitung kann außerhalb der EU erfolgen.'
-const CHAT_CONSENT_CHOICE = 'Die Einwilligung ist freiwillig und jederzeit im Chat widerrufbar.'
-const CHAT_CONSENT_WARNING =
-  'Bitte keine sensiblen Daten oder Daten anderer Personen eingeben. KI-Antworten können Fehler enthalten.'
+import {
+  CHAT_CONSENT_SUMMARY,
+  CHAT_CONSENT_CHOICE,
+  CHAT_CONSENT_WARNING,
+} from '@/constants/chatConsent'
 
 const STORAGE_KEY = 'easycode-ai-chat-opened'
 const CONSENT_KEY = 'easycode-ai-chat-consent'
@@ -360,7 +360,7 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                   <p className="text-xs text-gray-400">{CHAT_CONSENT_WARNING}</p>
                   <p>
                     <a
-                      href="/datenschutz"
+                      href="/datenschutz#ki-chat"
                       aria-label="Datenschutz zum KI-Chat (neuer Tab)"
                       target="_blank"
                       rel="noopener noreferrer"

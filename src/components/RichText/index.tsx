@@ -21,6 +21,7 @@ import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { cn } from '@/utilities/ui'
 import { resolveCMSLinkHref } from '@/utilities/resolveCMSLinkHref'
+import { privacySectionId } from '@/utilities/privacySections'
 
 type NodeTypes =
   | DefaultNodeTypes
@@ -28,6 +29,19 @@ type NodeTypes =
 
 const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
+  heading: ({ node, nodesToJSX }) => {
+    const text = node.children.map((child) => ('text' in child ? child.text : '')).join('')
+    const id = node.tag === 'h2' ? privacySectionId(text) : undefined
+    const Heading = node.tag
+    return (
+      <Heading
+        id={id}
+        style={id ? { scrollMarginTop: 'calc(var(--site-header-height, 7.5rem) + 1.5rem)' } : undefined}
+      >
+        {nodesToJSX({ nodes: node.children })}
+      </Heading>
+    )
+  },
   link: ({ node, nodesToJSX }) => {
     const children = nodesToJSX({ nodes: node.children })
     const doc = node.fields.doc

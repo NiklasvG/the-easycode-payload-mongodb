@@ -67,7 +67,7 @@ describe('AI chat privacy and interaction', () => {
     )
     render(React.createElement(AIChat, { initiallyOpen: true }))
     const details = screen.getByRole('link', { name: 'Datenschutz zum KI-Chat (neuer Tab)' })
-    expect(details.getAttribute('href')).toBe('/datenschutz')
+    expect(details.getAttribute('href')).toBe('/datenschutz#ki-chat')
     expect(details.getAttribute('target')).toBe('_blank')
     fireEvent.click(details)
     expect(fetch).not.toHaveBeenCalled()
@@ -96,7 +96,7 @@ describe('AI chat privacy and interaction', () => {
     send()
     await screen.findByText('Webentwicklung.')
     const body = JSON.parse(vi.mocked(fetch).mock.calls[0][1]?.body as string)
-    expect(body.consent).toMatchObject({ accepted: true, version: 'openai-consent-v2' })
+    expect(body.consent).toMatchObject({ accepted: true, version: 'openai-consent-v3' })
     expect(body.consent.id).toBeTruthy()
     expect(body.history).toEqual([])
     expect(sessionStorage.getItem('easycode-ai-chat-consent')).not.toContain('Webentwicklung')
@@ -151,7 +151,7 @@ describe('AI chat privacy and interaction', () => {
       'easycode-ai-chat-consent',
       JSON.stringify({
         accepted: true,
-        version: 'openai-consent-v2',
+        version: 'openai-consent-v3',
         acceptedAt: Date.now() - 86400000,
         id: '11111111-1111-4111-8111-111111111111',
       }),

@@ -1,8 +1,10 @@
+import { CHAT_CONSENT_VERSION } from '@/constants/chatConsent'
+
 export const CHAT_MESSAGE_CHARS = 1000
 export const CHAT_HISTORY_ITEMS = 12
 export const CHAT_HISTORY_CHARS = 6000
 export const CHAT_OUTPUT_CHARS = 6000
-export const CHAT_CONSENT_VERSION = 'openai-consent-v2'
+export { CHAT_CONSENT_VERSION } from '@/constants/chatConsent'
 export const CHAT_CONSENT_MAX_AGE = 24 * 60 * 60 * 1000
 export type ChatConsent = { accepted: true; version: string; acceptedAt: number; id: string }
 

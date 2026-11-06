@@ -1,3 +1,4 @@
+import { recordChatConsent } from '@/utilities/chatConsentReceipts'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { generateSystemInstruction } from '@/constants/ai-systemprompt'
@@ -111,10 +112,9 @@ export async function POST(req: Request) {
         timedOut ? 408 : error instanceof RequestBodyError ? error.status : 400,
       )
     }
-    // Record only the versioned client consent declaration; never message content or IP.
-    // These receipts follow the application's configured Docker log rotation.
-    console.info('[ai-chat-consent]', JSON.stringify(input.consent))
     const payload = await untilAbort(getPayload({ config: configPromise }), signal)
+    // Provider processing starts only after the minimal consent receipt is durably stored.
+    await untilAbort(recordChatConsent(payload, input.consent), signal)
     const { docs: projects } = await untilAbort(
       payload.find({
         collection: 'projects',
