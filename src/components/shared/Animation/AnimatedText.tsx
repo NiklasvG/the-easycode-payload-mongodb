@@ -54,7 +54,7 @@ export function RotatingText({
       <h1 aria-label={[phrases[0], title].filter(Boolean).join(' ')}>
         <span
           aria-hidden="true"
-          className={`inline-grid max-w-full align-top [overflow-wrap:anywhere] ${className || ''}`}
+          className={`hero-rotating-line inline-grid max-w-full align-top [overflow-wrap:anywhere] ${className || ''}`}
         >
           {/* Each phrase reserves its wrapped size, so CMS copy never shifts the page. */}
           {phrases.map((phrase, index) => (

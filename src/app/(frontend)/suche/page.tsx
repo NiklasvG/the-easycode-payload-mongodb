@@ -238,7 +238,7 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
           <p>Versuche einen anderen oder kürzeren Suchbegriff.</p>
           <Link
             href="/leistungen"
-            className="inline-flex min-h-11 items-center mt-4 text-accent underline underline-offset-4"
+            className="inline-link inline-flex min-h-11 items-center mt-4"
           >
             Leistungen entdecken
           </Link>

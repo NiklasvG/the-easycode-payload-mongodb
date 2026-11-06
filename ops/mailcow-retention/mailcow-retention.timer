@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Mailcow log retention every five minutes
+
+[Timer]
+OnBootSec=3min
+OnUnitInactiveSec=5min
+AccuracySec=10s
+Unit=mailcow-retention.service
+
+[Install]
+WantedBy=timers.target

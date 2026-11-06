@@ -13,6 +13,36 @@ und startet anschließend die Website unter `http://localhost:3000`.
 Docker Desktop muss vorher laufen. Der vorhandene Snapshot bleibt erhalten;
 beim Start wird kein neues Backup importiert.
 
+### KI-Chat lokal ausprobieren
+
+Der Chat prüft seine Verfügbarkeit über `GET /api/ai-chat`. Neben Aktivierung,
+Region und API-Schlüssel ist ein konfigurierter IP-Header für die Anfragebegrenzung
+erforderlich. Ohne ihn erscheint der Hinweis „Direkter Kontakt“.
+
+Für den direkten lokalen Next.js-Entwicklungsserver enthält die nicht eingecheckte
+Datei `.env.development.local`:
+
+```dotenv
+PUBLIC_TRUSTED_CLIENT_IP_HEADER=x-forwarded-for
+```
+
+Next.js ergänzt diesen Header beim direkten lokalen Aufruf aus der Socket-Adresse,
+wenn die Anfrage keinen solchen Header enthält. Diese Einstellung gilt ausschließlich
+für die lokale Entwicklung. Auf öffentlich erreichbaren Deployments bleibt der
+vertrauenswürdige, überschreibende Proxy mit der dort bestätigten Header-Konfiguration
+erforderlich; diese lokale Konfiguration nicht auf Live übertragen.
+
+Zusätzlich müssen `AI_CHAT_ENABLED=true`, `OPENAI_API_KEY` und eine freigegebene
+Region in der privaten lokalen Konfiguration vorhanden sein. Der vorhandene globale
+Staging-Modus nutzt `APP_ENV=staging` und `OPENAI_CHAT_REGION=global`.
+Schlüssel nicht in den Browser oder ins Repository übernehmen.
+
+Nach dem Start `http://localhost:3000` öffnen, die Cookie-Auswahl schließen und
+das Chat-Symbol unten rechts anklicken. Erst nach der gesonderten Einwilligung und
+dem Absenden einer Nachricht wird OpenAI angefragt. Lokale Testnachrichten sind echte
+API-Anfragen; es gelten die konfigurierten Limits. Weitere Betriebsdetails stehen in
+`docs/ai-chat-openai.md`.
+
 `compose.local.yml` startet MongoDB 8.0 mit einem eigenen Volume und einem
 einzelnen Mitglied im Replica Set `rs0`. Der Host-Port ist ausschließlich an
 `127.0.0.1:27018` gebunden. Diese lokale Entwicklungsinstanz verwendet keine

@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily expiry of Mailcow special-use folders
+
+[Timer]
+OnCalendar=*-*-* 03:40:00 Europe/Berlin
+Persistent=true
+AccuracySec=30s
+Unit=mailcow-folder-retention.service
+
+[Install]
+WantedBy=timers.target

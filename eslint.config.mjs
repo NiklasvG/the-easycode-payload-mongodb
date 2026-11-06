@@ -30,7 +30,7 @@ const eslintConfig = [
     },
   },
   {
-    ignores: ['.next/**', '.quality-*/**', 'src/payload-types.ts', 'src/app/(payload)/admin/importMap.js', 'playwright-report/**', 'test-results/**'],
+    ignores: ['.next/**', '.quality-*/**', '.agents/**', '.impeccable/**', 'src/payload-types.ts', 'src/app/(payload)/admin/importMap.js', 'playwright-report/**', 'test-results/**'],
   },
 ]
 

@@ -1,5 +1,35 @@
 # OpenAI-Chat: Betrieb und Datenschutzvorbereitung
 
+## Datenschutzabschluss vom 6. November 2026
+
+Die Fassung [Datenschutzerklärung](datenschutzerklaerung.md) und die
+[interne Bewertung](datenschutz-openai-bewertung-2026-11-06.md) ersetzen für den
+Datenschutz die nachstehenden älteren Prüfpunkte. Die globale Betriebsentscheidung
+bleibt erhalten. Neue Einwilligung openai-consent-v3, private minimale MongoDB-
+Nachweise und TTL-Löschung 90 Tage nach letzter Nutzung sind implementiert.
+Vor Providerzugriff muss der Nachweis bestätigt gespeichert sein.
+Alle zwölf Datenschutzabschnitte haben feste Anker; Chat-Link: /datenschutz#ki-chat.
+Abnahme des öffentlichen Releases wird gesondert protokolliert.
+
+## Themenbegrenzung vom 6. November 2026
+
+Der Chat beantwortet ausschließlich Fragen zu The-EasyCode, Niklas' öffentlichen
+beruflichen Angaben, Leistungen, veröffentlichten Projekten und Seitennavigation.
+Allgemeine Wissens-, Rezept-, Text- und Programmieraufträge gehören nicht dazu,
+auch nicht mit vorgeschobenem Projektbezug. Kurze, professionelle Antworten dürfen
+gelegentlich passenden Humor enthalten. Fehlende private Angaben werden nicht erraten.
+Kontaktverweise sind für konkrete Kontakt- und Beauftragungsabsicht vorgesehen.
+
+Validierung: 67 automatisierte Prüfungen für API, Antwortprüfung, Stream-Grenzen
+und Chatbedienung bestanden; zusätzlich 13 synthetische Anfragen mit `gpt-6-luna`
+über den globalen Endpunkt (`store=false`). Geprüft wurden Profil, Altersfolgefrage,
+Cookie-Rezept, Snake-Code, Programmierung mit Projektvorwand, Allgemeinwissen,
+Tutorial, Regelumgehung, Projektreferenz, Kontakt, Navigation, gemischte Anfrage
+und Fortsetzung eines alten Codeverlaufs. Alle 13 erfüllten die erwartete Kategorie
+und die geprüften Link-/Kontaktbedingungen. Das ist eine Stichprobe, keine Garantie
+gegen sämtliche Fehlklassifikationen. Chatblasen wurden im lokalen Browser bei
+1440 und 390 Pixel Breite mit simulierten Antworten visuell geprüft.
+
 Stand: 5. November 2026. Globaler Providerzugang erneut technisch getestet;
 Produktionsumschaltung und Veröffentlichung der passenden Datenschutzseite stehen aus.
 
@@ -115,11 +145,24 @@ Vertragsunterlagen und Account-Screenshots außerhalb des
    `model=gpt-6-luna`, `store=false`, `stream=true`, `reasoning.effort=none`,
    `text.verbosity=low`, `max_output_tokens=800`. Kein SDK, keine Tools, Files,
    Conversations, Background-Anfragen oder providerseitigen Response-IDs im Verlauf.
-6. Nur Text-/Refusal-Deltas sowie Abschluss-/Fehlersignale gelangen zum Browser.
+6. Seit dem 6. November 2026 wird eine strukturierte Antwort über `text.format`
+   (`json_schema`, `strict=true`) mit Themenkategorie und Antworttext angefordert.
+   Der Server sammelt die begrenzte Ausgabe bis zum erfolgreichen Abschluss,
+   prüft das Format und gibt erst dann den Antworttext an den Browser weiter.
+   Erkannte Code-, Rezept-, fachfremde und Umgehungsanfragen erhalten lokale
+   Überleitungen zu EasyCode; Modelltext aus diesen Kategorien wird verworfen.
+   Ungültige Formate und Refusals erhalten ebenfalls eine lokale Antwort.
+   Zusätzliche Syntaxprüfungen blockieren erkennbare Codeausgaben auch bei
+   falscher Kategorie. Abgebrochene Antworten werden gar nicht veröffentlicht.
+   Dadurch erscheint die Antwort vollständig nach einer Wartezeit statt Wort für Wort.
    Provider-Metadaten und rohe Fehlermeldungen werden nicht weitergegeben oder geloggt.
 7. Der Browser speichert Gesprächsinhalte nur im React-Arbeitsspeicher, maximal
    Begrüßung plus 40 jüngste Nachrichten. Verlauf löschen entfernt diesen Inhalt.
-   Ein Neuladen verwirft ihn ebenfalls. Schließen stoppt die laufende Anfrage,
+   Interne Chatlinks navigieren im selben Tab über Next.js, ohne das Dokument
+   neu zu laden. Der Chat bleibt im gemeinsamen Frontend-Layout eingebunden;
+   Verlauf, Öffnungszustand und Kontext für Folgefragen bleiben beim Seitenwechsel
+   im Arbeitsspeicher erhalten. Ein vollständiges Neuladen verwirft ihn weiterhin.
+   Schließen stoppt die laufende Anfrage,
    behält den Verlauf aber für ein späteres Öffnen im selben Dokument.
    Einwilligung widerrufen löscht Verlauf, Eingabe und Session-Bestätigung,
    bricht laufende Anfragen ab und verhindert neue bis zur erneuten Einwilligung.
@@ -183,6 +226,10 @@ Quellen: [Datenkontrollen](https://developers.openai.com/api/docs/guides/your-da
 - Origin und Honeypot sind kein Schutz gegen direkte HTTP-Clients. Prompt-Regeln sind
   keine beweisbare Injection-Abwehr; die fehlenden Tools und privaten Daten begrenzen
   mögliche Folgen. Keine zuverlässige Erkennung aller sensiblen Freitexte behaupten.
+  Auch das strukturierte Format garantiert nur die Form, nicht die korrekte
+  Themenzuordnung. Die Themenregeln und Syntaxfilter reduzieren zweckfremde Antworten,
+  sind aber keine vollständige semantische Prüfung. Kontaktverweise werden im Prompt
+  auf konkrete Kontaktabsicht, Beauftragung, Preise und Verfügbarkeit beschränkt.
 - Prozessbudgets werden bei Neustart zurückgesetzt und bei mehreren Replikas vervielfacht.
   Kein finanzieller Hard Cap: unabhängige OpenAI-Spend-Limits und gemeinsame Proxy-/Edge-
   Limits konfigurieren. Keine DDoS-Abwehr allein durch Anwendungscode.

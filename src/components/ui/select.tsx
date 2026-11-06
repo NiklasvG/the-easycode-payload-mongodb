@@ -4,6 +4,7 @@ import { cn } from '@/utilities/ui'
 import * as SelectPrimitive from '@radix-ui/react-select'
 import { Check, ChevronDown, ChevronUp } from 'lucide-react'
 import * as React from 'react'
+import { fieldStyles } from './fieldStyles'
 
 const Select = SelectPrimitive.Root
 
@@ -16,7 +17,8 @@ const SelectTrigger: React.FC<
 > = ({ children, className, ref, ...props }) => (
   <SelectPrimitive.Trigger
     className={cn(
-      'flex min-h-12 min-w-0 w-full items-center justify-between gap-3 rounded-xl border border-white/20 bg-background px-4 py-3 text-base text-foreground ring-offset-background placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-accent focus:ring-offset-2 aria-invalid:border-red-400 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:min-w-0 [&>span]:text-left [&>span]:whitespace-normal [&>span]:[overflow-wrap:anywhere]',
+      fieldStyles,
+      'flex min-h-12 items-center justify-between gap-3 rounded-full data-placeholder:text-muted-foreground [&>span]:min-w-0 [&>span]:text-left [&>span]:whitespace-normal [&>span]:[overflow-wrap:anywhere]',
       className,
     )}
     ref={ref}

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { useDebounce } from '@/utilities/useDebounce'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { SearchCode } from 'lucide-react'
+import { Input } from '@/components/ui/input'
 
 export const Search: React.FC = () => {
   const searchParams = useSearchParams()
@@ -41,7 +42,7 @@ export const Search: React.FC = () => {
               aria-hidden="true"
               className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground group-focus-within:text-accent transition-colors"
             />
-            <input
+            <Input
               type="text"
               name="q"
               inputMode="search"
@@ -52,7 +53,7 @@ export const Search: React.FC = () => {
               maxLength={200}
               aria-label="Website durchsuchen"
               placeholder="Projekte, Kunden, Seiten..."
-              className="w-full min-w-0 bg-secondary text-secondary-foreground border border-white/20 rounded-2xl py-5 pl-12 pr-4 text-base sm:text-xl focus:border-accent transition-colors placeholder:text-muted-foreground"
+              className="pl-12"
             />
           </div>
           <button

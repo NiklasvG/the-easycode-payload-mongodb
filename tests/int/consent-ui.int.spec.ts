@@ -21,10 +21,18 @@ vi.mock('next/link', () => ({
     React.createElement('a', props, children),
 }))
 describe('consent UI external storage', () => {
-  beforeEach(() => localStorage.clear())
+  beforeEach(() => {
+    localStorage.clear()
+    vi.stubGlobal('matchMedia', () => ({
+      matches: true,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }))
+  })
   afterEach(() => {
     cleanup()
     vi.restoreAllMocks()
+    vi.unstubAllGlobals()
     localStorage.clear()
   })
   it('accepts and allows later revocation', () => {
@@ -37,7 +45,10 @@ describe('consent UI external storage', () => {
     expect(JSON.parse(localStorage.getItem(COOKIE_CONSENT_KEY)!).analytics).toBe(false)
   })
   it('requests a new choice when only a consent from the former website exists', () => {
-    localStorage.setItem('cookie-consent-settings', JSON.stringify({ necessary: true, analytics: true }))
+    localStorage.setItem(
+      'cookie-consent-settings',
+      JSON.stringify({ necessary: true, analytics: true }),
+    )
     render(React.createElement(CookieBanner))
     expect(screen.getByRole('button', { name: 'Alle akzeptieren' })).toBeTruthy()
     expect(localStorage.getItem(COOKIE_CONSENT_KEY)).toBeNull()

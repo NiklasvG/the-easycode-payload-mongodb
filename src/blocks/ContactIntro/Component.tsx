@@ -15,7 +15,7 @@ export const ContactIntroBlockComponent: React.FC<Props> = ({
   return (
     <div className="min-w-0 [overflow-wrap:anywhere]">
       {badge ? (
-        <span className="inline-block py-1 px-3 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-bold tracking-widest uppercase mb-6">
+        <span className="accent-chip inline-block py-1 px-3 rounded-full text-sm font-bold tracking-widest uppercase mb-6">
           {badge}
         </span>
       ) : null}

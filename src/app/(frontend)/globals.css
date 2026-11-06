@@ -131,18 +131,6 @@
     font-size: 0.95rem;
   }
 
-  /* Links */
-  & a {
-    @apply text-accent;
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 2px;
-  }
-
-  & a:hover {
-    text-decoration-thickness: 2px;
-  }
-
   /* Blockquotes */
   & blockquote {
     margin: 0.35rem 0;
@@ -595,6 +583,10 @@
 
   .list:last-child {
     margin-bottom: 0;
+  }
+
+  .accent-chip {
+    @apply border border-accent-contrast bg-accent-contrast text-white;
   }
 
   .list--tag {
@@ -1402,6 +1394,12 @@
   font-size: clamp(2.25rem, 4.5vw, 4.5rem);
   line-height: 1.08;
 }
+@media (min-width: 1024px) {
+  .text-animation-hero {
+    min-height: calc(100vh - var(--site-header-height, 7.5rem));
+    min-height: calc(100svh - var(--site-header-height, 7.5rem));
+  }
+}
 @media (hover: hover) and (pointer: fine) {
   .header-link:hover {
     border-color: oklch(var(--primary));
@@ -1417,6 +1415,9 @@
 .hero-phrase-window {
   padding-block: 0.2em;
   margin-block: -0.2em;
+}
+.hero-rotating-line {
+  margin-bottom: 0.06em;
 }
 .mobile-navigation {
   position: fixed;
@@ -1538,17 +1539,6 @@
   @apply mt-4;
 }
 
-.payload-richtext a {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
-}
-
-.payload-richtext a:hover {
-  text-decoration-thickness: 2px;
-  @apply text-accent;
-}
-
 .payload-richtext ul {
   list-style-type: disc;
   @apply mt-2 mb-4 ml-4 ps-4;
@@ -1568,14 +1558,26 @@
   @apply normal-case;
 }
 
+/* Shared treatment for links within text; navigation and button links keep their own roles. */
+.inline-link,
+p a:not(.btn),
+.prose a:not(.btn),
+.payload-richtext a:not(.btn),
+.markdown a,
 .form-checkbox-label a {
-  @apply transition-colors duration-300 ease-in-out;
+  @apply text-foreground;
   text-decoration: underline;
   text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
+  text-underline-offset: 0.2em;
+  transition: color 150ms ease;
 }
 
+.inline-link:hover,
+p a:not(.btn):hover,
+.prose a:not(.btn):hover,
+.payload-richtext a:not(.btn):hover,
+.markdown a:hover,
 .form-checkbox-label a:hover {
-  text-decoration-thickness: 2px;
   @apply text-accent;
+  text-decoration-thickness: 2px;
 }

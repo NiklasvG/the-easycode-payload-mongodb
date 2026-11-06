@@ -101,7 +101,7 @@ export function ChatLauncher() {
         <div
           id={noticeId}
           role="status"
-          className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] z-50 w-[calc(100vw-2rem)] max-w-sm rounded-2xl border border-white/20 bg-card p-6 text-foreground shadow-2xl [overflow-wrap:anywhere]"
+          className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] z-50 w-[calc(100vw-2rem)] max-w-sm rounded-2xl border border-white/15 bg-card p-5 text-foreground [overflow-wrap:anywhere]"
         >
           <button
             type="button"
@@ -112,17 +112,13 @@ export function ChatLauncher() {
             <X className="size-5" aria-hidden="true" />
           </button>
           <div className="mb-4 flex items-center gap-3 pr-4">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent ring-1 ring-accent/20">
-              <MessageSquare className="size-5" aria-hidden="true" />
-            </span>
-            <h2 className="text-base font-semibold">Direkter Kontakt</h2>
+            <h2 className="font-sans text-lg font-bold tracking-tight text-accent">
+              Direkter Kontakt
+            </h2>
           </div>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Der KI-Chat ist momentan nicht verfügbar. Du erreichst mich per{' '}
-            <Link
-              href="mailto:info@the-easycode.eu"
-              className="font-medium text-accent underline underline-offset-4"
-            >
+            <Link href="mailto:info@the-easycode.eu" className="inline-link font-medium">
               E-Mail
             </Link>
             .

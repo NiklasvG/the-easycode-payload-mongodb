@@ -26,7 +26,7 @@ export const Markdown: React.FC<MarkdownProps> = ({ children, className }) => {
 						<a
 							href={href}
 							{...props}
-							className="text-accent hover:underline"
+							className="inline-link"
 							target="_blank"
 							rel="noreferrer"
 						>

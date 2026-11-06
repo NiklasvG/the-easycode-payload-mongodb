@@ -32,7 +32,7 @@ export async function Footer() {
             <Link
               className="flex w-fit items-center"
               href="/"
-              aria-label="The-EasyCode – Startseite"
+              aria-label="Startseite von The-EasyCode"
             >
               <Logo />
             </Link>
@@ -94,7 +94,7 @@ export async function Footer() {
               <h3 className="text-sm font-bold uppercase tracking-widest text-foreground">
                 {section.label}
               </h3>
-              <nav className="flex flex-col gap-1" aria-label={`${section.label} – Fußbereich`}>
+              <nav className="flex flex-col gap-1" aria-label={`${section.label} im Fußbereich`}>
                 {section.navItems?.map(({ link }, i) => (
                   <CMSLink
                     key={i}
@@ -110,8 +110,11 @@ export async function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-white/5 py-8">
-        <div className="container flex justify-center items-center gap-4 text-xs text-muted-foreground">
+        <div className="container flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
           <p>© {new Date().getFullYear()} The-Easycode. Alle Rechte vorbehalten.</p>
+          <a className="inline-link" href="https://lordicon.com/" rel="noopener noreferrer" target="_blank">
+            Animated icons by Lordicon.com
+          </a>
         </div>
       </div>
     </footer>

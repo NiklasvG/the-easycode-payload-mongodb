@@ -3,7 +3,11 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AIChat } from '@/components/Chat/AIChat'
 vi.mock('next/link', () => ({
-  default: ({ children, ...props }: React.ComponentProps<'a'>) =>
+  default: ({
+    children,
+    prefetch: _prefetch,
+    ...props
+  }: React.ComponentProps<'a'> & { prefetch?: boolean }) =>
     React.createElement('a', props, children),
 }))
 const stream = (text: string) =>
@@ -34,6 +38,30 @@ afterEach(() => {
 })
 
 describe('AI chat privacy and interaction', () => {
+  it('uses same-tab internal links and preserves earlier turns for the next question', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      stream(
+        '[Suche](/suche) [Kontakt](/kontakt) [Projekt](http://localhost:3000/projekte/demo/shop)',
+      ),
+    )
+    render(React.createElement(AIChat, { initiallyOpen: true }))
+    confirm()
+    send('Wo finde ich mehr Informationen?')
+    for (const [name, path] of [
+      ['Suche', '/suche'],
+      ['Kontakt', '/kontakt'],
+      ['Projekt', '/projekte/demo/shop'],
+    ]) {
+      const link = await screen.findByRole('link', { name })
+      expect(link.getAttribute('href')).toBe(path)
+      expect(link.getAttribute('target')).toBeNull()
+    }
+    send('Und was davon passt zu einem Onlineshop?')
+    await screen.findByText('Webentwicklung.')
+    const history = JSON.parse(vi.mocked(fetch).mock.calls[1][1]?.body as string).history
+    expect(history[0]).toEqual({ role: 'user', text: 'Wo finde ich mehr Informationen?' })
+    expect(history[1].text).toContain('[Suche](/suche)')
+  })
   it('starts keyboard focus at the readable consent heading without contacting the provider', async () => {
     render(React.createElement(AIChat, { initiallyOpen: true }))
     await waitFor(() =>
@@ -72,9 +100,7 @@ describe('AI chat privacy and interaction', () => {
     fireEvent.click(details)
     expect(fetch).not.toHaveBeenCalled()
     expect(sessionStorage.getItem('easycode-ai-chat-consent')).toBeNull()
-    expect(
-      (screen.getByRole('button', { name: 'Nachricht senden' }) as HTMLButtonElement).disabled,
-    ).toBe(true)
+    expect(screen.queryByRole('button', { name: 'Nachricht senden' })).toBeNull()
   })
   it('automatically withdraws session consent when its 24-hour validity ends', () => {
     vi.useFakeTimers()
@@ -89,9 +115,13 @@ describe('AI chat privacy and interaction', () => {
   it('requires active consent even if the old provider disclaimer was confirmed', async () => {
     localStorage.setItem('easycode-ai-chat-disclaimer-confirmed', 'openai-v1')
     render(React.createElement(AIChat, { initiallyOpen: true }))
-    send()
+    expect(screen.queryByRole('button', { name: 'Verlauf löschen' })).toBeNull()
+    expect(
+      screen.queryByRole('textbox', { name: 'Deine Nachricht an den KI-Assistenten' }),
+    ).toBeNull()
     expect(fetch).not.toHaveBeenCalled()
     confirm()
+    expect(screen.queryByRole('button', { name: 'Verlauf löschen' })).toBeNull()
     expect(localStorage.getItem('easycode-ai-chat-disclaimer-confirmed')).toBeNull()
     send()
     await screen.findByText('Webentwicklung.')
@@ -103,6 +133,7 @@ describe('AI chat privacy and interaction', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Verlauf löschen' }))
     expect(screen.queryByText('Webentwicklung.')).toBeNull()
     expect(screen.queryByText('Welche Leistungen bietet Niklas?')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Verlauf löschen' })).toBeNull()
   })
   it('declines without a provider request and leaves the rest of the site available', () => {
     render(React.createElement(AIChat, { initiallyOpen: true }))
@@ -126,24 +157,23 @@ describe('AI chat privacy and interaction', () => {
     send('Meine private Frage')
     fireEvent.click(screen.getByRole('button', { name: 'Einwilligung widerrufen' }))
     await waitFor(() =>
-      expect(
-        (screen.getByRole('button', { name: 'Nachricht senden' }) as HTMLButtonElement).disabled,
-      ).toBe(true),
+      expect(screen.queryByRole('button', { name: 'Nachricht senden' })).toBeNull(),
     )
     expect(sessionStorage.getItem('easycode-ai-chat-consent')).toBeNull()
     expect((vi.mocked(fetch).mock.calls[0][1]?.signal as AbortSignal).aborted).toBe(true)
     expect(screen.queryByText('Meine private Frage')).toBeNull()
     expect(screen.queryByRole('alert')).toBeNull()
-    await waitFor(() =>
-      expect(
-        (
-          screen.getByRole('textbox', {
-            name: 'Deine Nachricht an den KI-Assistenten',
-          }) as HTMLInputElement
-        ).value,
-      ).toBe(''),
-    )
-    send()
+    expect(
+      screen.queryByRole('textbox', { name: 'Deine Nachricht an den KI-Assistenten' }),
+    ).toBeNull()
+    confirm()
+    expect(
+      (
+        screen.getByRole('textbox', {
+          name: 'Deine Nachricht an den KI-Assistenten',
+        }) as HTMLInputElement
+      ).value,
+    ).toBe('')
     expect(fetch).toHaveBeenCalledTimes(1)
   })
   it('requires fresh consent after 24 hours and keeps expired input from reaching the API', () => {
@@ -157,7 +187,9 @@ describe('AI chat privacy and interaction', () => {
       }),
     )
     render(React.createElement(AIChat, { initiallyOpen: true }))
-    send()
+    expect(
+      screen.queryByRole('textbox', { name: 'Deine Nachricht an den KI-Assistenten' }),
+    ).toBeNull()
     expect(fetch).not.toHaveBeenCalled()
     expect(screen.getByRole('button', { name: 'Einwilligen und Chat nutzen' })).toBeTruthy()
   })

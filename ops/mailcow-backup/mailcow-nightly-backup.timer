@@ -1,0 +1,11 @@
+[Unit]
+Description=Nightly Mailcow backup at 01:30 Berlin time
+
+[Timer]
+OnCalendar=*-*-* 01:30:00 Europe/Berlin
+Persistent=true
+AccuracySec=30s
+Unit=mailcow-nightly-backup.service
+
+[Install]
+WantedBy=timers.target

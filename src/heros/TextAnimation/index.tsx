@@ -23,10 +23,10 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
   const desktopImageWidth = Math.ceil(384 * imageAspectRatio)
 
   return (
-    <section className="text-animation-hero bg-background w-full h-full py-12 lg:py-24 2xl:pb-32 flex items-start relative">
-      <div className="container mx-auto w-full h-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-          <div className="min-w-0 flex flex-col gap-6 lg:gap-10">
+    <section className="text-animation-hero bg-background w-full py-10 sm:py-12 lg:py-6 xl:py-10 flex items-center relative">
+      <div className="container mx-auto w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 lg:items-center">
+          <div className="min-w-0 flex flex-col gap-6 lg:gap-8 xl:gap-10">
             <RotatingText
               phrases={phrases?.map(({ phrase }) => phrase) ?? []}
               className="text-accent"
@@ -41,7 +41,7 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
               </ul>
             )}
           </div>
-          <div className="min-w-0 grid place-items-center w-full h-full relative py-16 lg:pt-0">
+          <div className="min-w-0 grid place-items-center w-full relative pt-6 pb-12 lg:py-0">
             {media && (
               <div
                 className="relative w-full max-w-full"
@@ -65,11 +65,14 @@ export const TextAnimationHero: React.FC<Page['hero']> = ({
 
             {icons && (
               <HeroIcons>
-                <div className="absolute left-1/2 -translate-x-1/2 top-[calc(100%-5rem)] lg:top-auto lg:bottom-24 xl:bottom-28 2xl:bottom-18">
+                <div className="absolute left-1/2 -translate-x-1/2 top-[calc(100%-3.5rem)] lg:top-auto lg:-bottom-6">
                   <ul className="flex w-max max-w-[calc(100vw-2rem)] flex-nowrap justify-center px-1 py-1 bg-n-9/40 backdrop-blur-sm border rounded-2xl">
                     {icons.map((icon, index) => (
-                      <li key={index} className="shrink-0 p-3 sm:p-5">
-                        <LucideIcon icon={icon.icon as LucideIconName} className="size-6" />
+                      <li
+                        key={index}
+                        className="min-w-0 flex items-center justify-center px-[min(0.75rem,3vw)] py-3 sm:p-5"
+                      >
+                        <LucideIcon icon={icon.icon as LucideIconName} className="size-6 max-w-full" />
                       </li>
                     ))}
                   </ul>

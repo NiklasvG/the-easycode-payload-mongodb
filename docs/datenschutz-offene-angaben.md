@@ -1,6 +1,102 @@
 # Belege und offene Angaben zur Datenschutzerklärung
 
-Stand: 5. November 2026. Ältere Abschnitte bleiben als historische Belege erhalten.
+Stand: 6. November 2026. Ältere Abschnitte bleiben als historische Belege erhalten.
+
+## Abschluss: veröffentlicht und technisch geprüft
+
+Die vorherigen offenen Datenschutz-Prüfpunkte sind am 6. November abgeschlossen.
+Maßgeblich sind [die fertige Erklärung](datenschutzerklaerung.md), die
+[OpenAI-Bewertung](datenschutz-openai-bewertung-2026-11-06.md) und der
+[Veröffentlichungs-/Abnahmebericht](datenschutz-abschluss-2026-11-06.md).
+Payload und das geprüfte Staging-Release enthalten die neue Fassung einschließlich
+zwölf Ankern und direktem Chat-Datenschutzlink. Alte offene Punkte darunter
+beschreiben historische Zwischenstände, keinen erneuten Auskunftsbedarf.
+
+## Nächtliche Mailbackup-Rotation verbindlich eingerichtet
+
+Auf ausdrücklichen Betreiberauftrag täglich 01:30 Europe/Berlin, ein
+vollständiger erfolgreicher Stand. Der Vorgänger wird erst nach neuer
+vollständiger Prüfung entfernt; bei Fehlern bleibt er erhalten. Zwölf
+synthetische Tests, systemd-Prüfung und Preflight bestanden. Erster Nachtlauf
+steht bei Einrichtung noch aus. Die offene Mailbackup-Rotationsangabe in
+Abschnitt 9 ist durch eine kurze tatsächliche Beschreibung ersetzt.
+[Zentraler Beleg](../../docs/reports/2026-11-06-mailcow-naechtliche-sicherung.md). Keine CMS-Veröffentlichung.
+
+## Späterer Abgleich der Website-Protokolle und Chat-Konfiguration
+
+Website, Proxy und Easycode-MongoDB wurden lesend geprüft. Kein zusätzliches
+Traefik-Zugriffslog gefunden; alle drei Container rotieren mit drei Dateien
+à 10 MB. MongoDB-Profiling ist deaktiviert, technische Diagnosekennzahlen sind
+auf 250 MB begrenzt. Der entsprechende offene Platzhalter in Abschnitt 2
+ist durch die bestätigten Angaben ersetzt. Die künftige Mailbackup-Rotation
+und die beschriebenen Chat-Nachweise bleiben offen.
+
+[Prüfbericht und konkrete Restarbeiten](datenschutz-protokoll-und-chat-pruefung-2026-11-06.md).
+
+## Anschließende freigegebene Oktober-Bereinigung
+
+Nach erfolgreicher Prüfung der neuen Sicherung wurden die Stände vom 8. und
+22. Oktober 2026 ausdrücklich freigegeben und entfernt. Es bleibt der neue
+Novemberstand. Automatische Rotation und vollständiger Restore-Test bleiben offen.
+[Nachweis](../../docs/reports/2026-11-06-mailcow-oktoberbackups-entfernt.md). Die folgenden Abschnitte sind historische Vorstufen.
+
+## Spätere freigegebene Mailbackup-Bereinigung und Neusicherung
+
+Am 6. November wurde ausschließlich der Stand vom 7. Februar 2025 entfernt.
+Die beiden Oktoberstände sind unverändert erhalten; hinzu kam eine native
+Vollsicherung vom 6. November 2026 einschließlich eigenem Konfigurationsarchiv.
+Alle sieben neuen Archive wurden vollständig gelesen, dekomprimiert und mit
+SHA-256 erfasst; die MariaDB-Vorbereitung ist bestätigt. Kein vollständiger
+Restore-Test und kein wiederkehrender Vollbackup-Zeitplan eingerichtet.
+Die künftige automatische Aufbewahrung bleibt offen. Die folgende Inventur
+beschreibt den historischen Befund vor diesem freigegebenen Eingriff.
+
+Beleg: [Bereinigung und Neusicherung](../../docs/reports/2026-11-06-mailcow-backup-bereinigung-und-neusicherung.md).
+
+## Spätere gezielte Mailbackup-Inventur am 6. November
+
+Auf `/mnt/HC_Volume_102089935` wurden drei Mailcow-Sicherungsstände vom
+7. Februar 2025, 8. Oktober 2026 und 22. Oktober 2026 lesend anhand ihrer
+Dateimetadaten nachgewiesen. Jeder Stand enthält Archive für vmail, crypt,
+MariaDB, Redis, Rspamd und Postfix sowie `mailcow.conf`. Archive und Secrets
+wurden nicht geöffnet; Integrität und Restore sind damit noch nicht bewiesen.
+Die vorherige Suche nur in üblichen Backup-Pfaden war zu eng und wird hiermit
+hinsichtlich Existenz und Speicherziel ergänzt.
+
+Das separate 80-GiB-Volume ist zu 82 % belegt; rund 13,7 GiB sind frei,
+verglichen mit rund 21,3 GiB für den jüngsten Vollstand. Regelmäßiger vollständiger
+Zeitplan und automatische Löschregel sind weiterhin nicht nachgewiesen.
+Die optionale Skriptfunktion `--delete-days` ist keine eingerichtete Frist.
+Die offene Angabe betrifft deshalb insbesondere die verbindliche Rotation,
+nicht mehr die bloße Existenz solcher Sicherungsstände.
+
+Zentraler Beleg: [Mailcow-Backup-Volumenbestand](../../docs/reports/2026-11-06-mailcow-backup-volumenbestand.md).
+Es wurden keine Backups verändert, neue Läufe gestartet oder alte Stände gelöscht.
+
+## Mailcow-Aufbewahrung am 6. November
+
+Der Betreiber hat die im lesenden Bestand vorgeschlagenen fünf Aufbewahrungsregeln
+ausdrücklich zur Umsetzung freigegeben. Eingerichtet sind sieben Tage für
+Funktions-/Zustelllogs, 30 Tage für Sicherheits-/Anmeldeereignisse, 14 Tage für
+Spam, 30 Tage für Papierkorb und 14 Tage als Quarantäne-Altersgrenze ohne Änderung
+der Aktivierung. Die tatsächliche Bereinigung der Loglisten und der vorhandenen
+Sonderordner wurde geprüft; beide Hosttimer sind aktiviert. Der erste tägliche
+Nachtlauf ist dadurch noch nicht nachgewiesen. Der öffentlich verwendete
+Datenschutztext wurde durch diese lokale Änderung nicht aktualisiert.
+
+Details, Belege und technische Laufintervalle stehen in
+[mailcow-aufbewahrung-umsetzung-2026-11-06.md](mailcow-aufbewahrung-umsetzung-2026-11-06.md).
+Der vorherige lesende Bestand bleibt unter
+[mailcow-bestand-und-fristenplan-2026-11-06.md](mailcow-bestand-und-fristenplan-2026-11-06.md)
+zeitlich eingeordnet erhalten.
+
+Die vom Systemintegrator bereitgestellte Beschreibung des Mailcow-Backupskripts
+erläutert dessen möglichen Umfang bei `backup all`. Sie bestätigt noch keinen
+tatsächlichen Lauf, Speicherort, Aufbewahrungszeitraum oder Restore. Die gefundene
+interne SOGo-Nutzerdatensicherung ist davon getrennt und kein nachgewiesenes
+Backup der E-Mail-Postfächer. Der Betreiber prüft Mailbackups separat; entsprechende
+Platzhalter bleiben offen. Ebenso bleiben die im Entwurf markierten weiteren
+Website-/OpenAI-Nachweise vor einer Gesamtveröffentlichung zu klären.
 
 ## Fortschritt der Livegang-Vorbereitung am 5. November
 

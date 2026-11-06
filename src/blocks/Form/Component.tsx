@@ -224,7 +224,7 @@ export const FormBlock: React.FC<
                 overflow: 'hidden',
               }}
             >
-              <label htmlFor={honeypotID}>Website – bitte leer lassen</label>
+              <label htmlFor={honeypotID}>Bitte das Feld Website leer lassen</label>
               <input
                 data-form-honeypot
                 id={honeypotID}

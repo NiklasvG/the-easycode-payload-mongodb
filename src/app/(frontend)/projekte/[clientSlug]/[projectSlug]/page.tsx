@@ -109,7 +109,7 @@ export default async function ProjectDetailPage({ params: paramsPromise }: Args)
           <div className="flex flex-col lg:flex-row gap-12 lg:items-end mb-12">
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-3 mb-6">
-                <span className="text-accent font-bold tracking-wider uppercase text-sm border border-accent/20 px-3 py-1 rounded-full bg-accent/5">
+                <span className="accent-chip font-bold tracking-wider uppercase text-sm px-3 py-1 rounded-full">
                   {clientName}
                 </span>
                 {project.customer && project.customer !== clientName && (

@@ -29,7 +29,7 @@ test.describe('website quality across published content', () => {
       await expect(contentinfo.getByText(footer.aboutText, { exact: true })).toBeVisible()
     for (const section of footer.sections || []) {
       await expect(
-        contentinfo.getByRole('navigation', { name: `${section.label} – Fußbereich` }),
+        contentinfo.getByRole('navigation', { name: `${section.label} im Fußbereich` }),
       ).toBeAttached()
     }
   })

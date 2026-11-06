@@ -1,11 +1,14 @@
 // src\components\Chat\AIChat.tsx
 'use client'
 
+import { Input } from '@/components/ui/input'
+
 import React, { useState, useRef, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { MessageSquare, Send, Sparkles, X, ShieldCheck, Trash2, LoaderCircle } from 'lucide-react'
+import { MessageSquare, Send, X, Trash2, LoaderCircle } from 'lucide-react'
 import {
   CHAT_MESSAGE_CHARS,
   CHAT_CONSENT_VERSION,
@@ -57,7 +60,7 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'model',
-      text: 'Hi! Ich bin **EasyCode AI**, ein KI-Assistent. Ich beantworte Fragen zu Niklas’ Leistungen, öffentlichen Projekten und Kontaktmöglichkeiten.',
+      text: 'Hi! Ich bin **EasyCode AI**, dein KI-Assistent für diese Website. Ich helfe dir bei Fragen zu Niklas, The-EasyCode und seinen öffentlichen Projekten. Außerdem zeige ich dir, wo du hier was findest.',
       excludeFromContext: true,
     },
   ])
@@ -300,71 +303,67 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
               closeChat()
             }
           }}
-          className="mb-4 w-[calc(100vw-2rem)] max-w-sm md:w-96 h-[min(36rem,calc(100dvh-7rem-env(safe-area-inset-bottom)))] bg-black border border-white/20 rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in duration-200 motion-reduce:animate-none"
+          className={`relative mb-4 w-[calc(100vw-2rem)] max-w-md md:w-[28rem] max-h-[calc(100dvh-8rem-env(safe-area-inset-bottom))] bg-card text-card-foreground border border-white/15 rounded-2xl flex flex-col ${consent ? 'h-[min(40rem,calc(100dvh-8rem-env(safe-area-inset-bottom)))]' : ''}`}
         >
           {/* Header */}
-          <div className="shrink-0 bg-secondary-background border-b border-white/10 p-3 flex justify-between items-center">
-            <div className="flex items-center gap-2 text-white">
-              <Sparkles className="w-5 h-5" />
-              <span className="font-display font-bold tracking-wide">EasyCode AI</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                aria-label="Verlauf löschen"
-                disabled={isLoading || messages.length <= 1}
-                onClick={() => {
-                  setMessages((previous) => previous.slice(0, 1))
-                  setInputValue('')
-                  setErrorMessage('')
-                  inputRef.current?.focus()
-                }}
-                className="group relative flex size-11 items-center justify-center rounded-xl text-white/80 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-30"
-              >
-                <Trash2 className="size-4" aria-hidden="true" />
-                <span
-                  aria-hidden="true"
-                  className="pointer-events-none absolute right-0 top-full z-30 mt-2 whitespace-nowrap rounded-lg border border-white/10 bg-secondary-background px-3 py-2 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 group-disabled:invisible"
+          <div className="shrink-0 border-b border-white/10 px-5 py-4 flex justify-between items-center gap-3">
+            <h2 className="font-sans text-lg font-bold tracking-tight text-accent">EasyCode AI</h2>
+            <div className="flex items-center gap-1 pr-8">
+              {consent && messages.some((message) => message.role === 'user') && (
+                <button
+                  type="button"
+                  aria-label="Verlauf löschen"
+                  disabled={isLoading}
+                  onClick={() => {
+                    setMessages((previous) => previous.slice(0, 1))
+                    setInputValue('')
+                    setErrorMessage('')
+                    inputRef.current?.focus()
+                  }}
+                  className="group relative flex size-11 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-30"
                 >
-                  Verlauf löschen
-                </span>
-              </button>
+                  <Trash2 className="size-4" aria-hidden="true" />
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute right-0 top-full z-30 mt-2 whitespace-nowrap rounded-lg border border-white/10 bg-secondary-background px-3 py-2 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 group-disabled:invisible"
+                  >
+                    Verlauf löschen
+                  </span>
+                </button>
+              )}
               <button
                 type="button"
                 aria-label="Chatfenster schließen"
                 onClick={closeChat}
                 title="Chatfenster schließen"
-                className="flex size-11 items-center justify-center rounded-xl text-white/80 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="absolute -top-5 right-3 flex size-11 items-center justify-center rounded-full border border-white/20 bg-card text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
               >
                 <X className="size-5" aria-hidden="true" />
               </button>
             </div>
           </div>
 
-          <div className="min-h-0 flex-1 relative flex flex-col overflow-hidden">
+          <div className="min-h-0 flex-1 relative flex flex-col overflow-hidden rounded-b-2xl">
             {!consent && (
-              <div className="absolute inset-0 z-20 bg-black overflow-y-auto overscroll-contain p-5 flex flex-col items-center justify-start text-center">
-                <div className="p-3 bg-accent/10 rounded-full text-accent mb-4 ring-1 ring-accent/20">
-                  <ShieldCheck className="w-6 h-6" />
-                </div>
+              <div className="min-h-0 bg-card overflow-y-auto overscroll-contain p-5 flex flex-col items-start text-left">
                 <h3
                   ref={consentHeadingRef}
                   tabIndex={-1}
-                  className="text-xl font-bold text-white mb-4 outline-hidden"
+                  className="font-sans text-lg font-semibold text-foreground mb-3 outline-hidden"
                 >
                   KI-Chat freiwillig nutzen
                 </h3>
-                <div className="text-sm text-gray-300 leading-relaxed space-y-3 mb-5 payload-richtext">
+                <div className="text-sm text-muted-foreground leading-relaxed space-y-3 mb-5">
                   <p>{CHAT_CONSENT_SUMMARY}</p>
                   <p>{CHAT_CONSENT_CHOICE}</p>
-                  <p className="text-xs text-gray-400">{CHAT_CONSENT_WARNING}</p>
+                  <p className="text-sm text-muted-foreground">{CHAT_CONSENT_WARNING}</p>
                   <p>
                     <a
                       href="/datenschutz#ki-chat"
                       aria-label="Datenschutz zum KI-Chat (neuer Tab)"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-accent underline underline-offset-4"
+                      className="inline-link"
                     >
                       Datenschutz zum KI-Chat
                     </a>
@@ -373,14 +372,14 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                 <button
                   type="button"
                   onClick={handleConsent}
-                  className="w-full shrink-0 bg-accent-contrast hover:bg-accent-contrast/90 text-white font-bold py-3 px-6 rounded-xl transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  className="w-full min-h-11 shrink-0 rounded-full border border-muted-foreground bg-transparent px-4 py-3 text-sm font-medium text-foreground transition-colors hover:border-foreground hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
                 >
                   Einwilligen und Chat nutzen
                 </button>
                 <button
                   type="button"
                   onClick={closeChat}
-                  className="mt-3 w-full shrink-0 rounded-xl border border-white/20 py-3 px-6 text-sm text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  className="mt-3 w-full min-h-11 shrink-0 rounded-full border border-muted-foreground bg-transparent px-4 py-3 text-sm font-medium text-foreground transition-colors hover:border-foreground hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
                 >
                   Ohne KI-Chat fortfahren
                 </button>
@@ -393,11 +392,12 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
               aria-live="polite"
               aria-busy={isLoading}
               inert={!consent}
+              hidden={!consent}
               onScroll={(event) => {
                 const list = event.currentTarget
                 followLatest.current = list.scrollHeight - list.scrollTop - list.clientHeight < 64
               }}
-              className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 space-y-4 bg-black chat-scroll"
+              className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 sm:px-5 space-y-5 bg-background chat-scroll"
             >
               {messages.map((msg, idx) => (
                 <div
@@ -405,13 +405,18 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                   className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`min-w-0 max-w-[90%] p-3 rounded-2xl text-sm leading-relaxed [overflow-wrap:anywhere]
-												${
+                    className={`min-w-0 max-w-[88%] border px-4 py-3 rounded-2xl text-sm leading-relaxed wrap-anywhere
+                        ${
                           msg.role === 'user'
-                            ? 'bg-accent-contrast text-white rounded-br-sm'
-                            : 'bg-black border border-white/10 text-gray-200 rounded-bl-sm'
+                            ? 'bg-accent-contrast border-accent-contrast text-white rounded-br-none'
+                            : 'bg-secondary border-white/10 text-foreground rounded-bl-none'
                         }`}
                   >
+                    <p
+                      className={`mb-1.5 text-xs font-medium ${msg.role === 'user' ? 'text-white/80' : 'text-accent'}`}
+                    >
+                      {msg.role === 'user' ? 'Du' : 'EasyCode AI'}
+                    </p>
                     <div className="markdown markdown-chat">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
@@ -426,6 +431,8 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                               !parsed.search &&
                               !parsed.hash &&
                               (parsed.pathname.startsWith('/projekte/') ||
+                                parsed.pathname === '/' ||
+                                parsed.pathname === '/suche' ||
                                 parsed.pathname === '/kontakt')
                             )
                               return parsed.href
@@ -444,17 +451,32 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                           strong: ({ children }) => (
                             <strong className="font-semibold">{children}</strong>
                           ),
-                          a: ({ children, href, ...props }) => (
-                            <a
-                              href={href}
-                              {...props}
-                              className="text-accent hover:underline"
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              {children}
-                            </a>
-                          ),
+                          a: ({ children, href }) => {
+                            if (href) {
+                              const url = new URL(href, window.location.origin)
+                              if (url.origin === window.location.origin) {
+                                return (
+                                  <Link
+                                    href={url.pathname}
+                                    prefetch={false}
+                                    className="inline-link"
+                                  >
+                                    {children}
+                                  </Link>
+                                )
+                              }
+                            }
+                            return (
+                              <a
+                                href={href}
+                                className="inline-link"
+                                target={href?.startsWith('https:') ? '_blank' : undefined}
+                                rel={href?.startsWith('https:') ? 'noopener noreferrer' : undefined}
+                              >
+                                {children}
+                              </a>
+                            )
+                          },
                           code: ({ node, children, ...props }) => {
                             const isInline =
                               !node?.position || node.position.start.line === node.position.end.line
@@ -485,9 +507,9 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
                         aria-hidden="true"
                         className="inline-flex gap-1 justify-start items-center motion-reduce:[&>div]:animate-none"
                       >
-                        <div className="size-2 bg-accent rounded-full animate-bounce [animation-delay:-0.3s]" />
-                        <div className="size-2 bg-accent rounded-full animate-bounce [animation-delay:-0.15s]" />
-                        <div className="size-2 bg-accent rounded-full animate-bounce" />
+                        <div className="size-2 bg-white rounded-full animate-bounce [animation-delay:-0.3s]" />
+                        <div className="size-2 bg-white rounded-full animate-bounce [animation-delay:-0.15s]" />
+                        <div className="size-2 bg-white rounded-full animate-bounce" />
                       </div>
                     )}
                   </div>
@@ -499,72 +521,74 @@ export const AIChat: React.FC<{ initiallyOpen?: boolean }> = ({ initiallyOpen = 
               <button
                 type="button"
                 onClick={handleWithdrawConsent}
-                className="shrink-0 min-h-11 bg-secondary-background px-4 py-2 text-xs text-gray-300 underline underline-offset-4 hover:text-white focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-accent"
+                className="shrink-0 min-h-11 self-start mx-5 px-0 py-2 text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 Einwilligung widerrufen
               </button>
             )}
 
             {/* Input */}
-            <form
-              onSubmit={handleSubmit}
-              className="shrink-0 p-4 bg-secondary-background border-t border-white/10"
-            >
-              {errorMessage && (
-                <p role="alert" className="mb-2 text-sm text-gray-300">
-                  {errorMessage}
-                </p>
-              )}
-              {cooldown > 0 && (
-                <p role="status" className="mb-2 text-xs text-gray-300">
-                  Erneut senden in {cooldown} Sekunden.
-                </p>
-              )}
-              {/* Honeypot Field */}
-              <input
-                type="text"
-                name="hp_field"
-                className="hidden"
-                autoComplete="off"
-                tabIndex={-1}
-              />
-
-              <div className="relative">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  disabled={!consent || isLoading || cooldown > 0}
-                  maxLength={CHAT_MESSAGE_CHARS}
-                  enterKeyHint="send"
-                  aria-label="Deine Nachricht an den KI-Assistenten"
-                  placeholder={consent ? 'Frag mich etwas ...' : 'Bitte erst einwilligen'}
-                  className="w-full min-w-0 bg-background/50 border border-white/20 rounded-xl pl-4 pr-12 py-3 text-base text-foreground focus:outline-hidden focus:border-accent focus:ring-2 focus:ring-accent transition-colors placeholder:text-gray-400 disabled:opacity-50"
-                />
-                {inputValue.length > 800 && (
-                  <div className="absolute -top-4 right-0 text-[10px] text-gray-500 font-mono">
-                    {inputValue.length}/{CHAT_MESSAGE_CHARS}
-                  </div>
+            {consent && (
+              <form
+                onSubmit={handleSubmit}
+                className="shrink-0 p-5 pt-4 bg-card border-t border-white/10"
+              >
+                {errorMessage && (
+                  <p role="alert" className="mb-2 text-sm text-gray-300">
+                    {errorMessage}
+                  </p>
                 )}
-                <button
-                  type="submit"
-                  aria-label="Nachricht senden"
-                  title={isLoading ? 'Antwort wird erstellt' : 'Nachricht senden'}
-                  disabled={isLoading || cooldown > 0 || !inputValue.trim() || !consent}
-                  className="absolute right-1 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-lg text-accent transition-colors hover:bg-accent/10 hover:text-accent-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? (
-                    <LoaderCircle
-                      className="size-4 animate-spin motion-reduce:animate-none"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <Send className="size-4" aria-hidden="true" />
+                {cooldown > 0 && (
+                  <p role="status" className="mb-2 text-xs text-gray-300">
+                    Erneut senden in {cooldown} Sekunden.
+                  </p>
+                )}
+                {/* Honeypot Field */}
+                <input
+                  type="text"
+                  name="hp_field"
+                  className="hidden"
+                  autoComplete="off"
+                  tabIndex={-1}
+                />
+
+                <div className="relative">
+                  <Input
+                    ref={inputRef}
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    disabled={!consent || isLoading || cooldown > 0}
+                    maxLength={CHAT_MESSAGE_CHARS}
+                    enterKeyHint="send"
+                    aria-label="Deine Nachricht an den KI-Assistenten"
+                    placeholder={consent ? 'Frag mich etwas ...' : 'Bitte erst einwilligen'}
+                    className="pr-12"
+                  />
+                  {inputValue.length > 800 && (
+                    <div className="absolute -top-4 right-0 text-[10px] text-gray-500 font-mono">
+                      {inputValue.length}/{CHAT_MESSAGE_CHARS}
+                    </div>
                   )}
-                </button>
-              </div>
-            </form>
+                  <button
+                    type="submit"
+                    aria-label="Nachricht senden"
+                    title={isLoading ? 'Antwort wird erstellt' : 'Nachricht senden'}
+                    disabled={isLoading || cooldown > 0 || !inputValue.trim() || !consent}
+                    className="absolute right-1 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full text-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isLoading ? (
+                      <LoaderCircle
+                        className="size-4 animate-spin motion-reduce:animate-none"
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      <Send className="size-4" aria-hidden="true" />
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}

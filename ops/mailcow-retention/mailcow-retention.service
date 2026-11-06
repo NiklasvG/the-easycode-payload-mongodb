@@ -1,0 +1,22 @@
+[Unit]
+Description=Age limits for Mailcow logs and authentication history
+After=docker.service systemd-journald.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /srv/mailcow-retention/retention.py run
+User=root
+UMask=0077
+TimeoutStartSec=600
+MemoryMax=256M
+CPUQuota=50%
+Nice=10
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/mailcow-retention /var/log -/run/log/journal
+Environment=DOCKER_CONFIG=/srv/mailcow-retention/docker-config
+StandardOutput=journal
+StandardError=journal

@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@fluejs/noscroll": "^1.0.0",
+    "@lordicon/element": "^3.0.2",
     "@payloadcms/admin-bar": "3.93.0",
     "@payloadcms/db-mongodb": "3.93.0",
     "@payloadcms/email-nodemailer": "3.93.0",

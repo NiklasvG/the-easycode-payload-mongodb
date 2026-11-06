@@ -2,11 +2,11 @@
 
 import React, { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react'
 import { m, AnimatePresence } from 'framer-motion'
-import { ChartNoAxesCombined, Cookie, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { FolderSettingsIcon } from './FolderSettingsIcon'
 import {
   COOKIE_CONSENT_KEY,
   COOKIE_CONSENT_EVENT,
@@ -113,51 +113,54 @@ export const CookieBanner = () => {
           transition={{ duration: 0.15 }}
           className="fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-100 md:left-auto md:right-8 md:bottom-8 md:max-w-md"
         >
-          <div className="relative flex max-h-[calc(100dvh-2rem-env(safe-area-inset-bottom))] flex-col overflow-y-auto overscroll-contain rounded-2xl border border-white/20 bg-card p-5 sm:p-6 shadow-2xl [overflow-wrap:anywhere]">
-            <div className="mb-2 sm:mb-6 flex shrink-0 flex-col items-center gap-4 sm:flex-row sm:items-start">
-              <div className="rounded-xl bg-accent/10 p-2 text-accent ring-1 ring-accent/20 sm:p-3">
-                <Cookie className="size-5 sm:size-7" />
-              </div>
-
-              <div>
+          <div className="relative flex max-h-[calc(100dvh-2rem-env(safe-area-inset-bottom))] flex-col overflow-y-auto overscroll-contain rounded-2xl border border-white/15 bg-card p-5 text-card-foreground sm:p-6 [overflow-wrap:anywhere]">
+            <div className="mb-5 shrink-0">
+              <div className="flex items-center justify-between gap-3">
                 <h3
                   ref={headingRef}
                   tabIndex={-1}
-                  className="font-sans text-xl font-bold tracking-tight outline-hidden"
+                  className="font-sans text-lg font-bold tracking-tight text-accent outline-hidden"
                 >
                   Cookie-Einstellungen
                 </h3>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                  Ich verwende Cookies, um die grundlegenden Funktionen der Website
-                  sicherzustellen. Mit deiner Zustimmung analysiere ich die Nutzung und Ladezeiten
-                  mit Umami ohne Analyse-Cookies. Weitere Informationen findest du in meiner{' '}
-                  <Link href="/datenschutz" className="text-accent underline hover:no-underline">
-                    Datenschutzerklärung
-                  </Link>
-                  .
-                </p>
+                <FolderSettingsIcon />
               </div>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Wir verwenden Cookies, um die grundlegenden Funktionen der Website sicherzustellen.
+                Mit deiner Zustimmung analysieren wir die Nutzung und Ladezeiten mit Umami ohne
+                Analyse-Cookies. Weitere Informationen findest du in unserer{' '}
+                <Link href="/datenschutz" className="inline-link">
+                  Datenschutzerklärung
+                </Link>
+                .
+              </p>
             </div>
 
             {!showDetails ? (
-              <div className="flex shrink-0 flex-col gap-3">
-                <Button className="w-full py-6 text-base font-semibold" onClick={handleAcceptAll}>
-                  Alle akzeptieren
-                </Button>
-
-                <div className="flex flex-wrap gap-3">
+              <div className="flex shrink-0 flex-col gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   <Button
-                    variant="outline"
-                    className="flex-1 py-5"
-                    onClick={() => setShowDetails(true)}
+                    variant="ghost"
+                    className="rounded-full! border! border-muted-foreground! bg-transparent px-4! py-3! text-sm! font-medium text-foreground hover:border-foreground! hover:bg-secondary"
+                    onClick={handleAcceptAll}
                   >
-                    Einstellungen
+                    Alle akzeptieren
                   </Button>
-
-                  <Button variant="secondary" className="flex-1 py-5" onClick={handleDeclineAll}>
+                  <Button
+                    variant="ghost"
+                    className="rounded-full! border! border-muted-foreground! bg-transparent px-4! py-3! text-sm! font-medium text-foreground hover:border-foreground! hover:bg-secondary"
+                    onClick={handleDeclineAll}
+                  >
                     Alle ablehnen
                   </Button>
                 </div>
+                <Button
+                  variant="ghost"
+                  className="w-full rounded-full! px-3! py-2! text-sm! text-muted-foreground hover:text-foreground"
+                  onClick={() => setShowDetails(true)}
+                >
+                  Einstellungen
+                </Button>
               </div>
             ) : (
               <m.div
@@ -166,66 +169,70 @@ export const CookieBanner = () => {
                 exit={{ opacity: 0 }}
                 className="flex shrink-0 flex-col"
               >
-                <div className="pr-1">
-                  <div className="space-y-3 pt-2">
-                    <div className="flex items-start justify-between rounded-xl border border-border/50 bg-secondary/30 p-4">
-                      <div className="flex flex-col pr-4">
-                        <div className="flex items-center gap-2">
-                          <ShieldCheck size={14} className="text-accent" />
-                          <span className="text-sm font-bold text-foreground">Notwendig</span>
-                        </div>
-                        <span className="mt-1 text-xs text-muted-foreground">
-                          Ermöglichen Grundfunktionen wie Sicherheit und Navigation.
-                        </span>
+                <div className="divide-y divide-white/10 border-y border-white/10">
+                  <div className="flex items-start justify-between gap-4 py-4">
+                    <div className="flex min-w-0 flex-1 flex-col">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-foreground">Notwendig</span>
                       </div>
-
-                      <Checkbox aria-label="Notwendige Funktionen, immer aktiv" checked disabled />
+                      <span className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                        Ermöglichen Grundfunktionen wie Sicherheit und Navigation.
+                      </span>
                     </div>
 
-                    <label
-                      htmlFor={analyticsID}
-                      className="flex cursor-pointer items-start justify-between rounded-xl border border-border/50 bg-secondary/30 p-4 transition-colors hover:bg-secondary/50"
-                    >
-                      <span className="flex flex-col pr-4">
-                        <span className="flex items-center gap-2">
-                          <ChartNoAxesCombined
-                            size={14}
-                            className="text-accent"
-                            aria-hidden="true"
-                          />
-                          <span className="text-sm font-bold text-foreground">Nutzungsanalyse</span>
-                        </span>
-                        <span className="mt-1 text-xs text-muted-foreground">
-                          Umami hilft mir zu verstehen, wie du meine Website nutzt und wie
-                          schnell sie lädt. Die Analyse läuft auf meiner eigenen Infrastruktur und
-                          verwendet keine Analyse-Cookies.
+                    <Checkbox
+                      className="mt-1 shrink-0"
+                      aria-label="Notwendige Funktionen, immer aktiv"
+                      checked
+                      disabled
+                    />
+                  </div>
+
+                  <label
+                    htmlFor={analyticsID}
+                    className="flex cursor-pointer items-start justify-between gap-4 py-4"
+                  >
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-foreground">
+                          Nutzungsanalyse
                         </span>
                       </span>
+                      <span className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                        Umami hilft uns zu verstehen, wie du unsere Website nutzt und wie schnell
+                        sie lädt. Die Analyse läuft auf unserer eigenen Infrastruktur und verwendet
+                        keine Analyse-Cookies.
+                      </span>
+                    </span>
 
-                      <Checkbox
-                        id={analyticsID}
-                        aria-label="Nutzungsanalyse"
-                        checked={settings.analytics}
-                        onCheckedChange={(checked) =>
-                          setSettings((s) => ({
-                            ...(s ?? settings),
-                            analytics: !!checked,
-                          }))
-                        }
-                      />
-                    </label>
-                  </div>
+                    <Checkbox
+                      id={analyticsID}
+                      className="mt-1 shrink-0"
+                      aria-label="Nutzungsanalyse"
+                      checked={settings.analytics}
+                      onCheckedChange={(checked) =>
+                        setSettings((s) => ({
+                          ...(s ?? settings),
+                          analytics: !!checked,
+                        }))
+                      }
+                    />
+                  </label>
                 </div>
 
-                <div className="mt-4 flex shrink-0 flex-col gap-2 border-t border-border/50 pt-4">
-                  <Button className="w-full font-bold" onClick={handleAcceptSelected}>
+                <div className="mt-4 flex shrink-0 flex-col gap-2">
+                  <Button
+                    variant="ghost"
+                    className="w-full rounded-full! border! border-muted-foreground! bg-transparent px-4! py-3! text-sm! font-medium text-foreground hover:border-foreground! hover:bg-secondary"
+                    onClick={handleAcceptSelected}
+                  >
                     Auswahl bestätigen
                   </Button>
 
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-muted-foreground hover:text-foreground"
+                    className="rounded-full! px-3! py-2! text-sm! text-muted-foreground hover:text-foreground"
                     onClick={() => setShowDetails(false)}
                   >
                     Abbrechen & Zurück
@@ -234,16 +241,16 @@ export const CookieBanner = () => {
               </m.div>
             )}
 
-            <div className="mt-6 flex shrink-0 justify-center gap-4 border-t border-border pt-4">
+            <div className="mt-3 flex shrink-0 gap-5 border-t border-white/10 pt-2">
               <Link
                 href="/datenschutz"
-                className="inline-flex min-h-11 items-center text-xs font-semibold text-muted-foreground transition-colors hover:text-accent"
+                className="inline-link inline-flex min-h-11 items-center text-sm"
               >
                 Datenschutz
               </Link>
               <Link
                 href="/impressum"
-                className="inline-flex min-h-11 items-center text-xs font-semibold text-muted-foreground transition-colors hover:text-accent"
+                className="inline-link inline-flex min-h-11 items-center text-sm"
               >
                 Impressum
               </Link>

@@ -1,0 +1,22 @@
+[Unit]
+Description=Expire only Mailcow special-use Junk and Trash folders
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /srv/mailcow-retention/retention.py folders
+User=root
+UMask=0077
+TimeoutStartSec=1800
+MemoryMax=192M
+CPUQuota=50%
+Nice=10
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/mailcow-retention /var/log/mailcow-security-retained
+Environment=DOCKER_CONFIG=/srv/mailcow-retention/docker-config
+StandardOutput=journal
+StandardError=journal

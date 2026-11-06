@@ -6,6 +6,7 @@ import { readLimitedJSON, RequestBodyError } from '@/utilities/publicRequestLimi
 import { validateChatInput, type ChatEvent } from '@/utilities/chatProtocol'
 import { createChatLimiter } from '@/utilities/chatLimits'
 import { readOpenAIText } from '@/utilities/openAIChatStream'
+import { CHAT_ANSWER_FORMAT, readCheckedChatAnswer } from '@/utilities/chatAnswerPolicy'
 
 const limiter = createChatLimiter()
 const headers = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }
@@ -171,7 +172,7 @@ export async function POST(req: Request) {
         store: false,
         stream: true,
         reasoning: { effort: 'none' },
-        text: { verbosity: 'low' },
+        text: { verbosity: 'low', format: CHAT_ANSWER_FORMAT },
         max_output_tokens: 800,
         instructions: generateSystemInstruction(projectContext),
         input: [
@@ -198,7 +199,7 @@ export async function POST(req: Request) {
         upstream.status === 429 ? 60 : undefined,
       )
     }
-    const iterator = readOpenAIText(upstream.body)
+    const iterator = readCheckedChatAnswer(readOpenAIText(upstream.body))
     const encoder = new TextEncoder()
     let cancelled = false
     let finished = false

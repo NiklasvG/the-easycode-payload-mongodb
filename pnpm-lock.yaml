@@ -17,6 +17,9 @@ importers:
       '@fluejs/noscroll':
         specifier: ^1.0.0
         version: 1.0.0
+      '@lordicon/element':
+        specifier: ^3.0.2
+        version: 3.0.2
       '@payloadcms/admin-bar':
         specifier: 3.93.0
         version: 3.93.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -1050,6 +1053,18 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
+
+  '@lordicon/element@3.0.2':
+    resolution: {integrity: sha512-y6p39HYBHMw155a9LA2XOj3NYCFo3Xx7vhrjKS/LB2+HnnKGKXOEWsykVGfsn+2JBZmajjsXAgdSly1AnR+uJA==}
+    engines: {node: '>=22'}
+
+  '@lordicon/utils-lottie@2.0.0':
+    resolution: {integrity: sha512-qD7kMhl78g9DCshZd62ARZeGpmw6pMhLlymjMt9vaqsMkOOlxCjLXeS+yh/j9EICL1oWVk3+fWiBAE0ayqmYtQ==}
+    engines: {node: '>=20'}
+
+  '@lordicon/web@2.1.0':
+    resolution: {integrity: sha512-T6/QxNCjboQnTYUYEFQGtl9Su3RbmtQk0Rm3//y6V0FP3BzsVqfyJ+QHRXru3/Ji0BJcvrdDuAQFeDNpPl2jJA==}
+    engines: {node: '>=20'}
 
   '@monaco-editor/loader@1.7.0':
     resolution: {integrity: sha512-gIwR1HrJrrx+vfyOhYmCZ0/JcWqG5kbfG7+d3f/C1LXk2EvzAbHSg3MQ5lO2sMlo9izoAZ04shohfKLVT6crVA==}
@@ -5606,6 +5621,16 @@ snapshots:
       yjs: 13.6.27
     optionalDependencies:
       typescript: 6.0.3
+
+  '@lordicon/element@3.0.2':
+    dependencies:
+      '@lordicon/web': 2.1.0
+
+  '@lordicon/utils-lottie@2.0.0': {}
+
+  '@lordicon/web@2.1.0':
+    dependencies:
+      '@lordicon/utils-lottie': 2.0.0
 
   '@monaco-editor/loader@1.7.0':
     dependencies:

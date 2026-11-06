@@ -123,7 +123,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
             <Link
               href="/"
               className="logo shrink-0"
-              aria-label="The-EasyCode – Startseite"
+              aria-label="Startseite von The-EasyCode"
               onClick={close}
             >
               <Logo />
