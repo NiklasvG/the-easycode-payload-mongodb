@@ -107,16 +107,6 @@ export async function Footer() {
           ))}
         </div>
       </div>
-
-      {/* Bottom Bar */}
-      <div className="border-t border-white/5 py-8">
-        <div className="container flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} The-Easycode. Alle Rechte vorbehalten.</p>
-          <a className="inline-link" href="https://lordicon.com/" rel="noopener noreferrer" target="_blank">
-            Animated icons by Lordicon.com
-          </a>
-        </div>
-      </div>
     </footer>
   )
 }
