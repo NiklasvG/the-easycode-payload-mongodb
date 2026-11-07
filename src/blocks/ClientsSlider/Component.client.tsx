@@ -39,7 +39,7 @@ const defaultOptions: Options = {
   snap: true, // Snap-Funktion nach Slide
   autoScroll: {
     // kontinuierliches Scrollen
-    speed: 0.8, // Geschwindigkeit (je höher, desto schneller)
+    speed: 0.3, // Geschwindigkeit (je höher, desto schneller)
     pauseOnHover: true,
     pauseOnFocus: true,
     rewind: false, // kein Zurücksetzen nötig

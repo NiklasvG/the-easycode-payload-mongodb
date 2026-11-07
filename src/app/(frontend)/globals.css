@@ -540,19 +540,27 @@
   }
 
   @media (min-width: 1440px) and (max-width: 1919px) {
+    :root {
+      --button-font-size: calc(1.125rem + (100vw - 1440px) / 100);
+      --button-padding-block: 0.8333333333vw;
+    }
     .btn {
       border-radius: 7vw;
-      font-size: calc(1.125rem + (100vw - 1440px) / 100);
-      padding: 0.8333333333vw 1.25vw;
+      font-size: var(--button-font-size);
+      padding: var(--button-padding-block) 1.25vw;
     }
   }
 
   @media (min-width: 1920px) {
+    :root {
+      --button-font-size: calc(1.2rem + (100vw - 1920px) / 100);
+      --button-padding-block: 0.7291666667vw;
+    }
     .btn {
       border-radius: 6.09375vw;
-      font-size: calc(1.2rem + (100vw - 1920px) / 100);
+      font-size: var(--button-font-size);
       gap: 0.46875vw;
-      padding: 0.7291666667vw 1.09375vw;
+      padding: var(--button-padding-block) 1.09375vw;
     }
   }
 
@@ -1261,14 +1269,19 @@
 .skip-link:focus {
   transform: none;
 }
+:root {
+  --header-link-font-size: clamp(1rem, 1.05vw, 1.2rem);
+  --header-link-padding-block: clamp(0.5rem, 0.73vw, 0.875rem);
+}
 .header-link {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding: clamp(0.5rem, 0.73vw, 0.875rem) clamp(1.25rem, 1.1vw, 1.5rem);
+  padding: var(--header-link-padding-block) clamp(1.25rem, 1.1vw, 1.5rem);
   border: 2px solid transparent;
   border-radius: 999px;
-  font-size: clamp(1rem, 1.05vw, 1.2rem);
+  font-size: var(--header-link-font-size);
+  line-height: 1.5;
   font-weight: 600;
   overflow-wrap: anywhere;
   transition:
@@ -1284,6 +1297,19 @@
   line-height: 1.08;
 }
 @media (min-width: 1024px) {
+  :root {
+    /* Match the header before hydration: 4rem padding plus its tallest control.
+       Navigation can exceed the 7.5rem minimum on wide screens. Keep its
+       metrics shared with the links and buttons so hydration adds no jump. */
+    --site-header-height: max(
+      7.5rem,
+      calc(4rem + var(--header-link-font-size) * 1.5 + var(--header-link-padding-block) * 2 + 4px),
+      calc(
+        4rem + max(1.5rem, var(--button-font-size, 1rem) * 1.5) +
+          var(--button-padding-block, 0.5rem) * 2 + 4px
+      )
+    );
+  }
   .text-animation-hero {
     min-height: calc(100vh - var(--site-header-height, 7.5rem));
     min-height: calc(100svh - var(--site-header-height, 7.5rem));
