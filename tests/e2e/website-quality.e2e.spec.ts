@@ -153,7 +153,6 @@ test.describe('website quality across published content', () => {
     const decline = page.getByRole('button', { name: 'Alle ablehnen', exact: true })
     if (await decline.isVisible()) await decline.click()
     await page.getByRole('textbox', { name: 'Website durchsuchen' }).fill('R&D ?')
-    await page.getByRole('button', { name: 'Suchen', exact: true }).click()
     await expect(page).toHaveURL(/q=R%26D\+%3F/)
     await expect(page.getByRole('heading', { name: 'Keine Ergebnisse gefunden' })).toBeVisible()
     await page.goto('/diese-seite-existiert-nicht-audit')
