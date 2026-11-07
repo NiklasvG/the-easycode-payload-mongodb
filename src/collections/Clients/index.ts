@@ -9,7 +9,7 @@ export const Clients: CollectionConfig<'clients'> = {
   disableBulkDelete: true,
   admin: {
     useAsTitle: 'companyName',
-    defaultColumns: ['companyName', 'slug', 'logo', 'updatedAt'],
+    defaultColumns: ['companyName', 'quoteOrder', 'slug', 'logo', 'updatedAt'],
   },
   access: {
     read: () => true,
@@ -35,6 +35,16 @@ export const Clients: CollectionConfig<'clients'> = {
       type: 'upload',
       relationTo: 'media', // deine Media-Collection
       required: false,
+    },
+    {
+      name: 'quoteOrder',
+      label: 'Reihenfolge der Kundenstimmen',
+      type: 'number',
+      defaultValue: 5,
+      admin: {
+        description:
+          'Kleinere Werte erscheinen zuerst. Bei gleichem Wert stehen neu angelegte Kunden vorne. Ein leeres Feld zählt als 5.',
+      },
     },
     {
       name: 'contacts',

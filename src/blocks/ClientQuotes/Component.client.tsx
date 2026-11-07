@@ -81,7 +81,7 @@ export const QuoteSlider: React.FC<Props> = ({ quotes }) => {
                               fill
                               className="w-full h-full object-cover"
                               quality={85}
-                              sizes="(min-width: 1920px) 9.375vw, (min-width: 1440px) 11.806vw, max(7.5rem, calc(4.46vw + 6.6rem))"
+                              sizes="(min-width: 1334px) 160px, (min-width: 1067px) 12vw, (min-width: 1024px) 128px, max(7.5rem, calc(4.46vw + 6.6rem))"
                             />
                           </div>
                         ) : (
@@ -107,22 +107,22 @@ export const QuoteSlider: React.FC<Props> = ({ quotes }) => {
       </Splide>
 
       {quotes.length > 1 && (
-        <div className="flex items-center justify-center gap-2 quote_navigation lg:mt-4">
+        <div className="quote_navigation">
           <button
             type="button"
-            className="arrow"
+            className="quote__arrow"
             onClick={(event) => go('<', event)}
             aria-label="Vorheriges Zitat"
           >
             <ChevronLeft className="stroke-2" />
           </button>
 
-          <ul className="splide__pagination quote__pagination">
+          <ul className="quote__pagination">
             {quotes.map((_, i) => (
               <li key={i}>
                 <button
                   type="button"
-                  className={`splide__pagination__page ${i === active ? 'is-active' : ''}`}
+                  className="quote__page"
                   onClick={(event) => go(i, event)}
                   aria-label={`Gehe zu Zitat ${i + 1}`}
                   aria-current={i === active ? 'true' : undefined}
@@ -133,7 +133,7 @@ export const QuoteSlider: React.FC<Props> = ({ quotes }) => {
 
           <button
             type="button"
-            className="arrow"
+            className="quote__arrow"
             onClick={(event) => go('>', event)}
             aria-label="Nächstes Zitat"
           >

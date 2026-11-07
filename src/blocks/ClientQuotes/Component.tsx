@@ -24,11 +24,16 @@ export const ClientQuotesBlockComponent: React.FC<Props> = async ({
 	const { docs } = await payload.find({
 		collection: 'clients',
 		overrideAccess: false,
-		limit: 100,
+		pagination: false,
+		limit: 0,
+		sort: '-createdAt',
 		depth: 2
 	})
 
-	const clients = docs as Client[]
+	// Stable sorting preserves newest-first order for clients with equal priorities.
+	const clients = [...(docs as Client[])].sort(
+		(a, b) => (a.quoteOrder ?? 5) - (b.quoteOrder ?? 5),
+	)
 
 	const allQuotes: QuoteItem[] = []
 

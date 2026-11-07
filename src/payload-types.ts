@@ -1232,6 +1232,10 @@ export interface Client {
   generateSlug?: boolean | null;
   slug: string;
   logo?: (string | null) | Media;
+  /**
+   * Kleinere Werte erscheinen zuerst. Bei gleichem Wert stehen neu angelegte Kunden vorne. Ein leeres Feld zählt als 5.
+   */
+  quoteOrder?: number | null;
   contacts?:
     | {
         name: string;
@@ -2343,6 +2347,7 @@ export interface ClientsSelect<T extends boolean = true> {
   generateSlug?: T;
   slug?: T;
   logo?: T;
+  quoteOrder?: T;
   contacts?:
     | T
     | {

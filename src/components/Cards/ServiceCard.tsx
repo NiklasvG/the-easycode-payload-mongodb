@@ -138,7 +138,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
               <button
                 ref={hintTrigger}
                 type="button"
-                className="image-teaser__hint-trigger min-h-11"
+                className="image-teaser__hint-trigger"
                 aria-label="Hinweis zum Vorschaubild anzeigen"
                 aria-describedby={hintOpen ? hintId : undefined}
                 onFocus={showHint}
@@ -158,8 +158,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
                   }
                 }}
               >
-                <span>Info</span>
                 <Info className="size-4" aria-hidden="true" />
+                <span>Info</span>
               </button>
             </div>
           )}
