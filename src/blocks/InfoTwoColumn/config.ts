@@ -1,5 +1,6 @@
 // src/blocks/InfoTwoColumn/config.ts
 import type { Block } from 'payload'
+import { link } from '@/fields/link'
 
 export const InfoTwoColumnBlock: Block = {
 	slug: 'infoTwoColumn',
@@ -53,6 +54,21 @@ export const InfoTwoColumnBlock: Block = {
 			required: false,
 			defaultValue: 'starken Onlineauftritt'
 		},
+		{
+			name: 'enableLink',
+			type: 'checkbox',
+			label: 'CTA unter der Überschrift anzeigen',
+			defaultValue: false
+		},
+		link({
+			appearances: false,
+			overrides: {
+				label: 'CTA-Link',
+				admin: {
+					condition: (_, siblingData) => Boolean(siblingData?.enableLink)
+				}
+			}
+		}),
 		{
 			name: 'body',
 			type: 'textarea',

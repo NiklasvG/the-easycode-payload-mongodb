@@ -1417,6 +1417,17 @@
   @apply mb-8 mt-4;
 }
 
+/* Shared section rhythm, including headings in separate CMS rich-text fields. */
+.legal-content .payload-richtext h2 {
+  margin-block-start: 3rem;
+}
+
+@media (min-width: 64rem) {
+  .legal-content .payload-richtext h2 {
+    margin-block-start: 4rem;
+  }
+}
+
 .payload-richtext h3,
 .payload-richtext h4,
 .payload-richtext h5,

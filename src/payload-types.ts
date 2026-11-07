@@ -1003,6 +1003,22 @@ export interface InfoTwoColumnBlock {
   overhead?: string | null;
   headline?: string | null;
   accentText?: string | null;
+  enableLink?: boolean | null;
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: string | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: string | Post;
+        } | null);
+    url?: string | null;
+    label: string;
+  };
   body?: string | null;
   listHeadline?: string | null;
   items?:
@@ -2011,6 +2027,16 @@ export interface InfoTwoColumnBlockSelect<T extends boolean = true> {
   overhead?: T;
   headline?: T;
   accentText?: T;
+  enableLink?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
   body?: T;
   listHeadline?: T;
   items?:

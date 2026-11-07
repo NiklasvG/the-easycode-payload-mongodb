@@ -55,7 +55,7 @@ export default async function Page({ params: paramsPromise }: Args) {
 	const { hero, layout } = page
 
 	return (
-		<article>
+		<article className={page.slug === 'impressum' || page.slug === 'datenschutz' ? 'legal-content' : undefined}>
 			{!draft && <StructuredData data={getContentStructuredData(page, 'pages')} />}
 			<PageClient />
 			<PayloadRedirects disableNotFound url={urlPath} />

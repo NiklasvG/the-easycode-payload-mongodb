@@ -2,7 +2,8 @@
 import React from 'react'
 import type { InfoTwoColumnBlock } from '@/payload-types'
 import { highlightPhrase } from '@/utilities/highlightPhrase'
-import { BadgeCheck } from 'lucide-react'
+import { ArrowUpRight, BadgeCheck } from 'lucide-react'
+import { CMSLink } from '@/components/Link'
 
 type Props = InfoTwoColumnBlock & {
 	className?: string
@@ -12,6 +13,8 @@ export const InfoTwoColumnBlockComponent: React.FC<Props> = ({
 	overhead,
 	headline,
 	accentText,
+	enableLink,
+	link,
 	body,
 	listHeadline,
 	items,
@@ -50,6 +53,14 @@ export const InfoTwoColumnBlockComponent: React.FC<Props> = ({
 						<h2 className="h2">
 							{accentText ? highlightPhrase(headline, accentText) : headline}
 						</h2>
+					)}
+					{enableLink && (
+						<CMSLink {...link} appearance="outline" size="lg" label={null} className="mt-8">
+							{link?.label}
+							<span className="block shrink-0 bg-accent rounded-full p-1">
+								<ArrowUpRight aria-hidden="true" className="stroke-3 text-primary!" />
+							</span>
+						</CMSLink>
 					)}
 				</div>
 
