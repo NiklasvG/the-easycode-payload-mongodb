@@ -126,9 +126,9 @@ export const CookieBanner = () => {
                 <FolderSettingsIcon />
               </div>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Wir verwenden Cookies, um die grundlegenden Funktionen der Website sicherzustellen.
-                Mit deiner Zustimmung analysieren wir die Nutzung und Ladezeiten mit Umami ohne
-                Analyse-Cookies. Weitere Informationen findest du in unserer{' '}
+                Ich verwende Cookies, um die grundlegenden Funktionen der Website sicherzustellen.
+                Mit deiner Zustimmung analysiere ich die Nutzung und Ladezeiten mit Umami ohne
+                Analyse-Cookies. Weitere Informationen findest du in meiner{' '}
                 <Link href="/datenschutz" className="inline-link">
                   Datenschutzerklärung
                 </Link>
@@ -199,8 +199,8 @@ export const CookieBanner = () => {
                         </span>
                       </span>
                       <span className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                        Umami hilft uns zu verstehen, wie du unsere Website nutzt und wie schnell
-                        sie lädt. Die Analyse läuft auf unserer eigenen Infrastruktur und verwendet
+                        Umami hilft mir zu verstehen, wie du meine Website nutzt und wie schnell
+                        sie lädt. Die Analyse läuft auf meiner eigenen Infrastruktur und verwendet
                         keine Analyse-Cookies.
                       </span>
                     </span>

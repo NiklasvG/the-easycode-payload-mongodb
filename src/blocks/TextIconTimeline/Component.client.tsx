@@ -137,6 +137,7 @@ const TimelineItemComponent: React.FC<{
   item: TimelineItem
 }> = ({ item }) => {
   const { icon, title, text } = item
+  const [station, ...details] = text.split('\n')
   const [playAnimation, setPlayAnimation] = useState(false)
 
   const handleMouseEnter = () => {
@@ -164,15 +165,13 @@ const TimelineItemComponent: React.FC<{
       </div>
 
       <div className="text-icon__content min-w-0 flex flex-col gap-2 [overflow-wrap:anywhere]">
-        <h3 className="text-icon__title font-semibold big">{title}</h3>
-        <p className="text-icon__text text-muted-foreground big">
-          {text.split('\n').map((line, idx) => (
-            <span key={idx}>
-              {line}
-              <br />
-            </span>
-          ))}
-        </p>
+        <h3 className="text-icon__title text-sm md:text-base font-medium text-accent">{title}</h3>
+        <div className="text-icon__text big">
+          <p className="font-medium text-foreground">{station}</p>
+          {details.length > 0 && (
+            <p className="mt-2 text-muted-foreground whitespace-pre-line">{details.join('\n')}</p>
+          )}
+        </div>
       </div>
     </div>
   )

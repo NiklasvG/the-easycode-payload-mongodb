@@ -1,5 +1,9 @@
 # Bedarfsweiser Easycode-Releasejob
 
+Seit dem [Livegang am 7. November 2026](golive-2026-11-07.md) verwenden
+Produktionsbuild und Abschlussprüfung `https://the-easycode.eu` und
+`APP_ENV=production`. Staging leitet permanent auf die Hauptdomain weiter.
+
 Die auf Betreiberwunsch eingerichtete Ablösung des Release-Webdienstes verwendet
 Python-Standardbibliothek auf dem Coolify-Controller. Kein dauerhaft laufender
 Releaseprozess, kein zusätzlicher HTTP-Port und keine eigene Release-Domain.

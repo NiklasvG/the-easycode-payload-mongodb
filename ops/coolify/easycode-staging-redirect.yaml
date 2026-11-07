@@ -1,0 +1,22 @@
+http:
+  routers:
+    easycode-staging-redirect-http:
+      rule: "Host(`staging.the-easycode.eu`)"
+      entryPoints: [http]
+      priority: 1000
+      middlewares: [easycode-staging-to-production]
+      service: noop@internal
+    easycode-staging-redirect-https:
+      rule: "Host(`staging.the-easycode.eu`)"
+      entryPoints: [https]
+      priority: 1000
+      middlewares: [easycode-staging-to-production]
+      service: noop@internal
+      tls:
+        certResolver: letsencrypt
+  middlewares:
+    easycode-staging-to-production:
+      redirectRegex:
+        regex: '^https?://staging\.the-easycode\.eu/(.*)'
+        replacement: 'https://the-easycode.eu/${1}'
+        permanent: true

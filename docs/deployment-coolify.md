@@ -1,5 +1,11 @@
 # Hetzner / Coolify deployment
 
+**Live seit 7. November 2026:** Die Anwendung läuft unter
+`https://the-easycode.eu` mit `APP_ENV=production`. Staging und www leiten
+permanent weiter. Aktueller Betriebs- und Umschaltbeleg:
+[Hauptdomain-Livegang](golive-2026-11-07.md). Die folgenden Staging- und
+Einrichtungsnotizen dokumentieren die frühere Vorbereitung.
+
 **Aktualisierung vom 5. November 2026:** Der aktuelle Releaseablauf steht in
 [release-job.md](release-job.md). Ein projektspezifischer Einmaljob ersetzt den
 früheren Release-Webdienst. Run-ID-Prüfung, getrennte Zugänge, Backupsperre,
