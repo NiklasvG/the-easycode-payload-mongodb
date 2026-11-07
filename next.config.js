@@ -8,6 +8,8 @@ const NEXT_PUBLIC_SERVER_URL =
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	output: 'standalone',
+	// Let open browsers detect a release change and reload on navigation mismatches.
+	deploymentId: process.env.BUILD_ID || process.env.SOURCE_COMMIT || undefined,
 	// Captured in the built server, so a runtime variable cannot impersonate a new build.
 	env: {
 		RELEASE_BUILD_ID: process.env.BUILD_ID || '',

@@ -65,6 +65,34 @@ der CI-Schlüssel erlaubt trotzdem nur den festen Auslöser dieses Projekts.
 
 ## Updates und Rückweg
 
+### Unterbrechungen beim Versionswechsel
+
+Next.js verwendet die vorhandene `BUILD_ID` (ersatzweise `SOURCE_COMMIT`) als
+`deploymentId`. Bei erkannten Versionskonflikten in der Navigation lädt der
+Browser die Seite vollständig neu. Die Werte werden bereits beim Image-Build
+übergeben; dafür ist keine weitere Coolify-Variable nötig. Dies ersetzt weder
+Readiness noch eine sichere Containerumschaltung und hält alte Assets nicht
+automatisch vor.
+
+Bei Fehlerseiten während eines Releases die Anwendungslogs des alten und neuen
+Containers mit den Deployment-Zeitpunkten abgleichen. In Coolify prüfen:
+
+- Der Healthcheck aus dem Image muss aktiv sein und `/api/health/ready` prüfen.
+  Eine eigene Coolify-Konfiguration darf ihn nicht durch einen oberflächlichen
+  Check ersetzen. Der Endpoint prüft Payload, MongoDB und die Releasezuordnung.
+- Den alten Container erst nach erfolgreichem Healthcheck des Ersatzes entfernen.
+  Keine feste Containerbenennung oder Host-Port-Bindung verwenden, die parallele
+  Container verhindert.
+- Die Stop Grace Period muss laufenden Anfragen genügend Zeit zum Abschluss
+  geben; Coolifys Standard ist 30 Sekunden.
+
+Auch mit diesen Maßnahmen sind fehlende Assets aus einer alten Browser-Sitzung
+oder Abhängigkeitsfehler anhand der tatsächlichen Logs zu unterscheiden. Eine
+erfolgreiche Abschlussprüfung allein belegt keine durchgängige Verfügbarkeit
+während des Releases.
+
+### Hostcode aktualisieren
+
 Hostcode nur nach Tests und verifiziertem Quellstand synchronisieren. Für einen
 Rückweg zuerst Jobauslöser sperren, laufende Jobs und Backups abwarten und den
 aktuellen Zustand sichern. Erst danach genau einen alten oder neuen Weg freigeben.
