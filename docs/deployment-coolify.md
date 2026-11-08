@@ -1,5 +1,7 @@
 # Hetzner / Coolify deployment
 
+**Healthchecks, 7. November 2026:** Website, MongoDB sowie Umami/PostgreSQL sind dauerhaft auf 60 Sekunden eingestellt. Die Website verwendet den bisherigen Image-Prüfbefehl jetzt als expliziten Coolify-CMD-Check, damit spätere Deployments ebenfalls 60 Sekunden erhalten. [Übernahme, Abnahme und Grenzen](../../docs/reports/2026-11-07-projekt-healthcheck-intervalle.md). Die unten beschriebene ausschließliche Übernahme des kürzeren Dockerfile-Defaults ist damit ersetzt.
+
 **Live seit 7. November 2026:** Die Anwendung läuft unter
 `https://the-easycode.eu` mit `APP_ENV=production`. Staging und www leiten
 permanent weiter. Aktueller Betriebs- und Umschaltbeleg:
