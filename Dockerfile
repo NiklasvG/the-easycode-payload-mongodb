@@ -73,8 +73,9 @@ RUN groupadd --system --gid 1001 nodejs \
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --chown=nextjs:nodejs healthcheck.cjs ./healthcheck.cjs
 USER nextjs
 EXPOSE 3000
-HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=3 \
-  CMD node -e "fetch('http://127.0.0.1:3000/api/health/ready', { signal: AbortSignal.timeout(4000) }).then(r => process.exit(r.status === 200 ? 0 : 1)).catch(() => process.exit(1))"
+HEALTHCHECK --interval=60s --timeout=5s --start-period=60s --retries=3 \
+  CMD ["node", "/app/healthcheck.cjs"]
 CMD ["node", "server.js"]

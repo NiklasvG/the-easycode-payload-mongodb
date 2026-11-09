@@ -148,6 +148,11 @@ jobs:
           done
           docker logs app-test
           exit 1
+      - name: Verify the image healthcheck used by Coolify
+        run: |
+          docker exec app-test node /app/healthcheck.cjs
+          test "$(docker inspect --format '{{json .Config.Healthcheck.Test}}' app-test)" = '["CMD","node","/app/healthcheck.cjs"]'
+          test "$(docker inspect --format '{{json .Config.Healthcheck.Interval}}' app-test)" = 60000000000
       - name: Required browser tests against the container
         run: |
           docker run --rm --init --network host --ipc host \

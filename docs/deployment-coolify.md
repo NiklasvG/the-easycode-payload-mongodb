@@ -1,6 +1,6 @@
 # Hetzner / Coolify deployment
 
-**Healthchecks, 7. November 2026:** Website, MongoDB sowie Umami/PostgreSQL sind dauerhaft auf 60 Sekunden eingestellt. Die Website verwendet den bisherigen Image-Prüfbefehl jetzt als expliziten Coolify-CMD-Check, damit spätere Deployments ebenfalls 60 Sekunden erhalten. [Übernahme, Abnahme und Grenzen](../../docs/reports/2026-11-07-projekt-healthcheck-intervalle.md). Die unten beschriebene ausschließliche Übernahme des kürzeren Dockerfile-Defaults ist damit ersetzt.
+**Healthchecks, 9. November 2026:** Die Website verwendet `node /app/healthcheck.cjs` als Coolify-CMD-Check und als Dockerfile-Healthcheck. Das Skript prüft `/api/health/ready` mit vier Sekunden Timeout und verlangt HTTP 200. Intervall 60 Sekunden, Docker-Timeout fünf Sekunden, Startperiode 60 Sekunden, drei Wiederholungen. Der zuvor übernommene `node -e`-Inlinebefehl wird von Coolify 4.7.0 wegen Anführungszeichen/Klammern abgelehnt und darf nicht erneut eingetragen werden. CI führt den gelieferten Skriptaufruf im Testimage aus. MongoDB sowie Umami/PostgreSQL behalten ihre bestehenden 60-Sekunden-Checks. [Ursprüngliche Intervallumstellung](../../docs/reports/2026-11-07-projekt-healthcheck-intervalle.md).
 
 **Live seit 7. November 2026:** Die Anwendung läuft unter
 `https://the-easycode.eu` mit `APP_ENV=production`. Staging und www leiten
