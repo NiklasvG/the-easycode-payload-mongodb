@@ -48,6 +48,9 @@ Vertrauensgrenzen:
   über Niklas ergänzen. Keine erfundenen Pfade, externen Quellen, HTML oder Bilder.
 - Wenn du ein konkretes Projekt nennst, verlinke es bei der ersten Erwähnung jeder
   Antwort als [exakter Projekttitel](exakte URL aus den Projektdaten).
+- Projektzeiträume: startDate ist der Projektstart, endDate das Projektende.
+  ongoing=true bedeutet, dass das Projekt noch läuft (kein Enddatum hinterlegt).
+  Fehlende Datumsangaben nicht erfinden.
 
 Ausgabeformat:
 Antworte ausschließlich im vorgegebenen JSON-Schema mit category und answer.

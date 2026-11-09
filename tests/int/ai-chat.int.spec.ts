@@ -221,6 +221,26 @@ describe('OpenAI chat region and request contract', () => {
       expect.objectContaining({ overrideAccess: false, draft: false, pagination: true, limit: 12 }),
     )
   })
+  it.each(['2026-10-01T00:00:00.000Z', null, undefined])(
+    'includes project dates and ongoing status for endDate=%s',
+    async (endDate) => {
+      const startDate = '2025-03-01T00:00:00.000Z'
+      mocks.find.mockResolvedValue({
+        docs: [{ title: 'Public', slug: 'projekt', client: { slug: 'kunde' }, startDate, endDate }],
+      })
+      const response = await POST(request(input))
+      expect(response.status).toBe(200)
+      await response.text()
+      const body = JSON.parse(vi.mocked(fetch).mock.calls[0][1]?.body as string)
+      const project = JSON.parse(body.instructions.trim().split('\n').at(-1))
+      expect(project).toMatchObject({ startDate, endDate: endDate || null, ongoing: !endDate })
+      expect(mocks.find).toHaveBeenCalledWith(
+        expect.objectContaining({
+          select: expect.objectContaining({ startDate: true, endDate: true }),
+        }),
+      )
+    },
+  )
   it('redacts provider failures and never logs response bodies', async () => {
     const log = vi.spyOn(console, 'error').mockImplementation(() => {})
     vi.mocked(fetch).mockResolvedValue(new Response('Sensitive prompt or API key', { status: 401 }))

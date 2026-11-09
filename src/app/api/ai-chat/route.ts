@@ -130,6 +130,8 @@ export async function POST(req: Request) {
         select: {
           title: true,
           shortDescription: true,
+          startDate: true,
+          endDate: true,
           technologies: true,
           slug: true,
           client: true,
@@ -147,6 +149,9 @@ export async function POST(req: Request) {
         const row = JSON.stringify({
           title: project.title?.slice(0, 150),
           description: project.shortDescription?.slice(0, 400),
+          startDate: project.startDate || null,
+          endDate: project.endDate || null,
+          ongoing: !project.endDate,
           technologies: project.technologies?.slice(0, 8).map((tech) => tech.name?.slice(0, 60)),
           url: `${expectedOrigin}/projekte/${encodeURIComponent(client.slug)}/${encodeURIComponent(slug)}`,
         })

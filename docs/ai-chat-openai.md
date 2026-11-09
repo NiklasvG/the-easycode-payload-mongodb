@@ -136,6 +136,7 @@ Vertragsunterlagen und Account-Screenshots außerhalb des
    abschließend bewerten, ohne unbegrenzt Besucherkennungen zu archivieren.
 4. Payload liefert maximal zwölf jüngste veröffentlichte Projekte unter anonymen
    Zugriffsrechten. Es werden nur Titel, Kurzbeschreibung, bis zu acht Technologien
+   sowie Startdatum, Enddatum, den Status „laufend“ (kein Enddatum hinterlegt)
    und öffentliche Projekt-URLs übertragen, insgesamt höchstens 6.000 Zeichen.
    Nicht enthalten: interne Kundenfelder, E-Mail-Adressen aus Beziehungen, Uploads,
    Kontaktanfragen, CMS-Authentifizierung, Besucher-IP oder Browser-Header.
