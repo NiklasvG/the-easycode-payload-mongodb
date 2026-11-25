@@ -49,6 +49,8 @@ ENV DATABASE_URL="postgresql://user:pass@localhost:5432/dummy"
 ARG SKIP_BUILD_GEO
 ENV SKIP_BUILD_GEO=$SKIP_BUILD_GEO
 
+# Webpack is the supported Next.js fallback for the emulated AMD64 builder.
+RUN node -e "const fs=require('fs');const p=require('./package.json');if(p.scripts['build:app']!=='next build --turbo')throw Error('Upstream build command changed');p.scripts['build:app']='next build --webpack';fs.writeFileSync('package.json',JSON.stringify(p));"
 RUN pnpm build:docker
 
 # Production image, copy all the files and run next
