@@ -9,6 +9,8 @@ Dieser Stand dokumentiert tatsächlich laufende Versionen und bereits abgeschlos
 - Bestehender DB-Backupplan blytmjdpebjx1iucvqpvbqwl, APP_SECRET, DB-Zugang und Volume erhalten. Frischer nativer Backup mit S3-Hashabgleich und isoliertem Restore-/Migrationstest über 26 Geschäftstabellen erfolgreich.
 - [Vollständige Liveabnahme mit PR-/CI-/Digest- und Zugriffsbelegen](umami-security-acceptance-2026-11-25.md).
 
+- Die ungenutzten Coolify-Prüfdefinitionen und ihre leere Umgebung sind nach Abnahme entfernt. [Bereinigung und spätere Validierung](security-validation-cleanup-2026-11-25.md); Produktion und Backuppläne unverändert.
+
 ## Easycode Website
 
 - Website rwzukgdnukwmpkgu0fyubgau produktiv Payload 3.94.2, Next 16.4.6, React 19.3.1, Node 24.22.3; Main-Release eee8beba1e3fb00a07c482628cc1cd02cad1757b, Deployment givouuwdffyg9b6fy8rgjwxs.
