@@ -21,3 +21,11 @@ jobs:
       - name: Check actual Node and Next versions without network
         run: |
           docker run --rm --network none --entrypoint node umami-security:candidate -e 'const assert=require("node:assert/strict");assert.equal(process.version,"v22.23.5");assert.equal(require("next/package.json").version,"16.4.5");console.log("Node and Next patched versions verified")'
+      - name: Export the checked AMD64 image
+        run: docker save umami-security:candidate | gzip -1 > /tmp/umami-security-amd64.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: umami-security-amd64
+          path: /tmp/umami-security-amd64.tar.gz
+          retention-days: 3
+          compression-level: 0
