@@ -48,6 +48,7 @@ test('Gateway preserves tracking, challenges management, and retains Umami Beare
     assert.equal((await call('/api/auth/verify', { headers: { Cookie: cookie, Authorization: 'Bearer invalid' } })).status, 401);
     assert.equal((await call('/api/auth/verify', { headers: { Authorization: 'Bearer valid' } })).status, 401);
     assert.equal((await call('/', { headers: { Cookie: cookie + 'tampered' } })).status, 401);
+    for (let i = 0; i < 60; i++) assert.equal((await call('/_next/static/dashboard-fixture.js', { headers: { Cookie: cookie } })).status, 200, 'Authenticated dashboard asset burst');
     let limited = false;
     for (let i = 0; i < 140; i++) if ((await call('/api/send', { method: 'OPTIONS' })).status === 429) { limited = true; break; }
     assert.equal(limited, true);
