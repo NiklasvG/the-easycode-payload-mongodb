@@ -33,6 +33,7 @@ jobs:
     timeout-minutes: 2
     outputs:
       release: ${{ steps.scope.outputs.release }}
+      website_release: ${{ steps.scope.outputs.website_release }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -47,11 +48,14 @@ jobs:
           import { appendFileSync } from 'node:fs'
           const before = process.env.BEFORE
           let release = true
+          let websiteRelease = true
           if (/^[a-f0-9]{40}$/.test(before || '') && !/^0+$/.test(before)) {
             const files = execFileSync('git', ['diff', '--name-only', '-z', before, process.env.AFTER], { encoding: 'utf8' }).split('\0').filter(Boolean)
             release = files.some(file => !file.endsWith('.md') && !file.startsWith('docs/'))
+            // Umami is an independent Coolify service; retain all checks while avoiding a website release.
+            websiteRelease = files.some(file => !file.endsWith('.md') && !file.startsWith('docs/') && !file.startsWith('ops/umami-security/') && !['.github/workflows/umami-security.yml', '.github/workflows/quality.yml'].includes(file))
           }
-          appendFileSync(process.env.GITHUB_OUTPUT, `release=${release}\n`)
+          appendFileSync(process.env.GITHUB_OUTPUT, `release=${release}\nwebsite_release=${websiteRelease}\n`)
           NODE
 
   checks:
@@ -208,7 +212,7 @@ jobs:
 
   request:
     needs: [changes, quality]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.changes.outputs.release == 'true' && vars.COOLIFY_PRODUCTION_ENABLED == 'true'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.changes.outputs.website_release == 'true' && vars.COOLIFY_PRODUCTION_ENABLED == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     concurrency:
