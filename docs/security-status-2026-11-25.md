@@ -14,8 +14,8 @@ Dieser Stand dokumentiert tatsächlich laufende Versionen und bereits abgeschlos
 ## Easycode Website
 
 - Website rwzukgdnukwmpkgu0fyubgau produktiv Payload 3.94.2, Next 16.4.6, React 19.3.1, Node 24.22.3; Main-Release eee8beba1e3fb00a07c482628cc1cd02cad1757b, Deployment givouuwdffyg9b6fy8rgjwxs.
-- MongoDB cui3iuxrxvwqytlyw9htzsek weiterhin 8.0.34 auf prod-app-01. Ressourcenname the-easycode-mongodb-staging ist irreführend: Umgebung 7 und tatsächliche Nutzung sind PRODUKTION.
-- Vorhandener hostbasierter Backupkoordinator sichert DB und Medien konsistent; aktuelles Paar 0475a7fc-c202-4655-b85d-c8f9cdbc8b2b erfolgreich, Writer wiederhergestellt.
+- MongoDB `cui3iuxrxvwqytlyw9htzsek` läuft produktiv auf prod-app-01 mit **8.0.38**. ARM64-Image `mongo:8.0.38@sha256:479e85ced54ffb8a40dade1dcde2da2a9ae858515b9415e9cc54bfb8f0575d01`. FCV 8.0 und Replica Set `rs0` bestätigt. Ressourcenname the-easycode-mongodb-staging ist irreführend: Umgebung 7 und tatsächliche Nutzung sind PRODUKTION.
+- Vor dem Patch sicherte der Backupkoordinator DB und Medien konsistent im Paar `8182f405-5ea4-4bcf-8661-caf301038dd8`. Beide S3-Kopien stimmten im SHA-256-Abgleich mit den lokalen Archiven überein. Ein früheres Paar wurde isoliert wiederhergestellt und von 8.0.34 auf 8.0.38 aktualisiert. Collections, Indizes, TTL, Authentifizierung und die 39 Medienreferenzen wurden geprüft. Nach dem Livewechsel waren Website und DB gesund. Der HTTP-Readiness-Endpunkt bestätigte den Payload-Datenbankzugriff.
 
 Abgenommene Prüfung: Produktionsaudit des Website-Lockstands ohne Befunde; Typ-/Lint-/16 Deploymenttests und vollständige Container-/Integrations-/Browser-CI erfolgreich. Laufzeit und Readiness bestätigt.
 
