@@ -1,0 +1,121 @@
+# syntax=docker/dockerfile:1.10
+# Source archive is immutable and independently SHA-256 verified by BuildKit.
+ARG NODE_IMAGE_VERSION="22.23.5-alpine"
+ARG PNPM_VERSION="12.3.4"
+# Keep in sync with the prisma/@prisma/* versions in package.json
+ARG PRISMA_VERSION="7.10.0"
+
+FROM --platform=linux/amd64 node:22.23.5-alpine AS source
+WORKDIR /src
+ADD --checksum=sha256:45e16a329e42f9ac376166984c0d5d6db402d3df7a49c6d8b45620e8fa3552b4 https://codeload.github.com/umami-software/umami/tar.gz/dbb8d606fbd4e99220fb83bcb4abad3e0f97f42a /tmp/umami.tar.gz
+RUN tar -xzf /tmp/umami.tar.gz --strip-components=1 -C /src && rm /tmp/umami.tar.gz
+
+# Install dependencies only when needed
+FROM --platform=linux/amd64 node:${NODE_IMAGE_VERSION} AS deps
+ARG PNPM_VERSION
+
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY --from=source /src/package.json /src/pnpm-lock.yaml /src/pnpm-workspace.yaml ./
+# Workspace packages (@umami/api-client, @umami/mcp) must be present for a frozen install.
+COPY --from=source /src/packages/api-client/package.json ./packages/api-client/
+COPY --from=source /src/packages/mcp/package.json ./packages/mcp/
+COPY --from=source /src/packages/mcp/bin ./packages/mcp/bin/
+RUN npm install -g pnpm@${PNPM_VERSION}
+
+RUN printf 'strictDepBuilds: false\n' >> pnpm-workspace.yaml
+
+RUN pnpm install --frozen-lockfile
+
+# Rebuild the source code only when needed
+FROM --platform=linux/amd64 node:${NODE_IMAGE_VERSION} AS builder
+ARG PNPM_VERSION
+WORKDIR /app
+# build:openapi shells out to pnpm, so the builder stage needs it too
+RUN npm install -g pnpm@${PNPM_VERSION}
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/packages/api-client/node_modules ./packages/api-client/node_modules
+COPY --from=deps /app/packages/mcp/node_modules ./packages/mcp/node_modules
+COPY --from=source /src/ .
+COPY --from=source /src/docker/proxy.ts ./src
+
+ARG BASE_PATH
+
+ENV BASE_PATH=$BASE_PATH
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV DATABASE_URL="postgresql://user:pass@localhost:5432/dummy"
+
+ARG SKIP_BUILD_GEO
+ENV SKIP_BUILD_GEO=$SKIP_BUILD_GEO
+
+# Webpack is the supported Next.js fallback for the emulated AMD64 builder.
+RUN node -e "const fs=require('fs');const p=require('./package.json');if(p.scripts['build:app']!=='next build --turbo')throw Error('Upstream build command changed');p.scripts['build:app']='next build --webpack';fs.writeFileSync('package.json',JSON.stringify(p));"
+RUN pnpm build:docker
+
+# Production image, copy all the files and run next
+FROM --platform=linux/amd64 node:${NODE_IMAGE_VERSION} AS runner
+WORKDIR /app
+
+ARG NODE_OPTIONS
+ARG PNPM_VERSION
+ARG PRISMA_VERSION
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_OPTIONS=$NODE_OPTIONS
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+# Bootstrap pnpm with the bundled npm, then remove npm in the same layer so the
+# vulnerable packages vendored inside the npm CLI are not shipped in the final
+# image. pnpm is the only package manager needed at build and runtime.
+RUN set -x \
+    && apk add --no-cache curl libc6-compat \
+    && npm install -g pnpm@${PNPM_VERSION} \
+    && rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
+
+RUN echo {} > package.json
+
+# Apply the shared security overrides to the runner's separate dependency install.
+COPY --from=source /src/pnpm-workspace.yaml /tmp/pnpm-workspace.yaml
+RUN printf "allowBuilds:\n  '@prisma/engines': true\n  prisma: false\nverifyDepsBeforeRun: false\n" > pnpm-workspace.yaml \
+    && awk '/^overrides:/{f=1;print;next} f&&/^[^ #]/{f=0} f' /tmp/pnpm-workspace.yaml >> pnpm-workspace.yaml \
+    && rm /tmp/pnpm-workspace.yaml
+
+# Script dependencies
+RUN pnpm add npm-run-all dotenv chalk semver \
+    prisma@${PRISMA_VERSION} \
+    @prisma/client@${PRISMA_VERSION} \
+    @prisma/adapter-pg@${PRISMA_VERSION}
+
+# Assert the @prisma/engines postinstall actually downloaded the engine
+# binaries. If pnpm blocked the build script (e.g. allowBuilds not honored by
+# the installed pnpm version), prisma would try to download engines at runtime
+# as the non-root user and fail with a permissions error.
+RUN ls node_modules/.pnpm/@prisma+engines@${PRISMA_VERSION}/node_modules/@prisma/engines/*engine* \
+    || (echo "ERROR: Prisma engine binaries missing - @prisma/engines postinstall was blocked" && exit 1)
+
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
+COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/generated ./generated
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3000
+
+CMD ["sh", "scripts/start-docker.sh"]
+
+# Native Coolify build resource has no public route or database credentials.
+FROM runner AS artifact
+CMD ["sleep", "infinity"]

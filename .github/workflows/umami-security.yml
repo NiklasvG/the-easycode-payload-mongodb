@@ -1,0 +1,33 @@
+name: Umami security image
+on:
+  pull_request:
+    paths: ['ops/umami-security/**', '.github/workflows/umami-security.yml']
+  push:
+    branches: ['codex/umami-security']
+    paths: ['ops/umami-security/**', '.github/workflows/umami-security.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  umami-security:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify tracking and management access gateway
+        run: node --test ops/umami-security/gateway.test.mjs
+      - name: Build patched runner from pinned upstream source
+        run: docker build --target runner --tag umami-security:candidate ops/umami-security
+      - name: Verify AMD64 image architecture
+        run: test "$(docker image inspect umami-security:candidate --format '{{.Architecture}}')" = amd64
+      - name: Check actual Node and Next versions without network
+        run: |
+          docker run --rm --network none --entrypoint node umami-security:candidate -e 'const assert=require("node:assert/strict");assert.equal(process.version,"v22.23.5");assert.equal(require("next/package.json").version,"16.4.5");console.log("Node and Next patched versions verified")'
+      - name: Export the checked AMD64 image
+        run: docker save umami-security:candidate | gzip -1 > /tmp/umami-security-amd64.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: umami-security-amd64
+          path: /tmp/umami-security-amd64.tar.gz
+          retention-days: 3
+          compression-level: 0
