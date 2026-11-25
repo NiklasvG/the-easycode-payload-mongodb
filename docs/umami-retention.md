@@ -6,7 +6,7 @@ ausgeführt. Die automatische tägliche Erstausführung ist für 6. November 202
 
 ## Fester Umfang
 
-- Coolify-Service `pg71i1kdbqjyhh81knlksgoc`, Umami 3.4.0, PostgreSQL 16.
+- Coolify-Service `pg71i1kdbqjyhh81knlksgoc`, Umami 3.5.0, PostgreSQL 16.16 (Liveabnahme vom 25. November 2026).
 - Tatsächlicher Server: Coolify-Controller `116.202.31.211`, nicht Appserver.
 - Website-ID `7d8fb646-d5ab-403b-b2a0-96f68c8d8a4d`; aktuell in Umami als
   EasyCode Staging mit Domain `staging.the-easycode.eu` geführt.
@@ -51,3 +51,5 @@ gezielt anpassen; keine globale Löschregel auf alle Umami-Websites ausweiten.
 
 Die 180-Tage-Regel gilt für die aktive Statistikdatenbank, nicht rückwirkend als
 Löschzusage für bestehende Sicherungskopien. Deren eigene Rotation separat prüfen.
+
+Die Sicherheitswartung vom 25. November ließ Timer, Website-ID und Aufbewahrungsumfang unverändert. [Versions-, Backup- und Zugriffsnachweis](umami-security-acceptance-2026-11-25.md).

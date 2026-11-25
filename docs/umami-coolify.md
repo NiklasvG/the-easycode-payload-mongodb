@@ -1,9 +1,8 @@
 # Umami in Coolify einrichten
 
-Aktueller Betriebsnachweis vom 5. November 2026:
-[180-Tage-Aufbewahrung](umami-retention.md). Umami 3.4.0 läuft auf dem
-Coolify-Controller; die folgenden Schritte sind Einrichtungsanleitung, kein
-Auftrag zur erneuten Anlage oder zu einem Serverumzug.
+Aktueller Betriebsnachweis vom 25. November 2026: [Sicherheitsupdate und Liveabnahme](umami-security-acceptance-2026-11-25.md). Umami 3.5.0 mit Next 16.4.5 / Node 22.23.5 und PostgreSQL 16.16 läuft auf dem Coolify-Controller. Die [180-Tage-Aufbewahrung](umami-retention.md) bleibt erhalten. Die folgenden allgemeinen Einrichtungsschritte sind kein Auftrag zur erneuten Anlage oder zu einem Serverumzug.
+
+Im bestehenden Service gehört `https://analytics.the-easycode.eu` ausschließlich dem Gateway auf Port 3000. Umami selbst und PostgreSQL haben keine öffentliche Route und keine Hostports. Basic Auth schützt die Verwaltung; nur GET/HEAD `/script.js` und POST/OPTIONS `/api/send` bleiben öffentlich. Zugangsdaten werden ausschließlich privat verwahrt. Für API-Aufrufe zuerst mit Basic die signierte Gateway-Sitzung holen, danach deren Cookie zusammen mit dem unveränderten Umami-Bearer senden.
 
 Die Website ersetzt Google Analytics durch selbst gehostetes Umami. Der Tracker
 laedt erst nach Zustimmung zu "Nutzungsanalyse" im Cookie-Banner. Umami misst

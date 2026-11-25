@@ -4,8 +4,10 @@ Dieser Stand dokumentiert tatsächlich laufende Versionen und bereits abgeschlos
 
 ## Umami
 
-- Produktiver Service pg71i1kdbqjyhh81knlksgoc im Projekt wwfukl2ylvs9rrjqcfbcm03k auf dem AMD64-Controller; Umami 3.4.0, PostgreSQL 16.15. Beide Container gesund.
-- Bestehender DB-Backupplan blytmjdpebjx1iucvqpvbqwl und vorhandenes APP_SECRET bleiben erhalten. Keine Produktionsumstellung und noch keine vorgeschaltete Basic Auth.
+- Produktiver Service pg71i1kdbqjyhh81knlksgoc im Projekt wwfukl2ylvs9rrjqcfbcm03k auf dem AMD64-Controller: Umami 3.5.0, Next 16.4.5, Node 22.23.5 und PostgreSQL 16.16; App, DB und Gateway gesund.
+- Verwaltung über HTTPS mit Basic Auth und signierter Sitzung geschützt; öffentlich nur GET/HEAD /script.js und POST/OPTIONS /api/send. Umamis eigene Anmeldung und Bearer-API erhalten.
+- Bestehender DB-Backupplan blytmjdpebjx1iucvqpvbqwl, APP_SECRET, DB-Zugang und Volume erhalten. Frischer nativer Backup mit S3-Hashabgleich und isoliertem Restore-/Migrationstest über 26 Geschäftstabellen erfolgreich.
+- [Vollständige Liveabnahme mit PR-/CI-/Digest- und Zugriffsbelegen](umami-security-acceptance-2026-11-25.md).
 
 ## Easycode Website
 
