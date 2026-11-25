@@ -1,0 +1,15 @@
+{
+  "repository": "https://github.com/umami-software/umami",
+  "commit": "dbb8d606fbd4e99220fb83bcb4abad3e0f97f42a",
+  "archive": "https://codeload.github.com/umami-software/umami/tar.gz/dbb8d606fbd4e99220fb83bcb4abad3e0f97f42a",
+  "sha256": "45e16a329e42f9ac376166984c0d5d6db402d3df7a49c6d8b45620e8fa3552b4",
+  "upstream_version": "3.5.0",
+  "next": "16.4.5",
+  "node": "22.23.5",
+  "runtime_target": "runner",
+  "build_resource_target": "artifact",
+  "start_command": [
+    "sh",
+    "scripts/start-docker.sh"
+  ]
+}
