@@ -11,5 +11,6 @@
   "start_command": [
     "sh",
     "scripts/start-docker.sh"
-  ]
+  ],
+  "platform": "linux/amd64"
 }

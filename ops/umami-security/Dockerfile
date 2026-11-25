@@ -5,13 +5,13 @@ ARG PNPM_VERSION="12.3.4"
 # Keep in sync with the prisma/@prisma/* versions in package.json
 ARG PRISMA_VERSION="7.10.0"
 
-FROM node:22.23.5-alpine AS source
+FROM --platform=linux/amd64 node:22.23.5-alpine AS source
 WORKDIR /src
 ADD --checksum=sha256:45e16a329e42f9ac376166984c0d5d6db402d3df7a49c6d8b45620e8fa3552b4 https://codeload.github.com/umami-software/umami/tar.gz/dbb8d606fbd4e99220fb83bcb4abad3e0f97f42a /tmp/umami.tar.gz
 RUN tar -xzf /tmp/umami.tar.gz --strip-components=1 -C /src && rm /tmp/umami.tar.gz
 
 # Install dependencies only when needed
-FROM node:${NODE_IMAGE_VERSION} AS deps
+FROM --platform=linux/amd64 node:${NODE_IMAGE_VERSION} AS deps
 ARG PNPM_VERSION
 
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
@@ -29,7 +29,7 @@ RUN printf 'strictDepBuilds: false\n' >> pnpm-workspace.yaml
 RUN pnpm install --frozen-lockfile
 
 # Rebuild the source code only when needed
-FROM node:${NODE_IMAGE_VERSION} AS builder
+FROM --platform=linux/amd64 node:${NODE_IMAGE_VERSION} AS builder
 ARG PNPM_VERSION
 WORKDIR /app
 # build:openapi shells out to pnpm, so the builder stage needs it too
@@ -52,7 +52,7 @@ ENV SKIP_BUILD_GEO=$SKIP_BUILD_GEO
 RUN pnpm build:docker
 
 # Production image, copy all the files and run next
-FROM node:${NODE_IMAGE_VERSION} AS runner
+FROM --platform=linux/amd64 node:${NODE_IMAGE_VERSION} AS runner
 WORKDIR /app
 
 ARG NODE_OPTIONS
