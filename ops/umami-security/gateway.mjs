@@ -47,10 +47,14 @@ const server = http.createServer((req, res) => {
   try { new URL(req.url, 'http://gateway'); path = req.url.split('?')[0]; } catch { res.writeHead(400); return res.end(); }
   const publicTracking = (path === '/script.js' && ['GET', 'HEAD'].includes(req.method)) ||
     (path === '/api/send' && ['POST', 'OPTIONS'].includes(req.method));
-  if (!allowedRate(req, publicTracking ? 'tracking' : 'management', publicTracking ? 120 : 30, publicTracking ? 20 : 2)) {
+  const authorized = !publicTracking && authenticated(req);
+  const group = publicTracking ? 'tracking' : authorized ? 'management' : 'authentication';
+  const capacity = publicTracking ? 120 : authorized ? 300 : 30;
+  const refill = publicTracking ? 20 : authorized ? 50 : 2;
+  if (!allowedRate(req, group, capacity, refill)) {
     res.writeHead(429, { 'Retry-After': '1', 'Cache-Control': 'no-store' }); return res.end();
   }
-  if (!publicTracking && !authenticated(req)) {
+  if (!publicTracking && !authorized) {
     res.writeHead(401, { 'WWW-Authenticate': 'Basic realm="Umami management", charset="UTF-8"', 'Cache-Control': 'no-store' }); return res.end('Authentication required');
   }
   if (!publicTracking) {
