@@ -1,7 +1,7 @@
 'use strict';
-const http = require('node:http');
-const crypto = require('node:crypto');
-const { Buffer } = require('node:buffer');
+import http from 'node:http';
+import crypto from 'node:crypto';
+import { Buffer } from 'node:buffer';
 const user = process.env.GATE_USER;
 const password = process.env.GATE_PASSWORD;
 const secret = process.env.GATE_COOKIE_SECRET;

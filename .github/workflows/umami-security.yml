@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Verify tracking and management access gateway
-        run: node --test ops/umami-security/gateway.test.cjs
+        run: node --test ops/umami-security/gateway.test.mjs
       - name: Build patched runner from pinned upstream source
         run: docker build --target runner --tag umami-security:candidate ops/umami-security
       - name: Verify AMD64 image architecture

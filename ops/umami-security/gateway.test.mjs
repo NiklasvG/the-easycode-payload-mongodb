@@ -1,8 +1,10 @@
-const { test } = require('node:test');
-const assert = require('node:assert/strict');
-const http = require('node:http');
-const { spawn } = require('node:child_process');
-const path = require('node:path');
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import http from 'node:http';
+import { spawn } from 'node:child_process';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 test('Gateway preserves tracking, challenges management, and retains Umami Bearer authentication', async () => {
   const requests = [];
   const upstream = http.createServer((req, res) => {
@@ -19,7 +21,7 @@ test('Gateway preserves tracking, challenges management, and retains Umami Beare
   await new Promise(resolve => reservation.listen(0, '127.0.0.1', resolve));
   const port = reservation.address().port;
   await new Promise(resolve => reservation.close(resolve));
-  const child = spawn(process.execPath, [path.join(__dirname, 'gateway.cjs')], { env: { ...process.env, PORT: String(port), UPSTREAM_HOST: '127.0.0.1', UPSTREAM_PORT: String(upstream.address().port), GATE_USER: 'operator', GATE_PASSWORD: 'fixture-password', GATE_COOKIE_SECRET: 'fixture-secret-with-at-least-32-characters' }, stdio: 'pipe' });
+  const child = spawn(process.execPath, [path.join(__dirname, 'gateway.mjs')], { env: { ...process.env, PORT: String(port), UPSTREAM_HOST: '127.0.0.1', UPSTREAM_PORT: String(upstream.address().port), GATE_USER: 'operator', GATE_PASSWORD: 'fixture-password', GATE_COOKIE_SECRET: 'fixture-secret-with-at-least-32-characters' }, stdio: 'pipe' });
   let errors = ''; child.stderr.on('data', x => errors += x);
   const call = (url, init = {}) => fetch(`http://127.0.0.1:${port}${url}`, init);
   try {
