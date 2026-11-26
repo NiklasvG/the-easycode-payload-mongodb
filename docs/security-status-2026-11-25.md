@@ -1,4 +1,10 @@
-# Bestätigter Sicherheitsstand vom 25. November 2026
+# Bestätigter Sicherheitsstand vom 26. November 2026
+
+## Aktueller Website-Release vom 26. November 2026
+
+Produktiv laufen **Next.js 16.4.6**, **Payload 3.94.2**, **React 19.3.1**, **Node 24.22.3** und **MongoDB 8.0.38**. Die gesunde Website läuft mit `b9ec786a47d848598c2f181c9fc90cf0ded6b375` und Digest `sha256:0801951cc207684508cdab5bea50097d2e63067a8b86948afcea11d698e6e27a`. Das Lockfile dieser Deployment-SHA bestätigt **Mongoose 8.24.10** und **Undici 8.12.2** in der 8er-Linie. Umami **3.5.0** mit **Next.js 16.4.5**, **Node 22.23.5** und **PostgreSQL 16.16** ist weiterhin aktiv. [PR 15](https://github.com/NiklasvG/the-easycode-payload-mongodb/pull/15) · [Produktionslauf](https://github.com/NiklasvG/the-easycode-payload-mongodb/actions/runs/45839558934)
+
+## Frühere Abnahmen
 
 Dieser Stand dokumentiert tatsächlich laufende Versionen und bereits abgeschlossene Maßnahmen. Ein weiterhin alter Versionsstand ist keine Aussage, dass alle Sicherheitsbefunde behoben sind. Unveröffentlichte Kandidaten bleiben auf den Featurebranches. Diese Dokumentationsänderung führt keinen Anwendungsrelease aus.
 
