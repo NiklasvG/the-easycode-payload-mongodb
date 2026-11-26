@@ -30,3 +30,8 @@ Abgenommene Prüfung: Produktionsaudit des Website-Lockstands ohne Befunde; Typ-
 Alle vier Coolify-Hosts aktualisiert und neu gestartet, Docker 29.10.1; Controller-/Produktions-/Staging-Traefik 3.7.20. Coolify 4.7.6. Projektmounts, Backupzuständigkeiten und bestehende Releasewege bleiben erhalten. Shopware-/Destille-Staging läuft dauerhaft getrennt von Produktion und bleibt ohne Backups.
 
 Lokaler zentraler Nachweis: [Coolify-Umsetzungsbericht](<E:/Coding/coolify Projekte/docs/reports/2026-11-25-sicherheitsupdates-umsetzung.md>). Ein reiner Dokumentationscommit auf main ändert nicht den zuvor gemessenen Anwendungscode im laufenden Container.
+
+## Sonderlösungen bei größeren Updates prüfen
+
+- Beim nächsten größeren Next.js-/Payload-Update die `pnpm.overrides` für DOMPurify, happy-dom, Nodemailer, fast-uri, Mongoose und Undici einzeln prüfen. Ein Override kann entfallen, wenn die unveränderte Auflösung den jeweiligen Fix enthält und Standalone-Build, CMS, Formulare und Mailvorschau bestehen.
+- Beim nächsten größeren Umami-Update prüfen, ob ein unterstützter Zugriffsschutz das eigene Gateway ersetzen kann. Abnahme: Verwaltung geschützt, öffentliches Tracking und CORS funktionsfähig, App nur über erlaubte Routen erreichbar. Den eigenen Website-Releasejob bei einem größeren Coolify-Update gegen native SHA-Freigabe, Readiness und Wiederanlauf vergleichen.
